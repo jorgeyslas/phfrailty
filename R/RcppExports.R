@@ -21,3 +21,15 @@ matrix_exponential <- function(A) {
     .Call(`_phfrailty_matrix_exponential`, A)
 }
 
+#' Phase-type density
+#'
+#' Computes the density of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
+#' @param x non-negative value
+#' @param alpha vector of initial probabilities
+#' @param S sub-intensity matrix
+#' @return The density at \code{x}
+#'
+ph_density <- function(x, alpha, S) {
+    .Call(`_phfrailty_ph_density`, x, alpha, S)
+}
+
