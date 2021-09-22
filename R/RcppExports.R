@@ -28,8 +28,21 @@ matrix_exponential <- function(A) {
 #' @param alpha vector of initial probabilities
 #' @param S sub-intensity matrix
 #' @return The density at \code{x}
-#'
+#' @export
 ph_density <- function(x, alpha, S) {
     .Call(`_phfrailty_ph_density`, x, alpha, S)
+}
+
+#' Phase-type cdf or tail
+#'
+#' Computes the cdf or tail of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
+#' @param x non-negative values
+#' @param alpha vector of initial probabilities
+#' @param S sub-intensity matrix
+#' @param lower_tail cdf or tail
+#' @return The density at \code{x}
+#' @export
+ph_cdf <- function(x, alpha, S, lower_tail = TRUE) {
+    .Call(`_phfrailty_ph_cdf`, x, alpha, S, lower_tail)
 }
 
