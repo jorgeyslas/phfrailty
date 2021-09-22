@@ -6,8 +6,12 @@ Authors@R:
            family = "Yslas",
            role = c("aut", "cre"),
            email = "jorge.yslas1@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           comment = c(ORCID = "https://orcid.org/0000-0001-5624-6163"))
+Description: This package provides the statistical tools for maximum-likelihood
+             estimation of univariate and multivariate phase-type frailty models
+             via expecation-maximization (EM) algorithms. The implementations 
+             are based on the following reference.
+             Yslas, J. (2021) <arXiv:2103.13142>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
