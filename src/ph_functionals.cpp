@@ -1,6 +1,9 @@
 #include <RcppArmadillo.h>
-#include "m_exp.h"
+#include "matrix_functions.h"
 // [[Rcpp::depends(RcppArmadillo)]]
+
+
+// Univariate case
 
 //' Phase-type density
 //'
@@ -69,3 +72,234 @@ Rcpp::NumericVector ph_cdf(Rcpp::NumericVector x, arma::vec alpha, arma::mat S, 
     return (1 - cdf);
   }
 }
+
+
+//' Laplace transform of a phase-type distribution
+//'
+//' Computes the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
+//' @param r real value
+//' @param alpha vector of initial probabilities
+//' @param S sub-intensity matrix
+//' @return Laplace transform at \code{r}
+//' @export
+//' @examples
+//' alpha <- c(0.5, 0.3, 0.2)
+//' S <- matrix(c(c(-1, 0, 0), c(1, -2, 0),c(0, 1, -5)), nrow = 3, ncol = 3)
+//' ph_laplace(0.5, alpha, S)
+// [[Rcpp::export]]
+Rcpp::NumericVector ph_laplace(Rcpp::NumericVector r, arma::vec alpha, arma::mat S) {
+
+  Rcpp::NumericVector laplace(r.size());
+
+  arma::mat e; e.ones(S.n_cols, 1);
+  arma::mat exit_vect = (S * (-1)) * e;
+
+  arma::mat aux_mat(1,1);
+
+  arma::mat identity_matrix;
+  identity_matrix.eye(size(S));
+
+  for (int i = 0; i < r.size(); ++i) {
+    aux_mat = alpha.t() * inv(identity_matrix * r[i] +  S * (-1.0)) * exit_vect;
+    laplace[i] = aux_mat(0,0);
+  }
+  return laplace;
+}
+
+
+//' Derivative of order n of the Laplace transform of a phase-type distribution without the multiplying constant
+//'
+//' Computes the derivative of order n (without the multiplying constant) of the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
+//' @param r real value
+//' @param n an integer
+//' @param alpha vector of initial probabilities
+//' @param S sub-intensity matrix
+//' @return Laplace transform at \code{r}
+//' @export
+//' @examples
+//' alpha <- c(0.5, 0.3, 0.2)
+//' S <- matrix(c(c(-1, 0, 0), c(1, -2, 0),c(0, 1, -5)), nrow = 3, ncol = 3)
+//' ph_laplace_der_nocons(0.5, 2, alpha, S)
+// [[Rcpp::export]]
+Rcpp::NumericVector ph_laplace_der_nocons(Rcpp::NumericVector r, int n, arma::vec alpha, arma::mat S) {
+
+  Rcpp::NumericVector laplace(r.size());
+
+  arma::mat e; e.ones(S.n_cols, 1);
+  arma::mat exit_vect = (S * (-1)) * e;
+
+  arma::mat aux_mat(1,1);
+
+  arma::mat identity_matrix;
+  identity_matrix.eye(size(S));
+
+  for (int i = 0; i < r.size(); ++i) {
+    aux_mat = alpha.t() * matrix_power(n, inv(identity_matrix * r[i] +  S * (-1.0))) * exit_vect;
+    laplace[i] = aux_mat(0,0);
+  }
+  return laplace;
+}
+
+
+
+// Multivariate case
+
+
+//' Bivariate phase-type joint density
+//'
+//' @param x matrix of values
+//' @param alpha vector of initial probabilities
+//' @param S11 sub-intensity matrix
+//' @param S12 matrix
+//' @param S22 sub-intensity matrix
+//' @return Joint density at \code{x}
+//' @export
+//' @examples
+//' alpha <- c(0.15, 0.85)
+//' S11 <- matrix(c(c(-2, 9), c(0, -11)), nrow = 2, ncol = 2)
+//' S12 <- matrix(c(c(2, 0), c(0, 2)), nrow = 2, ncol = 2)
+//' S22 <- matrix(c(c(-1, 0), c(0.5, -5)), nrow = 2, ncol = 2)
+//' x <- matrix(c(c(0.5, 1), c(2, 1.5)), ncol = 2)
+//' bivph_density(x, alpha, S11, S12, S22)
+// [[Rcpp::export]]
+Rcpp::NumericVector bivph_density(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+  long N{x.nrow()};
+  long p2{S22.n_cols};
+
+  Rcpp::NumericVector density(N);
+
+  arma::mat e; e.ones(S22.n_cols, 1);
+  arma::mat exit_vect = (S22 * (-1)) * e;
+
+  arma::mat aux_mat(1,1);
+
+  for (int k = 0; k < N; ++k) {
+    aux_mat = alpha.t() * matrix_exponential(S11 * x(k,0)) * S12 * matrix_exponential(S22 * x(k,1)) * exit_vect;
+    density[k] = aux_mat(0,0);
+  }
+  return density;
+}
+
+
+//' Bivariate phase-type joint tail
+//'
+//' @param x matrix of values
+//' @param alpha vector of initial probabilities
+//' @param S11 sub-intensity matrix
+//' @param S12 matrix
+//' @param S22 sub-intensity matrix
+//' @return Joint tail at \code{x}
+//' @export
+//' @examples
+//' alpha <- c(0.15, 0.85)
+//' S11 <- matrix(c(c(-2, 9), c(0, -11)), nrow = 2, ncol = 2)
+//' S12 <- matrix(c(c(2, 0), c(0, 2)), nrow = 2, ncol = 2)
+//' S22 <- matrix(c(c(-1, 0), c(0.5, -5)), nrow = 2, ncol = 2)
+//' x <- matrix(c(c(0.5, 1), c(2, 1.5)), ncol = 2)
+//' bivph_tail(x, alpha, S11, S12, S22)
+// [[Rcpp::export]]
+Rcpp::NumericVector bivph_tail(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+  long N{x.nrow()};
+  long p2{S22.n_cols};
+
+  Rcpp::NumericVector tail(N);
+
+  arma::mat e; e.ones(S22.n_cols, 1);
+
+  arma::mat aux_mat(1,1);
+
+  for (int k = 0; k < N; ++k) {
+    aux_mat = alpha.t() * inv(S11 * (-1)) * matrix_exponential(S11 * x(k,0)) * S12 * matrix_exponential(S22 * x(k,1)) * e;
+    tail[k] = aux_mat(0,0);
+  }
+  return tail;
+}
+
+
+
+//' Bivariate phase-type joint Laplace
+//'
+//' @param r matrix of values
+//' @param alpha vector of initial probabilities
+//' @param S11 sub-intensity matrix
+//' @param S12 matrix
+//' @param S22 sub-intensity matrix
+//' @return Joint laplace at \code{r}
+//' @export
+//' @examples
+//' alpha <- c(0.15, 0.85)
+//' S11 <- matrix(c(c(-2, 9), c(0, -11)), nrow = 2, ncol = 2)
+//' S12 <- matrix(c(c(2, 0), c(0, 2)), nrow = 2, ncol = 2)
+//' S22 <- matrix(c(c(-1, 0), c(0.5, -5)), nrow = 2, ncol = 2)
+//' x <- matrix(c(c(0.5, 1), c(2, 1.5)), ncol = 2)
+//' bivph_laplace(x, alpha, S11, S12, S22)
+// [[Rcpp::export]]
+Rcpp::NumericVector bivph_laplace(Rcpp::NumericMatrix r, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+  long N{r.nrow()};
+  long p2{S22.n_cols};
+
+  Rcpp::NumericVector laplace(N);
+
+  arma::mat e; e.ones(S22.n_cols, 1);
+  arma::mat exit_vect = (S22 * (-1)) * e;
+
+  arma::mat identity_matrix1;
+  identity_matrix1.eye(size(S11));
+
+  arma::mat identity_matrix2;
+  identity_matrix2.eye(size(S22));
+
+  arma::mat aux_mat(1,1);
+
+  for (int k = 0; k < N; ++k) {
+    aux_mat = alpha.t() * inv(identity_matrix1 * r[k] +  S11 * (-1.0)) * S12 * inv(identity_matrix2 * r[k] +  S22 * (-1.0)) * exit_vect;
+    laplace[k] = aux_mat(0,0);
+  }
+  return laplace;
+}
+
+
+
+//' Derivative of order (n,m) of the joint Laplace of a bivariate phase-type
+//'
+//' @param r matrix of values
+//' @param n order of first component
+//' @param m order of second component
+//' @param alpha vector of initial probabilities
+//' @param S11 sub-intensity matrix
+//' @param S12 matrix
+//' @param S22 sub-intensity matrix
+//' @return Derivative of joint laplace at \code{r}, without multiplicative constants
+//' @export
+//' @examples
+//' alpha <- c(0.15, 0.85)
+//' S11 <- matrix(c(c(-2, 9), c(0, -11)), nrow = 2, ncol = 2)
+//' S12 <- matrix(c(c(2, 0), c(0, 2)), nrow = 2, ncol = 2)
+//' S22 <- matrix(c(c(-1, 0), c(0.5, -5)), nrow = 2, ncol = 2)
+//' x <- matrix(c(c(0.5, 1), c(2, 1.5)), ncol = 2)
+//' bivph_laplace_der_nocons(x, 2, 3, alpha, S11, S12, S22)
+// [[Rcpp::export]]
+Rcpp::NumericVector bivph_laplace_der_nocons(Rcpp::NumericMatrix r, int n, int m, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+  long N{r.nrow()};
+  long p2{S22.n_cols};
+
+  Rcpp::NumericVector laplace_der(N);
+
+  arma::mat e; e.ones(S22.n_cols, 1);
+  arma::mat exit_vect = (S22 * (-1)) * e;
+
+  arma::mat identity_matrix1;
+  identity_matrix1.eye(size(S11));
+
+  arma::mat identity_matrix2;
+  identity_matrix2.eye(size(S22));
+
+  arma::mat aux_mat(1,1);
+
+  for (int k = 0; k < N; ++k) {
+    aux_mat = alpha.t() * matrix_power(n, inv(identity_matrix1 * r[k] +  S11 * (-1.0))) * S12 * matrix_power(m, inv(identity_matrix2 * r[k] +  S22 * (-1.0))) * exit_vect;
+    laplace_der[k] = aux_mat(0,0);
+  }
+  return laplace_der;
+}
+

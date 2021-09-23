@@ -9,6 +9,9 @@ matrix_exponential(A)
 \arguments{
 \item{A}{a matrix}
 }
+\value{
+exp(A)
+}
 \description{
 MATLAB's built-in algorithm - Pade approximation
 }
