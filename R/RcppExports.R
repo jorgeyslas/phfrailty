@@ -248,3 +248,70 @@ bivph_laplace_der_nocons <- function(r, n, m, alpha, S11, S12, S22) {
     .Call(`_phfrailty_bivph_laplace_der_nocons`, r, n, m, alpha, S11, S12, S22)
 }
 
+#' Embedded Markov chain of a sub-intensity matrix
+#'
+#' Returns the transition probabilities of the embedded Markov chain determined the sub-intensity matrix
+#' @param S sub-intensity matrix
+#' @return the embedded Markov chain
+#'
+embedded_mc <- function(S) {
+    .Call(`_phfrailty_embedded_mc`, S)
+}
+
+#' Cumulate matrix
+#'
+#' Creates a new matrix with entries the cumulated rows of \code{A}
+#' @param A a matrix
+#' @return the cumulated matrix
+#'
+cumulate_matrix <- function(A) {
+    .Call(`_phfrailty_cumulate_matrix`, A)
+}
+
+#' Cumulate vector
+#'
+#' Creates a new vector with entries the cumulated entries of \code{A}
+#' @param A a vector
+#' @return the cumulated vector
+#'
+cumulate_vector <- function(A) {
+    .Call(`_phfrailty_cumulate_vector`, A)
+}
+
+#' Initial state of Markov jump process
+#'
+#' Given the accumulated values of the initial probabilities \code{Pi} and a uniform value \code{u}, it returns the initial state of a Markov jump process
+#' This corresponds to the states satisfying cum_pi_(k-1)<u<cum_pi_(k)
+#' @param cum_pi a vector
+#' @param u random value in (0,1)
+#' @return initial state of the Markov jump process
+#'
+initial_state <- function(cum_pi, u) {
+    .Call(`_phfrailty_initial_state`, cum_pi, u)
+}
+
+#' New state in a Markov jump process
+#'
+#' Given a transition matrix \code{Q}, a uniform value \code{u}, and a previous state \code{k}, it returns the new state of a Markov jump process
+#' @param previous_state previous state of the Markov jump process
+#' @param cum_embedded_mc transition matrix
+#' @param u random value in (0,1)
+#' @return next state of the Markov jump process
+#'
+new_state <- function(previous_state, cum_embedded_mc, u) {
+    .Call(`_phfrailty_new_state`, previous_state, cum_embedded_mc, u)
+}
+
+#' Random phase-type
+#'
+#' Generates a sample of size \code{n} from a phase-type distribution with parameters \code{alpha} and \code{S}
+#' @param n sample size
+#' @param alpha vector of initial probabilities
+#' @param S sub-intensity matrix
+#' @return simulated sample
+#' @export
+#'
+rphasetype <- function(n, alpha, S) {
+    .Call(`_phfrailty_rphasetype`, n, alpha, S)
+}
+

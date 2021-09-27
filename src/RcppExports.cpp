@@ -249,6 +249,77 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// embedded_mc
+arma::mat embedded_mc(arma::mat S);
+RcppExport SEXP _phfrailty_embedded_mc(SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(embedded_mc(S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cumulate_matrix
+arma::mat cumulate_matrix(arma::mat A);
+RcppExport SEXP _phfrailty_cumulate_matrix(SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    rcpp_result_gen = Rcpp::wrap(cumulate_matrix(A));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cumulate_vector
+arma::vec cumulate_vector(arma::vec A);
+RcppExport SEXP _phfrailty_cumulate_vector(SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type A(ASEXP);
+    rcpp_result_gen = Rcpp::wrap(cumulate_vector(A));
+    return rcpp_result_gen;
+END_RCPP
+}
+// initial_state
+long initial_state(arma::vec cum_pi, double u);
+RcppExport SEXP _phfrailty_initial_state(SEXP cum_piSEXP, SEXP uSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type cum_pi(cum_piSEXP);
+    Rcpp::traits::input_parameter< double >::type u(uSEXP);
+    rcpp_result_gen = Rcpp::wrap(initial_state(cum_pi, u));
+    return rcpp_result_gen;
+END_RCPP
+}
+// new_state
+long new_state(long previous_state, arma::mat cum_embedded_mc, double u);
+RcppExport SEXP _phfrailty_new_state(SEXP previous_stateSEXP, SEXP cum_embedded_mcSEXP, SEXP uSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< long >::type previous_state(previous_stateSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type cum_embedded_mc(cum_embedded_mcSEXP);
+    Rcpp::traits::input_parameter< double >::type u(uSEXP);
+    rcpp_result_gen = Rcpp::wrap(new_state(previous_state, cum_embedded_mc, u));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rphasetype
+Rcpp::NumericVector rphasetype(int n, arma::vec alpha, arma::mat S);
+RcppExport SEXP _phfrailty_rphasetype(SEXP nSEXP, SEXP alphaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(rphasetype(n, alpha, S));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 6},
@@ -268,6 +339,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_bivph_tail", (DL_FUNC) &_phfrailty_bivph_tail, 5},
     {"_phfrailty_bivph_laplace", (DL_FUNC) &_phfrailty_bivph_laplace, 5},
     {"_phfrailty_bivph_laplace_der_nocons", (DL_FUNC) &_phfrailty_bivph_laplace_der_nocons, 7},
+    {"_phfrailty_embedded_mc", (DL_FUNC) &_phfrailty_embedded_mc, 1},
+    {"_phfrailty_cumulate_matrix", (DL_FUNC) &_phfrailty_cumulate_matrix, 1},
+    {"_phfrailty_cumulate_vector", (DL_FUNC) &_phfrailty_cumulate_vector, 1},
+    {"_phfrailty_initial_state", (DL_FUNC) &_phfrailty_initial_state, 2},
+    {"_phfrailty_new_state", (DL_FUNC) &_phfrailty_new_state, 3},
+    {"_phfrailty_rphasetype", (DL_FUNC) &_phfrailty_rphasetype, 3},
     {NULL, NULL, 0}
 };
 
