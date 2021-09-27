@@ -12,17 +12,37 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // discretizate_density
-List discretizate_density(Function density, NumericVector parameters, double truncation_point, double max_probability, double max_deltat);
-RcppExport SEXP _phfrailty_discretizate_density(SEXP densitySEXP, SEXP parametersSEXP, SEXP truncation_pointSEXP, SEXP max_probabilitySEXP, SEXP max_deltatSEXP) {
+List discretizate_density(Function density, NumericVector parameters, double ini_point, double truncation_point, double max_deltat, double max_probability);
+RcppExport SEXP _phfrailty_discretizate_density(SEXP densitySEXP, SEXP parametersSEXP, SEXP ini_pointSEXP, SEXP truncation_pointSEXP, SEXP max_deltatSEXP, SEXP max_probabilitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Function >::type density(densitySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type parameters(parametersSEXP);
+    Rcpp::traits::input_parameter< double >::type ini_point(ini_pointSEXP);
     Rcpp::traits::input_parameter< double >::type truncation_point(truncation_pointSEXP);
-    Rcpp::traits::input_parameter< double >::type max_probability(max_probabilitySEXP);
     Rcpp::traits::input_parameter< double >::type max_deltat(max_deltatSEXP);
-    rcpp_result_gen = Rcpp::wrap(discretizate_density(density, parameters, truncation_point, max_probability, max_deltat));
+    Rcpp::traits::input_parameter< double >::type max_probability(max_probabilitySEXP);
+    rcpp_result_gen = Rcpp::wrap(discretizate_density(density, parameters, ini_point, truncation_point, max_deltat, max_probability));
+    return rcpp_result_gen;
+END_RCPP
+}
+// discretizate_bivdensity
+List discretizate_bivdensity(Function density, NumericVector parameters, double ini_point1, double truncation_point1, double max_deltat1, double ini_point2, double truncation_point2, double max_deltat2, double max_probability);
+RcppExport SEXP _phfrailty_discretizate_bivdensity(SEXP densitySEXP, SEXP parametersSEXP, SEXP ini_point1SEXP, SEXP truncation_point1SEXP, SEXP max_deltat1SEXP, SEXP ini_point2SEXP, SEXP truncation_point2SEXP, SEXP max_deltat2SEXP, SEXP max_probabilitySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Function >::type density(densitySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type parameters(parametersSEXP);
+    Rcpp::traits::input_parameter< double >::type ini_point1(ini_point1SEXP);
+    Rcpp::traits::input_parameter< double >::type truncation_point1(truncation_point1SEXP);
+    Rcpp::traits::input_parameter< double >::type max_deltat1(max_deltat1SEXP);
+    Rcpp::traits::input_parameter< double >::type ini_point2(ini_point2SEXP);
+    Rcpp::traits::input_parameter< double >::type truncation_point2(truncation_point2SEXP);
+    Rcpp::traits::input_parameter< double >::type max_deltat2(max_deltat2SEXP);
+    Rcpp::traits::input_parameter< double >::type max_probability(max_probabilitySEXP);
+    rcpp_result_gen = Rcpp::wrap(discretizate_bivdensity(density, parameters, ini_point1, truncation_point1, max_deltat1, ini_point2, truncation_point2, max_deltat2, max_probability));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -231,7 +251,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 5},
+    {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 6},
+    {"_phfrailty_discretizate_bivdensity", (DL_FUNC) &_phfrailty_discretizate_bivdensity, 9},
     {"_phfrailty_inf_norm", (DL_FUNC) &_phfrailty_inf_norm, 1},
     {"_phfrailty_matrix_exponential", (DL_FUNC) &_phfrailty_matrix_exponential, 1},
     {"_phfrailty_matrix_power", (DL_FUNC) &_phfrailty_matrix_power, 2},

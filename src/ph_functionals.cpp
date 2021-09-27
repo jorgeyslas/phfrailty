@@ -15,7 +15,6 @@
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector ph_density(Rcpp::NumericVector x, arma::vec alpha, arma::mat S) {
-
   Rcpp::NumericVector density(x.size());
 
   arma::mat e; e.ones(S.n_cols, 1);
@@ -48,7 +47,6 @@ Rcpp::NumericVector ph_density(Rcpp::NumericVector x, arma::vec alpha, arma::mat
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector ph_cdf(Rcpp::NumericVector x, arma::vec alpha, arma::mat S, bool lower_tail = true) {
-
   Rcpp::NumericVector cdf(x.size());
 
   arma::mat e; e.ones(S.n_cols, 1);
@@ -88,7 +86,6 @@ Rcpp::NumericVector ph_cdf(Rcpp::NumericVector x, arma::vec alpha, arma::mat S, 
 //' ph_laplace(0.5, alpha, S)
 // [[Rcpp::export]]
 Rcpp::NumericVector ph_laplace(Rcpp::NumericVector r, arma::vec alpha, arma::mat S) {
-
   Rcpp::NumericVector laplace(r.size());
 
   arma::mat e; e.ones(S.n_cols, 1);
@@ -122,7 +119,6 @@ Rcpp::NumericVector ph_laplace(Rcpp::NumericVector r, arma::vec alpha, arma::mat
 //' ph_laplace_der_nocons(0.5, 2, alpha, S)
 // [[Rcpp::export]]
 Rcpp::NumericVector ph_laplace_der_nocons(Rcpp::NumericVector r, int n, arma::vec alpha, arma::mat S) {
-
   Rcpp::NumericVector laplace(r.size());
 
   arma::mat e; e.ones(S.n_cols, 1);
@@ -164,7 +160,6 @@ Rcpp::NumericVector ph_laplace_der_nocons(Rcpp::NumericVector r, int n, arma::ve
 // [[Rcpp::export]]
 Rcpp::NumericVector bivph_density(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
   long N{x.nrow()};
-  long p2{S22.n_cols};
 
   Rcpp::NumericVector density(N);
 
@@ -200,7 +195,6 @@ Rcpp::NumericVector bivph_density(Rcpp::NumericMatrix x, arma::vec alpha, arma::
 // [[Rcpp::export]]
 Rcpp::NumericVector bivph_tail(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
   long N{x.nrow()};
-  long p2{S22.n_cols};
 
   Rcpp::NumericVector tail(N);
 
@@ -236,7 +230,6 @@ Rcpp::NumericVector bivph_tail(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat
 // [[Rcpp::export]]
 Rcpp::NumericVector bivph_laplace(Rcpp::NumericMatrix r, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
   long N{r.nrow()};
-  long p2{S22.n_cols};
 
   Rcpp::NumericVector laplace(N);
 
@@ -281,7 +274,6 @@ Rcpp::NumericVector bivph_laplace(Rcpp::NumericMatrix r, arma::vec alpha, arma::
 // [[Rcpp::export]]
 Rcpp::NumericVector bivph_laplace_der_nocons(Rcpp::NumericMatrix r, int n, int m, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
   long N{r.nrow()};
-  long p2{S22.n_cols};
 
   Rcpp::NumericVector laplace_der(N);
 

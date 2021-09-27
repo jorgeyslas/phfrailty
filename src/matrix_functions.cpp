@@ -136,9 +136,9 @@ void vector_of_matrices(std::vector<arma::mat> & theVector, const arma::mat & S,
 //'
 // [[Rcpp::export]]
 arma::mat matrix_VanLoan(const arma::mat & A1, const arma::mat & A2, const arma::mat & B1) {
-  long p1{A1.n_cols};
-  long p2{A2.n_cols};
-  long p{p1 + p2};
+  unsigned p1{A1.n_cols};
+  unsigned p2{A2.n_cols};
+  unsigned p{p1 + p2};
 
   arma::mat auxiliarMatrix(p, p);
 

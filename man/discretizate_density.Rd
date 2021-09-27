@@ -2,14 +2,15 @@
 % Please edit documentation in R/RcppExports.R
 \name{discretizate_density}
 \alias{discretizate_density}
-\title{Discretization of a density}
+\title{Discretization of an univariate density}
 \usage{
 discretizate_density(
   density,
   parameters,
+  ini_point,
   truncation_point,
-  max_probability,
-  max_deltat
+  max_deltat,
+  max_probability
 )
 }
 \arguments{
@@ -17,15 +18,17 @@ discretizate_density(
 
 \item{parameters}{parameters of the density function}
 
+\item{ini_point}{initial value for the discretization}
+
 \item{truncation_point}{max value for the discretization}
 
-\item{max_probability}{maximum probability of a discrete point}
-
 \item{max_deltat}{maximum size of interval}
+
+\item{max_probability}{maximum probability of a discrete point}
 }
 \value{
 List with values and weights
 }
 \description{
-Discretizates a density function using Simposon rule
+Discretizates an univariate density function using Simposon rule
 }

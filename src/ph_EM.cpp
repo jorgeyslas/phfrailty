@@ -34,16 +34,12 @@ void EMstep_PADE(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & o
   arma::mat tProductPi(p,p);
   tProductPi = t * alpha.t();
 
-
   J = matrix_VanLoan(S, S, tProductPi);
-
 
   double JNorm{inf_norm(J)};
 
   std::vector<arma::mat> theVector;
-
   vector_of_matrices(theVector, J, 6);
-
 
   arma::mat X(2 * p,2 * p);
   arma::mat D(2 * p,2 * p);
@@ -52,8 +48,6 @@ void EMstep_PADE(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & o
   int s{};
   double xmod{};
   double c{};
-
-
 
   double SumOfWeights{0.0};
   double density{0.0};
@@ -151,9 +145,9 @@ void EMstep_PADE(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & o
 //' @export
 // [[Rcpp::export]]
 void EMstep_bivph(arma::vec & alpha, arma::mat & S11, arma::mat & S12, arma::mat & S22, const Rcpp::NumericMatrix & obs, const Rcpp::NumericVector & weight) {
-  long p1{S11.n_rows};
-  long p2{S22.n_rows};
-  long p{p1 + p2};
+  unsigned p1{S11.n_rows};
+  unsigned p2{S22.n_rows};
+  unsigned p{p1 + p2};
 
   double density{0};
   double aux;
@@ -176,9 +170,9 @@ void EMstep_bivph(arma::vec & alpha, arma::mat & S11, arma::mat & S12, arma::mat
   arma::mat e; e.ones(p2, 1);
   arma::mat exitvec = (S22 * (-1)) * e;
 
-  arma::mat auxMatrix1(p1,1);
-  arma::mat auxMatrix2(p2,p1);
-  arma::mat auxMatrix3(1,p2);
+  arma::mat aux_matrix1(p1,1);
+  arma::mat aux_matrix2(p2,p1);
+  arma::mat aux_matrix3(1,p2);
 
   arma::mat aux_mat(1,1);
 
@@ -215,27 +209,27 @@ void EMstep_bivph(arma::vec & alpha, arma::mat & S11, arma::mat & S12, arma::mat
 
 
     //E-step
-    auxMatrix1 = aux_exp1 * S12 * aux_exp2 * exitvec;
-    auxMatrix2 =  aux_exp2 * exitvec * alpha.t() * aux_exp1;
+    aux_matrix1 = aux_exp1 * S12 * aux_exp2 * exitvec;
+    aux_matrix2 =  aux_exp2 * exitvec * alpha.t() * aux_exp1;
 
     for (int i{0}; i < p1; ++i) {
-      aux = auxMatrix1(i,0);
+      aux = aux_matrix1(i,0);
       Bmean(i,0) += alpha[i] * aux * weight[k] / density;
       Zmean(i,0) += cmatrix1(i,i) * weight[k] / density;
       for (int j{0}; j < p1; ++j) {
         Nmean(i,j) += S11(i,j) * cmatrix1(j,i) * weight[k] / density;
       }
       for (int j{0}; j < p2; ++j) {
-        aux = auxMatrix2(j,i);
+        aux = aux_matrix2(j,i);
         Nmean(i,j + p1) += S12(i,j) * aux * weight[k] / density;
       }
     }
 
-    auxMatrix3 = alpha.t() * aux_exp1 * S12 * aux_exp2;
+    aux_matrix3 = alpha.t() * aux_exp1 * S12 * aux_exp2;
 
     for (int i{0}; i < p2; ++i) {
       Zmean(i + p1,0) += cmatrix2(i,i) * weight[k] / density;
-      aux = auxMatrix3(0,i);
+      aux = aux_matrix3(0,i);
       Nmean(i + p1,p) += aux * exitvec(i,0) * weight[k] / density;
       for (int j{0}; j < p2; ++j){
         Nmean(i + p1,j + p1) += S22(i,j) * cmatrix2(j,i) * weight[k] / density;
@@ -283,5 +277,5 @@ void EMstep_bivph(arma::vec & alpha, arma::mat & S11, arma::mat & S12, arma::mat
       }
     }
   }
-
 }
+
