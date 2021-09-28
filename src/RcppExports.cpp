@@ -320,6 +320,41 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// clone_vector
+NumericVector clone_vector(NumericVector v);
+RcppExport SEXP _phfrailty_clone_vector(SEXP vSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
+    rcpp_result_gen = Rcpp::wrap(clone_vector(v));
+    return rcpp_result_gen;
+END_RCPP
+}
+// clone_matrix
+NumericMatrix clone_matrix(NumericMatrix m);
+RcppExport SEXP _phfrailty_clone_matrix(SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(clone_matrix(m));
+    return rcpp_result_gen;
+END_RCPP
+}
+// random_structure
+List random_structure(int p, String structure, double scale_factor);
+RcppExport SEXP _phfrailty_random_structure(SEXP pSEXP, SEXP structureSEXP, SEXP scale_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< String >::type structure(structureSEXP);
+    Rcpp::traits::input_parameter< double >::type scale_factor(scale_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(random_structure(p, structure, scale_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 6},
@@ -345,6 +380,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_initial_state", (DL_FUNC) &_phfrailty_initial_state, 2},
     {"_phfrailty_new_state", (DL_FUNC) &_phfrailty_new_state, 3},
     {"_phfrailty_rphasetype", (DL_FUNC) &_phfrailty_rphasetype, 3},
+    {"_phfrailty_clone_vector", (DL_FUNC) &_phfrailty_clone_vector, 1},
+    {"_phfrailty_clone_matrix", (DL_FUNC) &_phfrailty_clone_matrix, 1},
+    {"_phfrailty_random_structure", (DL_FUNC) &_phfrailty_random_structure, 3},
     {NULL, NULL, 0}
 };
 

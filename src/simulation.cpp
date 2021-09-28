@@ -1,5 +1,4 @@
 #include <RcppArmadillo.h>
-#include "matrix_functions.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //' Embedded Markov chain of a sub-intensity matrix
@@ -28,7 +27,7 @@ arma::mat embedded_mc(arma::mat S) {
   }
   Q(p,p) = 1;
 
-  return (Q);
+  return Q;
 }
 
 //' Cumulate matrix
@@ -54,7 +53,7 @@ arma::mat cumulate_matrix(arma::mat A) {
       }
     }
   }
-  return (cumulated);
+  return cumulated;
 }
 
 //' Cumulate vector
@@ -70,14 +69,14 @@ arma::vec cumulate_vector(arma::vec A) {
   arma::vec cumulated(p);
 
   for (int i{0}; i < p; ++i) {
-    if (i == 0){
+    if (i == 0) {
       cumulated[i] = A[i];
     }
     else {
       cumulated[i] = cumulated[i - 1] + A[i];
     }
   }
-  return (cumulated);
+  return cumulated;
 }
 
 //' Initial state of Markov jump process
@@ -91,15 +90,15 @@ arma::vec cumulate_vector(arma::vec A) {
 // [[Rcpp::export]]
 long initial_state(arma::vec cum_pi, double u) {
   if (u <= cum_pi[0]) {
-    return (0);
+    return 0;
   }
 
   for( int i{1}; i < cum_pi.size(); ++i) {
     if (cum_pi[i - 1] < u && u <= cum_pi[i]) {
-      return (i);
+      return i;
     }
   }
-  return (0);
+  return 0;
 }
 
 //' New state in a Markov jump process
@@ -113,16 +112,16 @@ long initial_state(arma::vec cum_pi, double u) {
 // [[Rcpp::export]]
 long new_state(long previous_state, arma::mat cum_embedded_mc, double u) {
   if (u <= cum_embedded_mc(previous_state,0)) {
-    return (0);
+    return 0;
   }
 
   for (int i{1}; i < cum_embedded_mc.n_cols; ++i) {
     if (cum_embedded_mc(previous_state,i - 1) < u && u <= cum_embedded_mc(previous_state,i)) {
-      return (i);
+      return i;
     }
   }
 
-  return (0);
+  return 0;
 }
 
 
@@ -154,5 +153,5 @@ Rcpp::NumericVector rphasetype(int n, arma::vec alpha, arma::mat S) {
     }
     sample[i] = time;
   }
-  return (sample);
+  return sample;
 }

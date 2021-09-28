@@ -78,10 +78,10 @@ arma::mat matrix_exponential(arma::mat A) {
 
   ExpM = inv(d) * ExpM;
 
-  for (int k = 1; k <= s; ++k) {
+  for (int k{1}; k <= s; ++k) {
     ExpM = ExpM * ExpM;
   }
-  return(ExpM);
+  return ExpM;
 }
 
 

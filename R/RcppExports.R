@@ -315,3 +315,31 @@ rphasetype <- function(n, alpha, S) {
     .Call(`_phfrailty_rphasetype`, n, alpha, S)
 }
 
+#' Clone a vector
+#'
+#' @param v a vector
+#'
+clone_vector <- function(v) {
+    .Call(`_phfrailty_clone_vector`, v)
+}
+
+#' Clone a matrix
+#'
+#' @param m a matrix
+#'
+clone_matrix <- function(m) {
+    .Call(`_phfrailty_clone_matrix`, m)
+}
+
+#' Random structure of a phase-type
+#'
+#' Generates random parameters \code{alpha} and \code{S} of a phase-type distribution of dimension \code{p} with chosen structure
+#' @param p Dimension of the phase-type
+#' @param structure Type of structure: "general", "hyperexponential", "gerlang", "coxian" or "gcoxian"
+#' @param scale_factor A factor that multiplies the sub-intensity matrix
+#' @return Random parameters \code{alpha} and \code{S} of a phase-type
+#'
+random_structure <- function(p, structure = "general", scale_factor = 1) {
+    .Call(`_phfrailty_random_structure`, p, structure, scale_factor)
+}
+

@@ -53,7 +53,7 @@ Rcpp::NumericVector ph_cdf(Rcpp::NumericVector x, arma::vec alpha, arma::mat S, 
 
   arma::mat aux_mat(1,1);
 
-  for (int k = 0; k < x.size(); ++k){
+  for (int k = 0; k < x.size(); ++k) {
     if (x[k] == 0) {
       aux_mat = alpha.t() * e;
       cdf[k] = 1.0 - aux_mat(0,0);
