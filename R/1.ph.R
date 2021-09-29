@@ -22,7 +22,7 @@ setClass("phasetype",
   )
 )
 
-#' Constructor Function for phase type distributions
+#' Constructor function for phase type distributions
 #'
 #' @param alpha a probability vector.
 #' @param S a sub-intensity matrix.
@@ -59,7 +59,7 @@ phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
   )
 }
 
-#' Moment Method for phase-type distributions
+#' Moment method for phase-type distributions
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param k a positive integer (moment order).
@@ -69,8 +69,8 @@ phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
 #'
 #' @examples
 #' set.seed(123)
-#' ph1 <- phasetype(structure = "general", dimension = 3)
-#' moment(ph1, 2)
+#' obj <- phasetype(structure = "general", dimension = 3)
+#' moment(obj, 2)
 setMethod("moment", signature(x = "phasetype"),
           function (x, k = 1){
             if(k <= 0) return("k should be positive")
@@ -83,7 +83,7 @@ setMethod("moment", signature(x = "phasetype"),
           }
 )
 
-#' Show Method for phase type distributions
+#' Show method for phase type distributions
 #'
 #' @param object an object of class \linkS4class{phasetype}.
 #' @importFrom methods show
@@ -96,7 +96,7 @@ setMethod("show", "phasetype", function(object) {
   methods::show(object@pars)
 })
 
-#' Simulation Method for phase type distributions
+#' Simulation method for phase type distributions
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param n an integer of length of realization.
@@ -112,7 +112,7 @@ setMethod("sim", c(x = "phasetype"), function(x, n = 1000) {
   return(U)
 })
 
-#' Density Method for phase type distributions
+#' Density method for phase type distributions
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param y a vector of locations.
@@ -131,7 +131,7 @@ setMethod("dens", c(x = "phasetype"), function(x, y) {
   return(dens)
 })
 
-#' Distribution Method for phase type distributions
+#' Distribution method for phase type distributions
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param q a vector of locations.
@@ -153,7 +153,7 @@ setMethod("cdf", c(x = "phasetype"), function(x,
   return(cdf)
 })
 
-#' Hazard rate Method for phase type distributions
+#' Hazard rate method for phase type distributions
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param y a vector of locations.
@@ -170,7 +170,7 @@ setMethod("haz", c(x = "phasetype"), function(x, y) {
   return(d / s)
 })
 
-#' Quantile Method for phase type distributions
+#' Quantile method for phase type distributions
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param p a vector of probabilities.
@@ -190,7 +190,7 @@ setMethod("quan", c(x = "phasetype"), function(x,
   return(1 / (1 - quan) - 1)
 })
 
-#' Fit Method for phasetype Class
+#' Fit method for phasetype Class
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param y vector or data.
@@ -215,7 +215,7 @@ setMethod("quan", c(x = "phasetype"), function(x,
 #' @export
 #'
 #' @examples
-#' obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 #' data <- sim(obj, n = 100)
 #' fit(obj, data, stepsEM = 1000, every = 200)
 setMethod(
@@ -238,9 +238,9 @@ setMethod(
     if(!all(c(weight, rcenweight) >= 0)) stop("weights should be non-negative")
     is_iph <- methods::is(x, "frailty")
     if (is_iph) {
-      par_g <- x@gfun$pars
-      inv_g <- x@gfun$inverse}
-    LL <- if(is_iph){eval(parse(text = paste("logLikelihoodM", x@gfun$name, "_", methods[2], sep = "")))
+      par_g <- x@bhaz$pars
+      inv_g <- x@bhaz$inverse}
+    LL <- if(is_iph){eval(parse(text = paste("logLikelihoodM", x@bhaz$name, "_", methods[2], sep = "")))
       }else{eval(parse(text = paste("logLikelihoodPH_", methods[2], sep = "")))}
     A <- data_aggregation(y, weight)
     y <- A$un_obs
@@ -309,7 +309,7 @@ setMethod(
       trans_weight <- weight
       trans_rcenweight <- rcenweight
       for (k in 1:stepsEM) {
-        if(x@gfun$name != "gev") {trans <- inv_g(par_g, y); trans_cens <- inv_g(par_g, rcen)
+        if(x@bhaz$name != "gev") {trans <- inv_g(par_g, y); trans_cens <- inv_g(par_g, rcen)
         }else{ t <- inv_g(par_g, y, weight); tc <- inv_g(par_g, rcen, rcenweight)
         trans <- t$obs; trans_weight <- t$weight; trans_cens <- tc$obs; trans_rcenweight <- tc$weight}
         epsilon1 <- switch(which(methods[1] == c("RK", "UNI","PADE")),
@@ -350,10 +350,10 @@ setMethod(
             dev.off()
             plot(head(h$breaks, length(h$density)), h$density, col = "#b2df8a",
                  main = "Histogram", xlab = "data", ylab = "density", type = "s", lwd = 2)
-            tmp_ph <- frailty(phasetype(alpha_fit, S_fit), gfun = x@gfun$name, gfun_pars = par_g)
+            tmp_ph <- frailty(phasetype(alpha_fit, S_fit), bhaz = x@bhaz$name, bhaz_pars = par_g)
             lines(sq, dens(tmp_ph, sq), col = "#33a02c", lwd = 2, lty = 1)
             legend("topright",
-                   legend = c("Data", paste("Matrix-", x@gfun$name," fit", sep ="")),
+                   legend = c("Data", paste("Matrix-", x@bhaz$name," fit", sep ="")),
                    col = c("#b2df8a", "#33a02c"),
                    lty = c(1,1),
                    bty = "n",
@@ -372,7 +372,7 @@ setMethod(
         logLik = opt$value,
         nobs = sum(A$weights)
       )
-      x <- frailty(x, gfun = x@gfun$name, gfun_pars = par_g)
+      x <- frailty(x, bhaz = x@bhaz$name, bhaz_pars = par_g)
     }
     return(x)
   }
@@ -395,7 +395,7 @@ data_aggregation <- function(y, w) {
   return(list(un_obs = un_obs, weights = cum_weight))
 }
 
-#' logLik Method for phasetype Class
+#' logLik method for phasetype class
 #'
 #' @param object an object of class \linkS4class{phasetype}.
 #'
@@ -403,7 +403,7 @@ data_aggregation <- function(y, w) {
 #' @export
 #'
 #' @examples
-#' obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 #' data <- sim(obj, n = 100)
 #' fitted_ph <- fit(obj, data, stepsEM = 10)
 #' logLik(fitted_ph)
@@ -415,7 +415,7 @@ setMethod("logLik", "phasetype", function(object) {
   ll
 })
 
-#' Coef Method for phasetype Class
+#' Coef method for phasetype class
 #'
 #' @param object an object of class \linkS4class{phasetype}.
 #'

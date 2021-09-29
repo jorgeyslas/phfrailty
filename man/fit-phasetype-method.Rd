@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{fit,phasetype-method}
 \alias{fit,phasetype-method}
-\title{Fit Method for phasetype Class}
+\title{Fit method for phasetype Class}
 \usage{
 \S4method{fit}{phasetype}(
   x,
@@ -51,10 +51,10 @@
 An object of class \linkS4class{phasetype}.
 }
 \description{
-Fit Method for phasetype Class
+Fit method for phasetype Class
 }
 \examples{
-obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
+obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 data <- sim(obj, n = 100)
 fit(obj, data, stepsEM = 1000, every = 200)
 }

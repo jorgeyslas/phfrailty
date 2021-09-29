@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.generics.R
 \name{haz}
 \alias{haz}
-\title{New Generic for the Hazard rate of Matrix Distributions}
+\title{New generic for the hazard rate of matrix distributions}
 \usage{
 haz(x, ...)
 }
@@ -15,5 +15,5 @@ haz(x, ...)
 Hazard rate from the matrix distribution.
 }
 \description{
-Methods are available for objects of class \linkS4class{ph}
+Methods are available for objects of class \linkS4class{phasetype}
 }

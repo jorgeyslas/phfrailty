@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{cdf,phasetype-method}
 \alias{cdf,phasetype-method}
-\title{Distribution Method for phase type distributions}
+\title{Distribution method for phase type distributions}
 \usage{
 \S4method{cdf}{phasetype}(x, q, lower.tail = TRUE)
 }
@@ -17,7 +17,7 @@
 A list containing the locations and corresponding CDF evaluations.
 }
 \description{
-Distribution Method for phase type distributions
+Distribution method for phase type distributions
 }
 \examples{
 obj <- phasetype(structure = "general")

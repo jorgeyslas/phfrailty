@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{dens,frailty-method}
 \alias{dens,frailty-method}
-\title{Density Method for inhomogeneous phase type distributions}
+\title{Density method for phase type frailty models}
 \usage{
 \S4method{dens}{frailty}(x, y)
 }
@@ -15,9 +15,9 @@
 A list containing the locations and corresponding density evaluations.
 }
 \description{
-Density Method for inhomogeneous phase type distributions
+Density method for phase type frailty models
 }
 \examples{
-obj <- frailty(phasetype(structure = "general"), gfun = "weibull", gfun_pars = 2)
+obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 dens(obj, c(1, 2, 3))
 }

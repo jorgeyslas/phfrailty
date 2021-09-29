@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{dens,phasetype-method}
 \alias{dens,phasetype-method}
-\title{Density Method for phase type distributions}
+\title{Density method for phase type distributions}
 \usage{
 \S4method{dens}{phasetype}(x, y)
 }
@@ -15,7 +15,7 @@
 A list containing the locations and corresponding density evaluations.
 }
 \description{
-Density Method for phase type distributions
+Density method for phase type distributions
 }
 \examples{
 obj <- phasetype(structure = "general")

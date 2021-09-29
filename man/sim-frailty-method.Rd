@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{sim,frailty-method}
 \alias{sim,frailty-method}
-\title{Simulation Method for inhomogeneous phase type distributions}
+\title{Simulation method for phase type frailty models}
 \usage{
 \S4method{sim}{frailty}(x, n = 1000)
 }
@@ -15,9 +15,9 @@
 A realization of independent and identically distributed phase-type frailty variables.
 }
 \description{
-Simulation Method for inhomogeneous phase type distributions
+Simulation method for phase type frailty models
 }
 \examples{
-obj <- frailty(phasetype(structure = "general"), gfun = "lognormal", gfun_pars = 2)
+obj <- frailty(phasetype(structure = "general"), bhaz = "lognormal", bhaz_pars = 2)
 sim(obj, n = 100)
 }

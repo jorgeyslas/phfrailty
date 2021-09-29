@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.generics.R
 \name{sim}
 \alias{sim}
-\title{New Generic for Simulating Matrix Distributions}
+\title{New generic for simulating matrix distributions}
 \usage{
 sim(x, ...)
 }
@@ -15,5 +15,5 @@ sim(x, ...)
 A realization from the matrix distribution.
 }
 \description{
-Methods are available for objects of class \linkS4class{ph}
+Methods are available for objects of class \linkS4class{phasetype}
 }

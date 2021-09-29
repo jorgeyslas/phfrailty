@@ -3,19 +3,19 @@
 \docType{class}
 \name{frailty-class}
 \alias{frailty-class}
-\title{Inhomogeneous Phase Type distributions}
+\title{Phase type frailty model}
 \value{
 Class object
 }
 \description{
-Class of objects for inhomogeneous phase type distributions
+Class of objects for phase type frailty models
 }
 \section{Slots}{
 
 \describe{
 \item{\code{name}}{name of the phase type distribution.}
 
-\item{\code{gfun}}{a list comprising of the parameters.}
+\item{\code{bhaz}}{a list comprising of the parameters.}
 
 \item{\code{scale}}{scale.}
 }}

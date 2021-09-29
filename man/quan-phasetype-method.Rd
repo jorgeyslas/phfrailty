@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{quan,phasetype-method}
 \alias{quan,phasetype-method}
-\title{Quantile Method for phase type distributions}
+\title{Quantile method for phase type distributions}
 \usage{
 \S4method{quan}{phasetype}(x, p)
 }
@@ -15,7 +15,7 @@
 A list containing the probabilities and corresponding quantile evaluations.
 }
 \description{
-Quantile Method for phase type distributions
+Quantile method for phase type distributions
 }
 \examples{
 obj <- phasetype(structure = "general")

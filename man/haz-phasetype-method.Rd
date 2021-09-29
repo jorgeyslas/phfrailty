@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{haz,phasetype-method}
 \alias{haz,phasetype-method}
-\title{Hazard rate Method for phase type distributions}
+\title{Hazard rate method for phase type distributions}
 \usage{
 \S4method{haz}{phasetype}(x, y)
 }
@@ -15,7 +15,7 @@
 A list containing the locations and corresponding hazard rate evaluations.
 }
 \description{
-Hazard rate Method for phase type distributions
+Hazard rate method for phase type distributions
 }
 \examples{
 obj <- phasetype(structure = "general")

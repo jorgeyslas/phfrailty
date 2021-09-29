@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.generics.R
 \name{quan}
 \alias{quan}
-\title{New Generic for the Quantile of Matrix Distributions}
+\title{New generic for the quantile of matrix distributions}
 \usage{
 quan(x, ...)
 }
@@ -15,5 +15,5 @@ quan(x, ...)
 Quantile from the matrix distribution.
 }
 \description{
-Methods are available for objects of class \linkS4class{ph}
+Methods are available for objects of class \linkS4class{phasetype}
 }

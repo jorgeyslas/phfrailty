@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.generics.R
 \name{fit}
 \alias{fit}
-\title{New Generic for Estimating Matrix Distributions}
+\title{New generic for estimation of matrix distributions}
 \usage{
 fit(x, y, ...)
 }
@@ -17,5 +17,5 @@ fit(x, y, ...)
 An object of the fitted model class.
 }
 \description{
-Methods are available for objects of class \linkS4class{ph}
+Methods are available for objects of class \linkS4class{phastype}
 }

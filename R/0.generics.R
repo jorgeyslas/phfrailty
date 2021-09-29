@@ -1,6 +1,6 @@
-#' New Generic for Simulating Matrix Distributions
+#' New generic for simulating matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param ... further parameters to be passed on
@@ -12,9 +12,9 @@ setGeneric("sim", function(x, ...) {
   standardGeneric("sim")
 })
 
-#' New Generic for Moment of Matrix Distributions
+#' New generic for moment of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param ... further parameters to be passed on
@@ -27,9 +27,9 @@ setGeneric("moment", function(x, ...) {
 })
 
 
-#' New Generic for the Density of Matrix Distributions
+#' New generic for the density of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param ... further parameters to be passed on
@@ -41,9 +41,9 @@ setGeneric("dens", function(x, ...) {
   standardGeneric("dens")
 })
 
-#' New Generic for the Hazard rate of Matrix Distributions
+#' New generic for the hazard rate of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param ... further parameters to be passed on
@@ -55,9 +55,9 @@ setGeneric("haz", function(x, ...) {
   standardGeneric("haz")
 })
 
-#' New Generic for the Distribution of Matrix Distributions
+#' New generic for the distribution function of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param ... further parameters to be passed on
@@ -69,9 +69,9 @@ setGeneric("cdf", function(x, ...) {
   standardGeneric("cdf")
 })
 
-#' New Generic for the Quantile of Matrix Distributions
+#' New generic for the quantile of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param ... further parameters to be passed on
@@ -83,9 +83,9 @@ setGeneric("quan", function(x, ...) {
   standardGeneric("quan")
 })
 
-#' New Generic for Estimating Matrix Distributions
+#' New generic for estimation of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{ph}
+#' Methods are available for objects of class \linkS4class{phastype}
 #'
 #' @param x an object of the model class.
 #' @param y a vector of data.
@@ -96,18 +96,4 @@ setGeneric("quan", function(x, ...) {
 #'
 setGeneric("fit", function(x, y, ...) {
   standardGeneric("fit")
-})
-
-#' New Generic for Evaluating Survival Matrix Distributions
-#'
-#' Methods are available for objects of class \linkS4class{sph}
-#'
-#' @param x an object of the model class.
-#' @param subject a vector of data.
-#' @param ... further parameters to be passed on
-#'
-#' @export
-#'
-setGeneric("evaluate", function(x, subject, ...) {
-  standardGeneric("evaluate")
 })

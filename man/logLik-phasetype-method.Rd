@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{logLik,phasetype-method}
 \alias{logLik,phasetype-method}
-\title{logLik Method for phasetype Class}
+\title{logLik method for phasetype class}
 \usage{
 \S4method{logLik}{phasetype}(object)
 }
@@ -13,10 +13,10 @@
 An object of class logLik.
 }
 \description{
-logLik Method for phasetype Class
+logLik method for phasetype class
 }
 \examples{
-obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
+obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 data <- sim(obj, n = 100)
 fitted_ph <- fit(obj, data, stepsEM = 10)
 logLik(fitted_ph)

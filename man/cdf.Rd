@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.generics.R
 \name{cdf}
 \alias{cdf}
-\title{New Generic for the Distribution of Matrix Distributions}
+\title{New generic for the distribution function of matrix distributions}
 \usage{
 cdf(x, ...)
 }
@@ -15,5 +15,5 @@ cdf(x, ...)
 CDF from the matrix distribution.
 }
 \description{
-Methods are available for objects of class \linkS4class{ph}
+Methods are available for objects of class \linkS4class{phasetype}
 }

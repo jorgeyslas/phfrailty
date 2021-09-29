@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{coef,phasetype-method}
 \alias{coef,phasetype-method}
-\title{Coef Method for phasetype Class}
+\title{Coef method for phasetype class}
 \usage{
 \S4method{coef}{phasetype}(object)
 }
@@ -13,7 +13,7 @@
 Parameters of phasetype model.
 }
 \description{
-Coef Method for phasetype Class
+Coef method for phasetype class
 }
 \examples{
 obj <- phasetype(structure = "general")

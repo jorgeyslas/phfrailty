@@ -2,12 +2,12 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{frailty}
 \alias{frailty}
-\title{Constructor Function for phase type frailty models}
+\title{Constructor function for phase type frailty models}
 \usage{
 frailty(
   ph = NULL,
-  gfun = NULL,
-  gfun_pars = NULL,
+  bhaz = NULL,
+  bhaz_pars = NULL,
   alpha = NULL,
   S = NULL,
   structure = NULL,
@@ -16,11 +16,11 @@ frailty(
 )
 }
 \arguments{
-\item{ph}{An object of class \linkS4class{phasetype}.}
+\item{ph}{an object of class \linkS4class{phasetype}.}
 
-\item{gfun}{baseline hazard function}
+\item{bhaz}{baseline hazard function}
 
-\item{gfun_pars}{the parameters of the baseline hazard function}
+\item{bhaz_pars}{the parameters of the baseline hazard function}
 
 \item{alpha}{a probability vector.}
 
@@ -36,8 +36,8 @@ frailty(
 An object of class \linkS4class{frailty}.
 }
 \description{
-Constructor Function for phase type frailty models
+Constructor function for phase type frailty models
 }
 \examples{
-frailty(phasetype(structure = "coxian", dimension = 4), gfun = "pareto", gfun_pars = 3)
+frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "pareto", bhaz_pars = 3)
 }

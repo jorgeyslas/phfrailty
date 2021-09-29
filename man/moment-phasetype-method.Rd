@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{moment,phasetype-method}
 \alias{moment,phasetype-method}
-\title{Moment Method for phase-type distributions}
+\title{Moment method for phase-type distributions}
 \usage{
 \S4method{moment}{phasetype}(x, k = 1)
 }
@@ -15,10 +15,10 @@
 The raw moment of the \linkS4class{phasetype} (or undelying \linkS4class{phasetype}) object.
 }
 \description{
-Moment Method for phase-type distributions
+Moment method for phase-type distributions
 }
 \examples{
 set.seed(123)
-ph1 <- phasetype(structure = "general", dimension = 3)
-moment(ph1, 2)
+obj <- phasetype(structure = "general", dimension = 3)
+moment(obj, 2)
 }
