@@ -40,10 +40,10 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
   if (is.null(ph)) {
     ph <- phasetype(alpha = alpha, S = S, structure = structure, dimension = dimension)
   }
-  if (!bhaz %in% c("pareto", "weibull", "lognormal", "loglogistic", "gompertz", "gev", "identity")) {
+  if (!bhaz %in% c("exponential", "weibull", "gompertz")) {
     stop("invalid bhaz")
   }
-  if (bhaz %in% c("pareto", "weibull", "lognormal", "gompertz")) {
+  if (bhaz %in% c("weibull",  "gompertz")) {
     if(is.null(bhaz_pars))bhaz_pars <- 1
     if (length(bhaz_pars) != 1 | sum(bhaz_pars <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
@@ -51,20 +51,11 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
       names(bhaz_pars) <- "beta"
     }
   }
-  if (bhaz %in% c("gev")) {
-    if(is.null(bhaz_pars))bhaz_pars <- c(0, 1, 1)
-    if (length(bhaz_pars) != 3 | (bhaz_pars[2] > 0) == FALSE) {
-      stop("bhaz parameter should be of length three: mu, sigma, xi, and sigma > 0")
-    } else {
-      names(bhaz_pars) <- c("mu", "sigma", "xi")
-    }
-  }
-  if (bhaz %in% c("loglogistic")) {
-    if(is.null(bhaz_pars))bhaz_pars <- c(1, 1)
-    if (length(bhaz_pars) != 2 | (bhaz_pars[1] <= 0) | (bhaz_pars[2] <= 0)) {
-      stop("bhaz parameter should be positive and of length two: alpha, theta > 0")
-    } else {
-      names(bhaz_pars) <- c("alpha", "theta")
+  if (bhaz %in% c("exponential")) {
+    bhaz_pars <- 1
+    names(bhaz_pars) <- "beta"
+    if(!is.null(bhaz_pars)) {
+      warning("exponential only admits value constant equal to one")
     }
   }
   f1 <- function(beta, t) t^{beta}
@@ -73,7 +64,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
   f4 <- function(beta, t) log((t / beta[1])^{beta[2]} + 1)
   f5 <- function(beta, t) (exp(t * beta) - 1) / beta
   f6 <- function(beta, t, w) reversTransformData(t, w, beta)
-  nb <- which(bhaz == c("weibull", "pareto", "lognormal", "loglogistic", "gompertz", "gev"))
+  nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   ginv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   f1 <- function(beta, t) t^{beta} * log(t)
@@ -82,7 +73,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
   f4 <- NA
   f5 <- function(beta, t) exp(t * beta) * (t * beta - 1)  / beta^2
   f6 <- NA
-  nb <- which(bhaz == c("weibull", "pareto", "lognormal", "loglogistic", "gompertz", "gev"))
+  nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   ginv_prime <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   f1 <- function(beta, t) beta * t^{beta - 1}
@@ -91,7 +82,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
   f4 <- NA
   f5 <- function(beta, t) exp(t * beta)
   f6 <- NA
-  nb <- which(bhaz == c("weibull", "pareto", "lognormal", "loglogistic", "gompertz", "gev"))
+  nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   lambda <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   f1 <- function(beta, t) t^{beta - 1} + beta * t^{beta - 1} * log(t)
@@ -100,7 +91,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
   f4 <- NA
   f5 <- function(beta, t) t * exp(t * beta)
   f6 <- NA
-  nb <- which(bhaz == c("weibull", "pareto", "lognormal", "loglogistic", "gompertz", "gev"))
+  nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   lambda_prime <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   name <- if(is(ph, "frailty")){ph@name}else{paste("frailty ", ph@name, sep = "")}
@@ -177,7 +168,7 @@ setMethod("dens", c(x = "frailty"), function(x, y) {
   return(dens)
 })
 
-#' Distribution Method for inhomogeneous phase type distributions
+#' Distribution method for phase type frailty models
 #'
 #' @param x an object of class \linkS4class{frailty}.
 #' @param q a vector of locations.
@@ -199,7 +190,7 @@ setMethod("cdf", c(x = "frailty"), function(x,
 })
 
 
-#' Coef Method for frailty Class
+#' Coef method for frailty class
 #'
 #' @param object an object of class \linkS4class{frailty}.
 #'

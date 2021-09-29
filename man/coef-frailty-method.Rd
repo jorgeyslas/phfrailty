@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{coef,frailty-method}
 \alias{coef,frailty-method}
-\title{Coef Method for frailty Class}
+\title{Coef method for frailty class}
 \usage{
 \S4method{coef}{frailty}(object)
 }
@@ -13,7 +13,7 @@
 parameters of frailty model.
 }
 \description{
-Coef Method for frailty Class
+Coef method for frailty class
 }
 \examples{
 obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "lognormal", bhaz_pars = 2)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{cdf,frailty-method}
 \alias{cdf,frailty-method}
-\title{Distribution Method for inhomogeneous phase type distributions}
+\title{Distribution method for phase type frailty models}
 \usage{
 \S4method{cdf}{frailty}(x, q, lower.tail = TRUE)
 }
@@ -17,5 +17,5 @@
 A list containing the locations and corresponding CDF evaluations.
 }
 \description{
-Distribution Method for inhomogeneous phase type distributions
+Distribution method for phase type frailty models
 }
