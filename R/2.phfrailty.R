@@ -9,7 +9,7 @@
 #' @return Class object
 #' @export
 #'
-setClass("iph",
+setClass("phfrailty",
   contains = c("ph"),
   slots = list(
     gfun = "list",
@@ -17,7 +17,7 @@ setClass("iph",
   )
 )
 
-#' Constructor Function for inhomogeneous phase type distributions
+#' Constructor Function for phase type frailty models
 #'
 #' @param ph An object of class \linkS4class{ph}.
 #' @param alpha a probability vector.
@@ -28,12 +28,12 @@ setClass("iph",
 #' @param gfun_pars the parameters of the inhomogeneity function
 #' @param scale scale
 #'
-#' @return An object of class \linkS4class{iph}.
+#' @return An object of class \linkS4class{phfrailty}.
 #' @export
 #'
 #' @examples
-#' iph(ph(structure = "coxian", dimension = 4), gfun = "pareto", gfun_pars = 3)
-iph <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
+#' phfrailty(ph(structure = "coxian", dimension = 4), gfun = "pareto", gfun_pars = 3)
+phfrailty <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
   if (all(is.null(c(gfun, gfun_pars)))) {
     stop("input inhomogeneity function and parameters")
   }
@@ -122,7 +122,7 @@ iph <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S = NULL
 #' @importFrom methods show
 #' @export
 #'
-setMethod("show", "iph", function(object) {
+setMethod("show", "phfrailty", function(object) {
   cat("object class: ", methods::is(object)[[1]], "\n", sep = "")
   cat("name: ", object@name, "\n", sep = "")
   cat("parameters: ", "\n", sep = "")
@@ -141,9 +141,9 @@ setMethod("show", "iph", function(object) {
 #' @export
 #'
 #' @examples
-#' obj <- iph(ph(structure = "general"), gfun = "lognormal", gfun_pars = 2)
+#' obj <- phfrailty(ph(structure = "general"), gfun = "lognormal", gfun_pars = 2)
 #' sim(obj, n = 100)
-setMethod("sim", c(x = "iph"), function(x, n = 1000) {
+setMethod("sim", c(x = "phfrailty"), function(x, n = 1000) {
   name <- x@gfun$name
   pars <- x@gfun$pars
   scale <- x@scale
@@ -158,16 +158,16 @@ setMethod("sim", c(x = "iph"), function(x, n = 1000) {
 
 #' Density Method for inhomogeneous phase type distributions
 #'
-#' @param x an object of class \linkS4class{iph}.
+#' @param x an object of class \linkS4class{phfrailty}.
 #' @param y a vector of locations.
 #'
 #' @return A list containing the locations and corresponding density evaluations.
 #' @export
 #'
 #' @examples
-#' obj <- iph(ph(structure = "general"), gfun = "weibull", gfun_pars = 2)
+#' obj <- phfrailty(ph(structure = "general"), gfun = "weibull", gfun_pars = 2)
 #' dens(obj, c(1, 2, 3))
-setMethod("dens", c(x = "iph"), function(x, y) {
+setMethod("dens", c(x = "phfrailty"), function(x, y) {
   fn <- base::eval(parse(text = paste("m", x@gfun$name, "den", sep = "")))
   scale <- x@scale
   y_inf <- (y == Inf)
@@ -179,17 +179,14 @@ setMethod("dens", c(x = "iph"), function(x, y) {
 
 #' Distribution Method for inhomogeneous phase type distributions
 #'
-#' @param x an object of class \linkS4class{iph}.
+#' @param x an object of class \linkS4class{phfrailty}.
 #' @param q a vector of locations.
 #' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
 #' @return A list containing the locations and corresponding CDF evaluations.
 #' @export
 #'
-#' @examples
-#' obj <- iph(ph(structure = "general"), gfun = "weibull", gfun_pars = 2)
-#' cdf(obj, c(1, 2, 3))
-setMethod("cdf", c(x = "iph"), function(x,
+setMethod("cdf", c(x = "phfrailty"), function(x,
                                         q,
                                         lower.tail = TRUE) {
   fn <- base::eval(parse(text = paste("m", x@gfun$name, "cdf", sep = "")))
@@ -202,17 +199,17 @@ setMethod("cdf", c(x = "iph"), function(x,
 })
 
 
-#' Coef Method for iph Class
+#' Coef Method for phfrailty Class
 #'
 #' @param object an object of class \linkS4class{iph}.
 #'
-#' @return parameters of iph model.
+#' @return parameters of phfrailty model.
 #' @export
 #'
 #' @examples
-#' obj <- iph(ph(structure = "general", dimension = 2), gfun = "lognormal", gfun_pars = 2)
+#' obj <- phfrailty(ph(structure = "general", dimension = 2), gfun = "lognormal", gfun_pars = 2)
 #' coef(obj)
-setMethod("coef", c(object = "iph"), function(object) {
+setMethod("coef", c(object = "phfrailty"), function(object) {
   L <- object@pars
   L$gpars <- object@gfun$pars
   L
