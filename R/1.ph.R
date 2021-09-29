@@ -9,7 +9,7 @@
 #' @return Class object
 #' @export
 #'
-setClass("ph",
+setClass("phasetype",
   slots = list(
     name = "character",
     pars = "list",
@@ -26,16 +26,16 @@ setClass("ph",
 #'
 #' @param alpha a probability vector.
 #' @param S a sub-intensity matrix.
-#' @param structure a valid ph structure ("general", "coxian", "hyperexponential", "gcoxian", "gerlang").
-#' @param dimension the dimension of the ph structure (if structure is provided).
+#' @param structure a valid phase-type structure ("general", "coxian", "hyperexponential", "gcoxian", "gerlang").
+#' @param dimension the dimension of the phase-type structure (if structure is provided).
 #'
-#' @return An object of class \linkS4class{ph}.
+#' @return An object of class \linkS4class{phasetype}.
 #' @export
 #'
 #' @examples
-#' ph(structure = "gcoxian", dim = 5)
-#' ph(alpha = c(.5, .5), S = matrix(c(-1, .5, .5, -1), 2, 2))
-ph <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
+#' phasetype(structure = "gcoxian", dim = 5)
+#' phasetype(alpha = c(.5, .5), S = matrix(c(-1, .5, .5, -1), 2, 2))
+phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
   if (any(is.null(alpha)) & any(is.null(S)) & is.null(structure)) {
     stop("input a vector and matrix, or a structure")
   }
@@ -53,29 +53,29 @@ ph <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
     }
     name <- "custom"
   }
-  methods::new("ph",
-    name = paste(name, " ph(", length(alpha), ")", sep = ""),
+  methods::new("phasetype",
+    name = paste(name, " phasetype(", length(alpha), ")", sep = ""),
     pars = list(alpha = alpha, S = S)
   )
 }
 
-#' Moment Method for phase type distributions
+#' Moment Method for phase-type distributions
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param k a positive integer (moment order).
 #'
-#' @return The raw moment of the \linkS4class{ph} (or undelying \linkS4class{ph}) object.
+#' @return The raw moment of the \linkS4class{phasetype} (or undelying \linkS4class{phasetype}) object.
 #' @export
 #'
 #' @examples
 #' set.seed(123)
-#' ph1 <- ph(structure = "general", dimension = 3)
+#' ph1 <- phasetype(structure = "general", dimension = 3)
 #' moment(ph1, 2)
-setMethod("moment", signature(x = "ph"),
+setMethod("moment", signature(x = "phasetype"),
           function (x, k = 1){
             if(k <= 0) return("k should be positive")
             if((k%%1) != 0) return("k should be an integer")
-            if(methods::is(x, "iph")) warning("moment of undelying ph structure is provided for iph objects")
+            if(methods::is(x, "frailty")) warning("moment of undelying phase-type structure is provided for frailty objects")
             m <- solve(-x@pars$S)
             prod <- diag(nrow(m))
             for(i in 1:k){prod <- prod %*% m}
@@ -85,11 +85,11 @@ setMethod("moment", signature(x = "ph"),
 
 #' Show Method for phase type distributions
 #'
-#' @param object an object of class \linkS4class{ph}.
+#' @param object an object of class \linkS4class{phasetype}.
 #' @importFrom methods show
 #' @export
 #'
-setMethod("show", "ph", function(object) {
+setMethod("show", "phasetype", function(object) {
   cat("object class: ", methods::is(object)[[1]], "\n", sep = "")
   cat("name: ", object@name, "\n", sep = "")
   cat("parameters: ", "\n", sep = "")
@@ -98,32 +98,32 @@ setMethod("show", "ph", function(object) {
 
 #' Simulation Method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param n an integer of length of realization.
 #'
 #' @return A realization of independent and identically distributed phase-type variables.
 #' @export
 #'
 #' @examples
-#' obj <- ph(structure = "general")
+#' obj <- phasetype(structure = "general")
 #' sim(obj, n = 100)
-setMethod("sim", c(x = "ph"), function(x, n = 1000) {
+setMethod("sim", c(x = "phasetype"), function(x, n = 1000) {
   U <- rphasetype(n, x@pars$alpha, x@pars$S)
   return(U)
 })
 
 #' Density Method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param y a vector of locations.
 #'
 #' @return A list containing the locations and corresponding density evaluations.
 #' @export
 #'
 #' @examples
-#' obj <- ph(structure = "general")
+#' obj <- phasetype(structure = "general")
 #' dens(obj, c(1, 2, 3))
-setMethod("dens", c(x = "ph"), function(x, y) {
+setMethod("dens", c(x = "phasetype"), function(x, y) {
   y_inf <- (y == Inf)
   dens <- y
   dens[!y_inf] <- ph_density(y, x@pars$alpha, x@pars$S)
@@ -133,7 +133,7 @@ setMethod("dens", c(x = "ph"), function(x, y) {
 
 #' Distribution Method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param q a vector of locations.
 #' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
@@ -141,9 +141,9 @@ setMethod("dens", c(x = "ph"), function(x, y) {
 #' @export
 #'
 #' @examples
-#' obj <- ph(structure = "general")
+#' obj <- phasetype(structure = "general")
 #' cdf(obj, c(1, 2, 3))
-setMethod("cdf", c(x = "ph"), function(x,
+setMethod("cdf", c(x = "phasetype"), function(x,
                                        q,
                                        lower.tail = TRUE) {
   q_inf <- (q == Inf)
@@ -155,16 +155,16 @@ setMethod("cdf", c(x = "ph"), function(x,
 
 #' Hazard rate Method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param y a vector of locations.
 #'
 #' @return A list containing the locations and corresponding hazard rate evaluations.
 #' @export
 #'
 #' @examples
-#' obj <- ph(structure = "general")
+#' obj <- phasetype(structure = "general")
 #' haz(obj, c(1, 2, 3))
-setMethod("haz", c(x = "ph"), function(x, y) {
+setMethod("haz", c(x = "phasetype"), function(x, y) {
   d <- dens(x, y)
   s <- cdf(x, y, lower.tail = FALSE)
   return(d / s)
@@ -172,16 +172,16 @@ setMethod("haz", c(x = "ph"), function(x, y) {
 
 #' Quantile Method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param p a vector of probabilities.
 #'
 #' @return A list containing the probabilities and corresponding quantile evaluations.
 #' @export
 #'
 #' @examples
-#' obj <- ph(structure = "general")
+#' obj <- phasetype(structure = "general")
 #' quan(obj, c(0.5, 0.9, 0.99))
-setMethod("quan", c(x = "ph"), function(x,
+setMethod("quan", c(x = "phasetype"), function(x,
                                         p) {
   quan <- numeric(length(p))
   for (i in seq_along(p)) {
@@ -190,9 +190,9 @@ setMethod("quan", c(x = "ph"), function(x,
   return(1 / (1 - quan) - 1)
 })
 
-#' Fit Method for ph Class
+#' Fit Method for phasetype Class
 #'
-#' @param x an object of class \linkS4class{ph}.
+#' @param x an object of class \linkS4class{phasetype}.
 #' @param y vector or data.
 #' @param weight vector of weights.
 #' @param rcen vector of right-censored observations
@@ -206,7 +206,7 @@ setMethod("quan", c(x = "ph"), function(x,
 #' @param every number of iterations between likelihood display updates.
 #' @param plot logical indicating whether to plot the fit at each iteration.
 #'
-#' @return An object of class \linkS4class{ph}.
+#' @return An object of class \linkS4class{phasetype}.
 #'
 #' @importFrom grDevices dev.off
 #' @importFrom graphics hist legend lines
@@ -215,11 +215,11 @@ setMethod("quan", c(x = "ph"), function(x,
 #' @export
 #'
 #' @examples
-#' obj <- iph(ph(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
 #' data <- sim(obj, n = 100)
 #' fit(obj, data, stepsEM = 1000, every = 200)
 setMethod(
-  "fit", c(x = "ph", y = "ANY"),
+  "fit", c(x = "phasetype", y = "ANY"),
   function(x,
            y,
            weight = numeric(0),
@@ -236,7 +236,7 @@ setMethod(
     EMstep <- eval(parse(text = paste("EMstep_", methods[1], sep = "")))
     if(!all(c(y, rcen) > 0)) stop("data should be positive")
     if(!all(c(weight, rcenweight) >= 0)) stop("weights should be non-negative")
-    is_iph <- methods::is(x, "iph")
+    is_iph <- methods::is(x, "frailty")
     if (is_iph) {
       par_g <- x@gfun$pars
       inv_g <- x@gfun$inverse}
@@ -350,7 +350,7 @@ setMethod(
             dev.off()
             plot(head(h$breaks, length(h$density)), h$density, col = "#b2df8a",
                  main = "Histogram", xlab = "data", ylab = "density", type = "s", lwd = 2)
-            tmp_ph <- iph(ph(alpha_fit, S_fit), gfun = x@gfun$name, gfun_pars = par_g)
+            tmp_ph <- frailty(phasetype(alpha_fit, S_fit), gfun = x@gfun$name, gfun_pars = par_g)
             lines(sq, dens(tmp_ph, sq), col = "#33a02c", lwd = 2, lty = 1)
             legend("topright",
                    legend = c("Data", paste("Matrix-", x@gfun$name," fit", sep ="")),
@@ -372,7 +372,7 @@ setMethod(
         logLik = opt$value,
         nobs = sum(A$weights)
       )
-      x <- iph(x, gfun = x@gfun$name, gfun_pars = par_g)
+      x <- frailty(x, gfun = x@gfun$name, gfun_pars = par_g)
     }
     return(x)
   }
@@ -395,19 +395,19 @@ data_aggregation <- function(y, w) {
   return(list(un_obs = un_obs, weights = cum_weight))
 }
 
-#' logLik Method for ph Class
+#' logLik Method for phasetype Class
 #'
-#' @param object an object of class \linkS4class{ph}.
+#' @param object an object of class \linkS4class{phasetype}.
 #'
 #' @return An object of class logLik.
 #' @export
 #'
 #' @examples
-#' obj <- iph(ph(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "weibull", gfun_pars = 2)
 #' data <- sim(obj, n = 100)
 #' fitted_ph <- fit(obj, data, stepsEM = 10)
 #' logLik(fitted_ph)
-setMethod("logLik", "ph", function(object) {
+setMethod("logLik", "phasetype", function(object) {
   ll <- object@fit$logLik
   attr(ll, "nobs") <- object@fit$nobs
   attr(ll, "df") <- sum(unlist(coef(object)) != 0) - 1
@@ -415,17 +415,17 @@ setMethod("logLik", "ph", function(object) {
   ll
 })
 
-#' Coef Method for ph Class
+#' Coef Method for phasetype Class
 #'
-#' @param object an object of class \linkS4class{ph}.
+#' @param object an object of class \linkS4class{phasetype}.
 #'
-#' @return Parameters of ph model.
+#' @return Parameters of phasetype model.
 #' @export
 #'
 #' @examples
-#' obj <- ph(structure = "general")
+#' obj <- phasetype(structure = "general")
 #' coef(obj)
-setMethod("coef", c(object = "ph"), function(object) {
+setMethod("coef", c(object = "phasetype"), function(object) {
   object@pars
 })
 

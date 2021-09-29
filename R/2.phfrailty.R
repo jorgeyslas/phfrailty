@@ -1,6 +1,6 @@
-#' Inhomogeneous Phase Type distributions
+#' Phase type frailty model
 #'
-#' Class of objects for inhomogeneous phase type distributions
+#' Class of objects for phase type frailty models
 #'
 #' @slot name name of the phase type distribution.
 #' @slot gfun a list comprising of the parameters.
@@ -9,36 +9,36 @@
 #' @return Class object
 #' @export
 #'
-setClass("phfrailty",
-  contains = c("ph"),
+setClass("frailty",
+  contains = c("phasetype"),
   slots = list(
     gfun = "list",
     scale = "numeric"
   )
 )
 
-#' Constructor Function for phase type frailty models
+#' Constructor function for phase type frailty models
 #'
-#' @param ph An object of class \linkS4class{ph}.
+#' @param ph an object of class \linkS4class{phasetype}.
 #' @param alpha a probability vector.
 #' @param S a sub-intensity matrix.
-#' @param structure a valid ph structure
-#' @param dimension the dimension of the ph structure (if provided)
-#' @param gfun inhomogeneity transform
-#' @param gfun_pars the parameters of the inhomogeneity function
+#' @param structure a valid phase-type structure
+#' @param dimension the dimension of the phase-type structure (if provided)
+#' @param gfun baseline hazard function
+#' @param gfun_pars the parameters of the baseline hazard function
 #' @param scale scale
 #'
-#' @return An object of class \linkS4class{phfrailty}.
+#' @return An object of class \linkS4class{frailty}.
 #' @export
 #'
 #' @examples
-#' phfrailty(ph(structure = "coxian", dimension = 4), gfun = "pareto", gfun_pars = 3)
-phfrailty <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
+#' frailty(phasetype(structure = "coxian", dimension = 4), gfun = "pareto", gfun_pars = 3)
+frailty <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
   if (all(is.null(c(gfun, gfun_pars)))) {
     stop("input inhomogeneity function and parameters")
   }
   if (is.null(ph)) {
-    ph <- ph(alpha = alpha, S = S, structure = structure, dimension = dimension)
+    ph <- phasetype(alpha = alpha, S = S, structure = structure, dimension = dimension)
   }
   if (!gfun %in% c("pareto", "weibull", "lognormal", "loglogistic", "gompertz", "gev", "identity")) {
     stop("invalid gfun")
@@ -103,9 +103,9 @@ phfrailty <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S 
   nb <- which(gfun == c("weibull", "pareto", "lognormal", "loglogistic", "gompertz", "gev"))
   lambda_prime <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  name <- if(is(ph, "iph")){ph@name}else{paste("inhomogeneous ", ph@name, sep = "")}
+  name <- if(is(ph, "frailty")){ph@name}else{paste("frailty ", ph@name, sep = "")}
 
-  methods::new("iph",
+  methods::new("frailty",
     name = name,
     pars = ph@pars,
     gfun = list(name = gfun, pars = gfun_pars, inverse = ginv,
@@ -116,13 +116,13 @@ phfrailty <- function(ph = NULL, gfun = NULL, gfun_pars = NULL, alpha = NULL, S 
 }
 
 
-#' Show Method for inhomogeneous phase type distributions
+#' Show method for phase type frailty models
 #'
-#' @param object an object of class \linkS4class{iph}.
+#' @param object an object of class \linkS4class{frailty}.
 #' @importFrom methods show
 #' @export
 #'
-setMethod("show", "phfrailty", function(object) {
+setMethod("show", "frailty", function(object) {
   cat("object class: ", methods::is(object)[[1]], "\n", sep = "")
   cat("name: ", object@name, "\n", sep = "")
   cat("parameters: ", "\n", sep = "")
@@ -132,18 +132,18 @@ setMethod("show", "phfrailty", function(object) {
   methods::show(object@gfun$pars)
 })
 
-#' Simulation Method for inhomogeneous phase type distributions
+#' Simulation method for phase type frailty models
 #'
-#' @param x an object of class \linkS4class{iph}.
+#' @param x an object of class \linkS4class{frailty}.
 #' @param n an integer of length of realization.
 #'
-#' @return A realization of independent and identically distributed inhomogeneous phase-type variables.
+#' @return A realization of independent and identically distributed phase-type frailty variables.
 #' @export
 #'
 #' @examples
-#' obj <- phfrailty(ph(structure = "general"), gfun = "lognormal", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general"), gfun = "lognormal", gfun_pars = 2)
 #' sim(obj, n = 100)
-setMethod("sim", c(x = "phfrailty"), function(x, n = 1000) {
+setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
   name <- x@gfun$name
   pars <- x@gfun$pars
   scale <- x@scale
@@ -156,18 +156,18 @@ setMethod("sim", c(x = "phfrailty"), function(x, n = 1000) {
   return(U)
 })
 
-#' Density Method for inhomogeneous phase type distributions
+#' Density method for phase type frailty models
 #'
-#' @param x an object of class \linkS4class{phfrailty}.
+#' @param x an object of class \linkS4class{frailty}.
 #' @param y a vector of locations.
 #'
 #' @return A list containing the locations and corresponding density evaluations.
 #' @export
 #'
 #' @examples
-#' obj <- phfrailty(ph(structure = "general"), gfun = "weibull", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general"), gfun = "weibull", gfun_pars = 2)
 #' dens(obj, c(1, 2, 3))
-setMethod("dens", c(x = "phfrailty"), function(x, y) {
+setMethod("dens", c(x = "frailty"), function(x, y) {
   fn <- base::eval(parse(text = paste("m", x@gfun$name, "den", sep = "")))
   scale <- x@scale
   y_inf <- (y == Inf)
@@ -179,14 +179,14 @@ setMethod("dens", c(x = "phfrailty"), function(x, y) {
 
 #' Distribution Method for inhomogeneous phase type distributions
 #'
-#' @param x an object of class \linkS4class{phfrailty}.
+#' @param x an object of class \linkS4class{frailty}.
 #' @param q a vector of locations.
 #' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
 #' @return A list containing the locations and corresponding CDF evaluations.
 #' @export
 #'
-setMethod("cdf", c(x = "phfrailty"), function(x,
+setMethod("cdf", c(x = "frailty"), function(x,
                                         q,
                                         lower.tail = TRUE) {
   fn <- base::eval(parse(text = paste("m", x@gfun$name, "cdf", sep = "")))
@@ -199,17 +199,17 @@ setMethod("cdf", c(x = "phfrailty"), function(x,
 })
 
 
-#' Coef Method for phfrailty Class
+#' Coef Method for frailty Class
 #'
-#' @param object an object of class \linkS4class{iph}.
+#' @param object an object of class \linkS4class{frailty}.
 #'
-#' @return parameters of phfrailty model.
+#' @return parameters of frailty model.
 #' @export
 #'
 #' @examples
-#' obj <- phfrailty(ph(structure = "general", dimension = 2), gfun = "lognormal", gfun_pars = 2)
+#' obj <- frailty(phasetype(structure = "general", dimension = 2), gfun = "lognormal", gfun_pars = 2)
 #' coef(obj)
-setMethod("coef", c(object = "phfrailty"), function(object) {
+setMethod("coef", c(object = "frailty"), function(object) {
   L <- object@pars
   L$gpars <- object@gfun$pars
   L
