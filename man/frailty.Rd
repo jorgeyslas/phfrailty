@@ -39,5 +39,5 @@ An object of class \linkS4class{frailty}.
 Constructor function for phase type frailty models
 }
 \examples{
-frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "pareto", bhaz_pars = 3)
+frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "weibull", bhaz_pars = 3)
 }

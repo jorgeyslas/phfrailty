@@ -32,7 +32,7 @@ setClass("frailty",
 #' @export
 #'
 #' @examples
-#' frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "pareto", bhaz_pars = 3)
+#' frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "weibull", bhaz_pars = 3)
 frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
   if (all(is.null(c(bhaz, bhaz_pars)))) {
     stop("input inhomogeneity function and parameters")
@@ -58,49 +58,31 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
       warning("exponential only admits value constant equal to one")
     }
   }
-  f1 <- function(beta, t) t^{beta}
-  f2 <- function(beta, t) log(t / beta + 1)
-  f3 <- function(beta, t) log(t + 1)^{beta}
-  f4 <- function(beta, t) log((t / beta[1])^{beta[2]} + 1)
-  f5 <- function(beta, t) (exp(t * beta) - 1) / beta
-  f6 <- function(beta, t, w) reversTransformData(t, w, beta)
+  f1 <- function(beta, t) 1
+  f2 <- function(beta, t)  beta * t^{beta - 1}
+  f3 <- function(beta, t) exp(beta * t)
   nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
-  ginv <- base::eval(parse(text = paste("f", nb, sep = "")))
+  hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  f1 <- function(beta, t) t^{beta} * log(t)
-  f2 <- function(beta, t) -t/(beta * t + beta^2)
-  f3 <- function(beta, t) log(t + 1)^{beta} * log(log(t + 1))
-  f4 <- NA
-  f5 <- function(beta, t) exp(t * beta) * (t * beta - 1)  / beta^2
-  f6 <- NA
+  f1 <- function(beta, t) t
+  f2 <- function(beta, t) t^{beta}
+  f3 <- function(beta, t) (exp(beta * t) - 1) / beta
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
-  ginv_prime <- base::eval(parse(text = paste("f", nb, sep = "")))
+  c_hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  f1 <- function(beta, t) beta * t^{beta - 1}
-  f2 <- function(beta, t) (t + beta)^{-1}
-  f3 <- function(beta, t) beta * log(t + 1)^{beta - 1}/(t + 1)
-  f4 <- NA
-  f5 <- function(beta, t) exp(t * beta)
-  f6 <- NA
+  f1 <- function(beta, t) t
+  f2 <- function(beta, t) t^{1 / beta}
+  f3 <- function(beta, t)  log(beta * t + 1) / beta
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
-  lambda <- base::eval(parse(text = paste("f", nb, sep = "")))
-
-  f1 <- function(beta, t) t^{beta - 1} + beta * t^{beta - 1} * log(t)
-  f2 <- function(beta, t) -(t + beta)^{-2}
-  f3 <- function(beta, t) log(t + 1)^{beta - 1}/(t + 1) + beta * log(t + 1)^{beta - 1} * log(log(t + 1))/(t + 1)
-  f4 <- NA
-  f5 <- function(beta, t) t * exp(t * beta)
-  f6 <- NA
-  nb <- which(bhaz == c("exponential","weibull", "gompertz"))
-  lambda_prime <- base::eval(parse(text = paste("f", nb, sep = "")))
+  c_hz_inv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   name <- if(is(ph, "frailty")){ph@name}else{paste("frailty ", ph@name, sep = "")}
 
   methods::new("frailty",
     name = name,
     pars = ph@pars,
-    bhaz = list(name = bhaz, pars = bhaz_pars, inverse = ginv,
-                inverse_prime = ginv_prime, intensity = lambda, intensity_prime = lambda_prime),
+    bhaz = list(name = bhaz, pars = bhaz_pars, hazard = hz,
+                cum_hazard = c_hz, cum_hazard_inv = c_hz_inv),
     scale = scale,
     fit = ph@fit
   )
@@ -132,18 +114,12 @@ setMethod("show", "frailty", function(object) {
 #' @export
 #'
 #' @examples
-#' obj <- frailty(phasetype(structure = "general"), bhaz = "lognormal", bhaz_pars = 2)
+#' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 #' sim(obj, n = 100)
 setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
-  name <- x@bhaz$name
-  pars <- x@bhaz$pars
-  scale <- x@scale
-  if (name %in% c("pareto", "weibull", "lognormal", "loglogistic", "gompertz")) {
-    U <- scale * riph(n, name, x@pars$alpha, x@pars$S, pars)
-  }
-  if (name %in% c("gev")) {
-    U <- scale * rmatrixgev(n, x@pars$alpha, x@pars$S, pars[1], pars[2], pars[3])
-  }
+  beta <- x@bhaz$pars
+  c_hz_inv <- x@bhaz$cum_hazard_inv
+  U <- c_hz_inv(beta, -log(stats::runif(n)) / rphasetype(n, x@pars$alpha, x@pars$S))
   return(U)
 })
 
@@ -189,6 +165,23 @@ setMethod("cdf", c(x = "frailty"), function(x,
   return(cdf)
 })
 
+
+#' Hazard rate method for phase type frailty models
+#'
+#' @param x an object of class \linkS4class{frailty}.
+#' @param y a vector of locations.
+#'
+#' @return A list containing the locations and corresponding hazard rate evaluations.
+#' @export
+#'
+#' @examples
+#' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
+#' haz(obj, c(1, 2, 3))
+setMethod("haz", c(x = "frailty"), function(x, y) {
+  d <- dens(x, y)
+  s <- cdf(x, y, lower.tail = FALSE)
+  return(d / s)
+})
 
 #' Coef method for frailty class
 #'

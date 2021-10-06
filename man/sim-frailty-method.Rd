@@ -18,6 +18,6 @@ A realization of independent and identically distributed phase-type frailty vari
 Simulation method for phase type frailty models
 }
 \examples{
-obj <- frailty(phasetype(structure = "general"), bhaz = "lognormal", bhaz_pars = 2)
+obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 sim(obj, n = 100)
 }
