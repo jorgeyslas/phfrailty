@@ -135,11 +135,12 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 #' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 #' dens(obj, c(1, 2, 3))
 setMethod("dens", c(x = "frailty"), function(x, y) {
-  fn <- base::eval(parse(text = paste("m", x@bhaz$name, "den", sep = "")))
-  scale <- x@scale
+  beta <- x@bhaz$pars
+  fn <- x@bhaz$cum_hazard
+  fn_der <- x@bhaz$hazard
   y_inf <- (y == Inf)
   dens <- y
-  dens[!y_inf] <- fn(y / scale, x@pars$alpha, x@pars$S, x@bhaz$pars) / scale
+  dens[!y_inf] <-  ph_laplace_der_nocons(fn(beta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(beta, y[!y_inf])
   dens[y_inf] <- 0
   return(dens)
 })
@@ -156,11 +157,16 @@ setMethod("dens", c(x = "frailty"), function(x, y) {
 setMethod("cdf", c(x = "frailty"), function(x,
                                         q,
                                         lower.tail = TRUE) {
-  fn <- base::eval(parse(text = paste("m", x@bhaz$name, "cdf", sep = "")))
-  scale <- x@scale
+  beta <- x@bhaz$pars
+  fn <- x@bhaz$cum_hazard
   q_inf <- (q == Inf)
   cdf <- q
-  cdf[!q_inf] <- fn(q[!q_inf] / scale, x@pars$alpha, x@pars$S, x@bhaz$pars, lower.tail)
+  if (lower.tail) {
+    cdf[!q_inf] <- 1 - ph_laplace(fn(beta, q[!q_inf]), x@pars$alpha, x@pars$S)
+  }
+  else {
+    cdf[!q_inf] <- ph_laplace(fn(beta, q[!q_inf]), x@pars$alpha, x@pars$S)
+  }
   cdf[q_inf] <- as.numeric(1 * lower.tail)
   return(cdf)
 })
