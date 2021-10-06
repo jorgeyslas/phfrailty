@@ -172,23 +172,6 @@ setMethod("cdf", c(x = "frailty"), function(x,
 })
 
 
-#' Hazard rate method for phase type frailty models
-#'
-#' @param x an object of class \linkS4class{frailty}.
-#' @param y a vector of locations.
-#'
-#' @return A list containing the locations and corresponding hazard rate evaluations.
-#' @export
-#'
-#' @examples
-#' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
-#' haz(obj, c(1, 2, 3))
-setMethod("haz", c(x = "frailty"), function(x, y) {
-  d <- dens(x, y)
-  s <- cdf(x, y, lower.tail = FALSE)
-  return(d / s)
-})
-
 #' Coef method for frailty class
 #'
 #' @param object an object of class \linkS4class{frailty}.
