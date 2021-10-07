@@ -16,6 +16,6 @@ parameters of frailty model.
 Coef method for frailty class
 }
 \examples{
-obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "lognormal", bhaz_pars = 2)
+obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 coef(obj)
 }

@@ -90,8 +90,8 @@ matrix_VanLoan <- function(A1, A2, B1) {
 #' @param weight the weights for the observations
 #' @return fitted alpha and S after one iteration
 #' @export
-EMstep_PADE <- function(alpha, S, obs, weight) {
-    invisible(.Call(`_phfrailty_EMstep_PADE`, alpha, S, obs, weight))
+EMstep <- function(alpha, S, obs, weight) {
+    invisible(.Call(`_phfrailty_EMstep`, alpha, S, obs, weight))
 }
 
 #' EM  for bivariate PH using Matlab algorithm for matrix exponential

@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{fit,phasetype-method}
 \alias{fit,phasetype-method}
-\title{Fit method for phasetype Class}
+\title{Fit method for phase-type frailty models}
 \usage{
 \S4method{fit}{phasetype}(
   x,
@@ -11,13 +11,14 @@
   rcen = numeric(0),
   rcenweight = numeric(0),
   stepsEM = 1000,
-  methods = c("RK", "RK"),
-  rkstep = NA,
-  uni_epsilon = NA,
+  stepsPH = 50,
+  initialpoint = 0.001,
+  truncationpoint = 10,
+  maxprobability = 0.01,
+  maxdelta = 0.05,
   maxit = 100,
   reltol = 1e-08,
-  every = 100,
-  plot = FALSE
+  every = 100
 )
 }
 \arguments{
@@ -33,25 +34,27 @@
 
 \item{stepsEM}{number of EM steps to be performed.}
 
-\item{methods}{methods to use for matrix exponential calculation: RM, UNI or PADE}
+\item{stepsPH}{number of EM steps for the phase-type component at each iteration of the global EM.}
 
-\item{rkstep}{Runge-Kutta step size (optional)}
+\item{initialpoint}{initial value for discretization of density}
 
-\item{uni_epsilon}{epsilon parameter for uniformization method}
+\item{truncationpoint}{ultimate value for discretization of density}
+
+\item{maxprobability}{max probability allowed for an interval in the discretization}
+
+\item{maxdelta}{max size of interval allowed for the discretization}
 
 \item{maxit}{maximum number of iterations when optimizing g function.}
 
 \item{reltol}{relative tolerance when optimizing g function.}
 
 \item{every}{number of iterations between likelihood display updates.}
-
-\item{plot}{logical indicating whether to plot the fit at each iteration.}
 }
 \value{
 An object of class \linkS4class{phasetype}.
 }
 \description{
-Fit method for phasetype Class
+Fit method for phase-type frailty models
 }
 \examples{
 obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)

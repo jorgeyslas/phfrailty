@@ -105,16 +105,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// EMstep_PADE
-void EMstep_PADE(arma::vec& alpha, arma::mat& S, const Rcpp::NumericVector& obs, const Rcpp::NumericVector& weight);
-RcppExport SEXP _phfrailty_EMstep_PADE(SEXP alphaSEXP, SEXP SSEXP, SEXP obsSEXP, SEXP weightSEXP) {
+// EMstep
+void EMstep(arma::vec& alpha, arma::mat& S, const Rcpp::NumericVector& obs, const Rcpp::NumericVector& weight);
+RcppExport SEXP _phfrailty_EMstep(SEXP alphaSEXP, SEXP SSEXP, SEXP obsSEXP, SEXP weightSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type S(SSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type obs(obsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type weight(weightSEXP);
-    EMstep_PADE(alpha, S, obs, weight);
+    EMstep(alpha, S, obs, weight);
     return R_NilValue;
 END_RCPP
 }
@@ -364,7 +364,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_matrix_power", (DL_FUNC) &_phfrailty_matrix_power, 2},
     {"_phfrailty_vector_of_matrices", (DL_FUNC) &_phfrailty_vector_of_matrices, 3},
     {"_phfrailty_matrix_VanLoan", (DL_FUNC) &_phfrailty_matrix_VanLoan, 3},
-    {"_phfrailty_EMstep_PADE", (DL_FUNC) &_phfrailty_EMstep_PADE, 4},
+    {"_phfrailty_EMstep", (DL_FUNC) &_phfrailty_EMstep, 4},
     {"_phfrailty_EMstep_bivph", (DL_FUNC) &_phfrailty_EMstep_bivph, 6},
     {"_phfrailty_ph_density", (DL_FUNC) &_phfrailty_ph_density, 3},
     {"_phfrailty_ph_cdf", (DL_FUNC) &_phfrailty_ph_cdf, 4},

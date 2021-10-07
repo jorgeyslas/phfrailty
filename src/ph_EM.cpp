@@ -13,7 +13,7 @@
 //' @return fitted alpha and S after one iteration
 //' @export
 // [[Rcpp::export]]
-void EMstep_PADE(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, const Rcpp::NumericVector & weight) {
+void EMstep(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, const Rcpp::NumericVector & weight) {
   unsigned p{S.n_rows};
 
   arma::mat e; e.ones(S.n_cols, 1);

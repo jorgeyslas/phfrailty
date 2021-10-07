@@ -190,27 +190,25 @@ setMethod("quan", c(x = "phasetype"), function(x,
   return(1 / (1 - quan) - 1)
 })
 
-#' Fit method for phasetype Class
+
+#' Fit method for phase-type frailty models
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param y vector or data.
 #' @param weight vector of weights.
 #' @param rcen vector of right-censored observations
 #' @param rcenweight vector of weights for right-censored observations.
+#' @param initialpoint initial value for discretization of density
+#' @param truncationpoint ultimate value for discretization of density
+#' @param maxprobability max probability allowed for an interval in the discretization
+#' @param maxdelta max size of interval allowed for the discretization
 #' @param stepsEM number of EM steps to be performed.
-#' @param methods methods to use for matrix exponential calculation: RM, UNI or PADE
-#' @param rkstep Runge-Kutta step size (optional)
-#' @param uni_epsilon epsilon parameter for uniformization method
+#' @param stepsPH number of EM steps for the phase-type component at each iteration of the global EM.
 #' @param maxit maximum number of iterations when optimizing g function.
 #' @param reltol relative tolerance when optimizing g function.
 #' @param every number of iterations between likelihood display updates.
-#' @param plot logical indicating whether to plot the fit at each iteration.
 #'
 #' @return An object of class \linkS4class{phasetype}.
-#'
-#' @importFrom grDevices dev.off
-#' @importFrom graphics hist legend lines
-#' @importFrom utils head
 #'
 #' @export
 #'
@@ -226,194 +224,54 @@ setMethod(
            rcen = numeric(0),
            rcenweight = numeric(0),
            stepsEM = 1000,
-           methods = c("RK", "RK"),
-           rkstep = NA,
-           uni_epsilon = NA,
+           stepsPH = 50,
+           initialpoint = 0.001,
+           truncationpoint = 10,
+           maxprobability = 0.01,
+           maxdelta = 0.05,
            maxit = 100,
            reltol = 1e-8,
-           every = 100,
-           plot = FALSE) {
-    EMstep <- eval(parse(text = paste("EMstep_", methods[1], sep = "")))
+           every = 100) {
     if(!all(c(y, rcen) > 0)) stop("data should be positive")
-    if(!all(c(weight, rcenweight) >= 0)) stop("weights should be non-negative")
-    is_iph <- methods::is(x, "frailty")
-    if (is_iph) {
-      par_g <- x@bhaz$pars
-      inv_g <- x@bhaz$inverse}
-    LL <- if(is_iph){eval(parse(text = paste("logLikelihoodM", x@bhaz$name, "_", methods[2], sep = "")))
-      }else{eval(parse(text = paste("logLikelihoodPH_", methods[2], sep = "")))}
-    A <- data_aggregation(y, weight)
-    y <- A$un_obs
-    weight <- A$weights
-    if(length(rcen)>0){
-      B <- data_aggregation(rcen, rcenweight)
-      rcen <- B$un_obs
-      rcenweight <- B$weights
+
+    par_haz <- x@bhaz$pars
+    chaz <- x@bhaz$cum_hazard
+    haz <- x@bhaz$hazard
+
+    LL <- function(alpha, S, beta, obs, cens) {
+      log(ph_laplace_der_nocons(chaz(beta, obs), 2, alpha, S) * haz(beta, obs)) + log(ph_laplace(chaz(beta, cens), alpha, S))
     }
-    if(plot == TRUE){
-      if(length(rcen)>0) stop("plot option only available for non-censored data")
-      h <- hist(rep(y, weight), breaks = 30, plot = FALSE)
-      sq <- seq(0, 1.1 * max(y), length.out = 200)
-      plot(head(h$breaks, length(h$density)), h$density, col = "#b2df8a",
-           main = "Histogram", xlab = "data", ylab = "density", type = "s", lwd = 2)
+
+    conditional_density <- function(z, y, beta, alpha, S) {
+      (sum(z * theta * y^(theta-1) * exp(- z * y^theta) * phdensity(z, alpha, S) / mp3density(y, theta, alpha, S)) + sum(exp(- z * cens^theta) * phdensity(z, alpha, S) / (1 - mp3cdf(cens, theta, alpha, S)))) / (length(y) + length(cens))
     }
 
     ph_par <- x@pars
     alpha_fit <- clone_vector(ph_par$alpha)
     S_fit <- clone_matrix(ph_par$S)
 
-    if (!is_iph) {
-      for (k in 1:stepsEM) {
-        epsilon1 <- switch(which(methods[1] == c("RK", "UNI","PADE")),
-                           if(!is.na(rkstep)){rkstep} else{default_step_length(S_fit)},
-                           if(!is.na(uni_epsilon)){uni_epsilon} else{1e-4},
-                           0)
-        epsilon2 <- switch(which(methods[2] == c("RK", "UNI","PADE")),
-                           if(!is.na(rkstep)){rkstep} else{default_step_length(S_fit)},
-                           if(!is.na(uni_epsilon)){uni_epsilon} else{1e-4},
-                           0)
-        EMstep(epsilon1, alpha_fit, S_fit, y, weight, rcen, rcenweight)
-        if (k %% every == 0) {
-          cat("\r", "iteration:", k,
-            ", logLik:", LL(epsilon2, alpha_fit, S_fit, y, weight, rcen, rcenweight),
+    for (k in 1:stepsEM) {
+      A <- discretizate_density(conditional_density, parameters, initialpoint, truncationpoint, maxdelta, maxprobability)
+      EMstep(alpha_fit, S_fit, A$values, A$prob)
+      if (k %% every == 0) {
+        cat("\r", "iteration:", k,
+            ", logLik:", LL(alpha_fit, S_fit, par_haz, y, rcen),
             sep = " "
-          )
-          if(plot == TRUE){
-            dev.off()
-            plot(head(h$breaks, length(h$density)), h$density, col = "#b2df8a",
-                 main = "Histogram", xlab = "data", ylab = "density", type = "s", lwd = 2)
-            tmp_ph <- ph(alpha_fit, S_fit)
-            lines(sq, dens(tmp_ph, sq), col = "#33a02c", lwd = 2, lty = 1)
-            legend("topright",
-                   legend = c("Data", "PH fit"),
-                   col = c("#b2df8a", "#33a02c"),
-                   lty = c(1,1),
-                   bty = "n",
-                   lwd = 2,
-                   cex = 1.2,
-                   text.col = "black",
-                   horiz = FALSE,
-                   inset = c(0.05, 0.05))
-          }
-        }
-      }
-      cat("\n", sep = "")
-      x@pars$alpha <- alpha_fit
-      x@pars$S <- S_fit
-      x@fit <- list(
-        logLik = LL(epsilon2, alpha_fit, S_fit, y, weight, rcen, rcenweight),
-        nobs = sum(A$weights)
-      )
-    }
-    if (is_iph) {
-      trans_weight <- weight
-      trans_rcenweight <- rcenweight
-      for (k in 1:stepsEM) {
-        if(x@bhaz$name != "gev") {trans <- inv_g(par_g, y); trans_cens <- inv_g(par_g, rcen)
-        }else{ t <- inv_g(par_g, y, weight); tc <- inv_g(par_g, rcen, rcenweight)
-        trans <- t$obs; trans_weight <- t$weight; trans_cens <- tc$obs; trans_rcenweight <- tc$weight}
-        epsilon1 <- switch(which(methods[1] == c("RK", "UNI","PADE")),
-                           if(!is.na(rkstep)){rkstep} else{default_step_length(S_fit)},
-                           if(!is.na(uni_epsilon)){uni_epsilon} else{1e-4},
-                           0)
-        epsilon2 <- switch(which(methods[2] == c("RK", "UNI","PADE")),
-                           if(!is.na(rkstep)){rkstep} else{default_step_length(S_fit)},
-                           if(!is.na(uni_epsilon)){uni_epsilon} else{1e-4},
-                           0)
-        EMstep(epsilon1, alpha_fit, S_fit, trans, trans_weight, trans_cens, trans_rcenweight)
-        opt <- suppressWarnings(
-          stats::optim(
-            par = par_g,
-            fn = LL,
-            h = epsilon2,
-            alpha = alpha_fit,
-            S = S_fit,
-            obs = y,
-            weight = weight,
-            rcens = rcen,
-            rcweight = rcenweight,
-            hessian = FALSE,
-            control = list(
-              maxit = maxit,
-              reltol = reltol,
-              fnscale = -1
-            )
-          )
         )
-        par_g <- opt$par
-        if (k %% every == 0) {
-          cat("\r", "iteration:", k,
-            ", logLik:", opt$value,
-            sep = " "
-          )
-          if(plot == TRUE){
-            dev.off()
-            plot(head(h$breaks, length(h$density)), h$density, col = "#b2df8a",
-                 main = "Histogram", xlab = "data", ylab = "density", type = "s", lwd = 2)
-            tmp_ph <- frailty(phasetype(alpha_fit, S_fit), bhaz = x@bhaz$name, bhaz_pars = par_g)
-            lines(sq, dens(tmp_ph, sq), col = "#33a02c", lwd = 2, lty = 1)
-            legend("topright",
-                   legend = c("Data", paste("Matrix-", x@bhaz$name," fit", sep ="")),
-                   col = c("#b2df8a", "#33a02c"),
-                   lty = c(1,1),
-                   bty = "n",
-                   lwd = 2,
-                   cex = 1.2,
-                   text.col = "black",
-                   horiz = FALSE,
-                   inset = c(0.05, 0.05))
-          }
-        }
       }
-      cat("\n", sep = "")
-      x@pars$alpha <- alpha_fit
-      x@pars$S <- S_fit
-      x@fit <- list(
-        logLik = opt$value,
-        nobs = sum(A$weights)
-      )
-      x <- frailty(x, bhaz = x@bhaz$name, bhaz_pars = par_g)
     }
+    cat("\n", sep = "")
+    x@pars$alpha <- alpha_fit
+    x@pars$S <- S_fit
+    x@fit <- list(
+      logLik = LL(alpha_fit, S_fit, y, rcen),
+      nobs = sum(A$prob)
+    )
+
     return(x)
   }
 )
 
-data_aggregation <- function(y, w) {
-  if(length(w) == 0) w <- rep(1, length(y))
-  observations <- cbind(y, w)
-  mat <- data.frame(observations)
-  names(mat) <- c("obs", "weight")
-  y <- sort(as.numeric(y))
-  un_obs <- unique(y)
-  if (length(w) == 0) {
-    w <- rep(1, length(y))
-  }
-  cum_weight <- numeric(0)
-  for (i in un_obs) {
-    cum_weight <- c(cum_weight, sum(mat$weight[which(mat$obs == i)]))
-  }
-  return(list(un_obs = un_obs, weights = cum_weight))
-}
-
-#' logLik method for phasetype class
-#'
-#' @param object an object of class \linkS4class{phasetype}.
-#'
-#' @return An object of class logLik.
-#' @export
-#'
-#' @examples
-#' obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
-#' data <- sim(obj, n = 100)
-#' fitted_ph <- fit(obj, data, stepsEM = 10)
-#' logLik(fitted_ph)
-setMethod("logLik", "phasetype", function(object) {
-  ll <- object@fit$logLik
-  attr(ll, "nobs") <- object@fit$nobs
-  attr(ll, "df") <- sum(unlist(coef(object)) != 0) - 1
-  class(ll) <- "logLik"
-  ll
-})
 
 #' Coef method for phasetype class
 #'

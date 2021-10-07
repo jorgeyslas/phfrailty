@@ -35,7 +35,7 @@ setClass("frailty",
 #' frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "weibull", bhaz_pars = 3)
 frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
   if (all(is.null(c(bhaz, bhaz_pars)))) {
-    stop("input inhomogeneity function and parameters")
+    stop("input baseline hazard function and parameters")
   }
   if (is.null(ph)) {
     ph <- phasetype(alpha = alpha, S = S, structure = structure, dimension = dimension)
@@ -76,7 +76,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   c_hz_inv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  name <- if(is(ph, "frailty")){ph@name}else{paste("frailty ", ph@name, sep = "")}
+  name <- if(methods::is(ph, "frailty")){ph@name}else{paste("frailty ", ph@name, sep = "")}
 
   methods::new("frailty",
     name = name,
@@ -180,7 +180,7 @@ setMethod("cdf", c(x = "frailty"), function(x,
 #' @export
 #'
 #' @examples
-#' obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "lognormal", bhaz_pars = 2)
+#' obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 #' coef(obj)
 setMethod("coef", c(object = "frailty"), function(object) {
   L <- object@pars

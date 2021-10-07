@@ -85,7 +85,7 @@ setGeneric("quan", function(x, ...) {
 
 #' New generic for estimation of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phastype}
+#' Methods are available for objects of class \linkS4class{phasetype}
 #'
 #' @param x an object of the model class.
 #' @param y a vector of data.
