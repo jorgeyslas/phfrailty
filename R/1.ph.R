@@ -195,9 +195,7 @@ setMethod("quan", c(x = "phasetype"), function(x,
 #'
 #' @param x an object of class \linkS4class{phasetype}.
 #' @param y vector or data.
-#' @param weight vector of weights.
 #' @param rcen vector of right-censored observations
-#' @param rcenweight vector of weights for right-censored observations.
 #' @param initialpoint initial value for discretization of density
 #' @param truncationpoint ultimate value for discretization of density
 #' @param maxprobability max probability allowed for an interval in the discretization
@@ -220,9 +218,7 @@ setMethod(
   "fit", c(x = "phasetype", y = "ANY"),
   function(x,
            y,
-           weight = numeric(0),
            rcen = numeric(0),
-           rcenweight = numeric(0),
            stepsEM = 1000,
            stepsPH = 50,
            initialpoint = 0.001,
@@ -238,21 +234,78 @@ setMethod(
     chaz <- x@bhaz$cum_hazard
     haz <- x@bhaz$hazard
 
-    LL <- function(alpha, S, beta, obs, cens) {
-      log(ph_laplace_der_nocons(chaz(beta, obs), 2, alpha, S) * haz(beta, obs)) + log(ph_laplace(chaz(beta, cens), alpha, S))
+    LL <- function(alphafn, Sfn, beta, obs, cens) {
+      sum(log(ph_laplace_der_nocons(chaz(beta, obs), 2, alphafn, Sfn) * haz(beta, obs))) + sum(log(ph_laplace(chaz(beta, cens), alphafn, Sfn)))
     }
 
-    conditional_density <- function(z, y, beta, alpha, S) {
-      (sum(z * theta * y^(theta-1) * exp(- z * y^theta) * phdensity(z, alpha, S) / mp3density(y, theta, alpha, S)) + sum(exp(- z * cens^theta) * phdensity(z, alpha, S) / (1 - mp3cdf(cens, theta, alpha, S)))) / (length(y) + length(cens))
+    conditional_density <- function(z, alphafn, Sfn, beta, obs, cens) {
+      (sum(z * exp(- z * chaz(beta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(beta, obs), 2, alphafn, Sfn)) + sum(exp(- z * chaz(beta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(beta, cens), alphafn, Sfn))) / (length(obs) + length(cens))
+    }
+
+    Ezgiveny <- function(betamax, alphafn, Sfn, beta, obs, cens) {
+      -sum(log(haz(betamax, obs))  - chaz(betamax, obs) * 2 * ph_laplace_der_nocons(chaz(beta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(beta, obs), 2, alphafn, Sfn)) + sum(chaz(betamax, cens) * ph_laplace_der_nocons(chaz(beta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(beta, cens), alphafn, Sfn) )
     }
 
     ph_par <- x@pars
     alpha_fit <- clone_vector(ph_par$alpha)
     S_fit <- clone_matrix(ph_par$S)
 
+    par_haz_fit <- par_haz
+
     for (k in 1:stepsEM) {
-      A <- discretizate_density(conditional_density, parameters, initialpoint, truncationpoint, maxdelta, maxprobability)
-      EMstep(alpha_fit, S_fit, A$values, A$prob)
+
+      par_haz_fit <- suppressWarnings(
+        stats::optim(par = par_haz,
+              fn = Ezgiveny,
+              beta = par_haz,
+              alpha = alpha_fit,
+              S = S_fit,
+              obs = y,
+              cens = rcen,
+              hessian = FALSE,
+              control = list(
+                maxit = maxit,
+                reltol = reltol
+                )
+              )$par
+        )
+
+      #Discretization of density
+      deltat <- 0
+      t <- initialpoint
+
+      prob = numeric(0)
+      value = numeric(0)
+
+      j <- 1
+
+      while (t < truncationpoint) {
+        if (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) < maxprobability / maxdelta) {
+          deltat = maxdelta
+        }
+        else {
+          deltat = maxprobability / conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen)
+        }
+        proba_aux = deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen) )
+        while (proba_aux > maxprobability) {
+          deltat = deltat * 0.9
+          proba_aux = deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
+        }
+        if (proba_aux > 0) {
+          value[j] = (t * conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen)  + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen)) / (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
+          prob[j] = proba_aux
+          j <- j + 1
+        }
+        t = t + deltat
+      }
+
+      # PH fitting
+      for (l in 1:stepsPH) {
+        EMstep(alpha_fit, S_fit, value, prob)
+      }
+
+      par_haz <- par_haz_fit
+
       if (k %% every == 0) {
         cat("\r", "iteration:", k,
             ", logLik:", LL(alpha_fit, S_fit, par_haz, y, rcen),
@@ -264,10 +317,10 @@ setMethod(
     x@pars$alpha <- alpha_fit
     x@pars$S <- S_fit
     x@fit <- list(
-      logLik = LL(alpha_fit, S_fit, y, rcen),
-      nobs = sum(A$prob)
+      logLik = LL(alpha_fit, S_fit, par_haz, y, rcen),
+      nobs = sum(prob)
     )
-
+    x <- frailty(x, bhaz = x@bhaz$name, bhaz_pars = par_haz)
     return(x)
   }
 )

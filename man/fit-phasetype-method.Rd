@@ -7,9 +7,7 @@
 \S4method{fit}{phasetype}(
   x,
   y,
-  weight = numeric(0),
   rcen = numeric(0),
-  rcenweight = numeric(0),
   stepsEM = 1000,
   stepsPH = 50,
   initialpoint = 0.001,
@@ -26,11 +24,7 @@
 
 \item{y}{vector or data.}
 
-\item{weight}{vector of weights.}
-
 \item{rcen}{vector of right-censored observations}
-
-\item{rcenweight}{vector of weights for right-censored observations.}
 
 \item{stepsEM}{number of EM steps to be performed.}
 
