@@ -8,7 +8,7 @@
 Class object
 }
 \description{
-Class of objects for phase type frailty models
+Class of objects for univariate phase type frailty models
 }
 \section{Slots}{
 
@@ -17,6 +17,6 @@ Class of objects for phase type frailty models
 
 \item{\code{bhaz}}{a list comprising of the parameters.}
 
-\item{\code{scale}}{scale.}
+\item{\code{coefs}}{regression parameters}
 }}
 

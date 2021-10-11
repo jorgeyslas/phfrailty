@@ -10,7 +10,7 @@
   rcen = numeric(0),
   stepsEM = 1000,
   stepsPH = 50,
-  initialpoint = 0.001,
+  initialpoint = 1e-04,
   truncationpoint = 10,
   maxprobability = 0.01,
   maxdelta = 0.05,

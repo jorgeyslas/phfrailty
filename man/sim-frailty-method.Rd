@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{sim,frailty-method}
 \alias{sim,frailty-method}
-\title{Simulation method for phase type frailty models}
+\title{Simulation method for univariate phase type frailty models}
 \usage{
 \S4method{sim}{frailty}(x, n = 1000)
 }
@@ -15,7 +15,7 @@
 A realization of independent and identically distributed phase-type frailty variables.
 }
 \description{
-Simulation method for phase type frailty models
+Simulation method for univariate phase type frailty models
 }
 \examples{
 obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)

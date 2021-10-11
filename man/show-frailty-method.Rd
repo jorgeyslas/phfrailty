@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{show,frailty-method}
 \alias{show,frailty-method}
-\title{Show method for phase type frailty models}
+\title{Show method for univariate phase type frailty models}
 \usage{
 \S4method{show}{frailty}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{an object of class \linkS4class{frailty}.}
 }
 \description{
-Show method for phase type frailty models
+Show method for univariate phase type frailty models
 }

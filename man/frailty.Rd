@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.phfrailty.R
 \name{frailty}
 \alias{frailty}
-\title{Constructor function for phase type frailty models}
+\title{Constructor function for univariate phase type frailty models}
 \usage{
 frailty(
   ph = NULL,
@@ -12,7 +12,7 @@ frailty(
   S = NULL,
   structure = NULL,
   dimension = 3,
-  scale = 1
+  B = numeric(0)
 )
 }
 \arguments{
@@ -30,13 +30,13 @@ frailty(
 
 \item{dimension}{the dimension of the phase-type structure (if provided)}
 
-\item{scale}{scale}
+\item{B}{regression parameters}
 }
 \value{
 An object of class \linkS4class{frailty}.
 }
 \description{
-Constructor function for phase type frailty models
+Constructor function for univariate phase type frailty models
 }
 \examples{
 frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "weibull", bhaz_pars = 3)

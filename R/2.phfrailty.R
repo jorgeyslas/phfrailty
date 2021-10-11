@@ -4,7 +4,7 @@
 #'
 #' @slot name name of the phase type distribution.
 #' @slot bhaz a list comprising of the parameters.
-#' @slot scale scale.
+#' @slot coefs regression parameters
 #'
 #' @return Class object
 #' @export
@@ -13,7 +13,7 @@ setClass("frailty",
   contains = c("phasetype"),
   slots = list(
     bhaz = "list",
-    scale = "numeric"
+    coefs = "list"
   )
 )
 
@@ -26,14 +26,14 @@ setClass("frailty",
 #' @param dimension the dimension of the phase-type structure (if provided)
 #' @param bhaz baseline hazard function
 #' @param bhaz_pars the parameters of the baseline hazard function
-#' @param scale scale
+#' @param B regression parameters
 #'
 #' @return An object of class \linkS4class{frailty}.
 #' @export
 #'
 #' @examples
 #' frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "weibull", bhaz_pars = 3)
-frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, scale = 1) {
+frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, B = numeric(0)) {
   if (all(is.null(c(bhaz, bhaz_pars)))) {
     stop("input baseline hazard function and parameters")
   }
@@ -48,31 +48,31 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
     if (length(bhaz_pars) != 1 | sum(bhaz_pars <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
     } else {
-      names(bhaz_pars) <- "beta"
+      names(bhaz_pars) <- "theta"
     }
   }
   if (bhaz %in% c("exponential")) {
     bhaz_pars <- 1
-    names(bhaz_pars) <- "beta"
+    names(bhaz_pars) <- "theta"
     if(!is.null(bhaz_pars)) {
       warning("exponential only admits value constant equal to one")
     }
   }
-  f1 <- function(beta, t) 1
-  f2 <- function(beta, t)  beta * t^{beta - 1}
-  f3 <- function(beta, t) exp(beta * t)
+  f1 <- function(theta, t) 1
+  f2 <- function(theta, t)  theta * t^{theta - 1}
+  f3 <- function(theta, t) exp(theta * t)
   nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  f1 <- function(beta, t) t
-  f2 <- function(beta, t) t^{beta}
-  f3 <- function(beta, t) (exp(beta * t) - 1) / beta
+  f1 <- function(theta, t) t
+  f2 <- function(theta, t) t^{theta}
+  f3 <- function(theta, t) (exp(theta * t) - 1) / theta
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   c_hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  f1 <- function(beta, t) t
-  f2 <- function(beta, t) t^{1 / beta}
-  f3 <- function(beta, t)  log(beta * t + 1) / beta
+  f1 <- function(theta, t) t
+  f2 <- function(theta, t) t^{1 / theta}
+  f3 <- function(theta, t)  log(theta * t + 1) / theta
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   c_hz_inv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
@@ -83,7 +83,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
     pars = ph@pars,
     bhaz = list(name = bhaz, pars = bhaz_pars, hazard = hz,
                 cum_hazard = c_hz, cum_hazard_inv = c_hz_inv),
-    scale = scale,
+    coefs = list(B = B),
     fit = ph@fit
   )
 }
@@ -117,9 +117,9 @@ setMethod("show", "frailty", function(object) {
 #' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 #' sim(obj, n = 100)
 setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
-  beta <- x@bhaz$pars
+  theta <- x@bhaz$pars
   c_hz_inv <- x@bhaz$cum_hazard_inv
-  U <- c_hz_inv(beta, -log(stats::runif(n)) / rphasetype(n, x@pars$alpha, x@pars$S))
+  U <- c_hz_inv(theta, -log(stats::runif(n)) / rphasetype(n, x@pars$alpha, x@pars$S))
   return(U)
 })
 
@@ -135,12 +135,12 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 #' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 #' dens(obj, c(1, 2, 3))
 setMethod("dens", c(x = "frailty"), function(x, y) {
-  beta <- x@bhaz$pars
+  theta <- x@bhaz$pars
   fn <- x@bhaz$cum_hazard
   fn_der <- x@bhaz$hazard
   y_inf <- (y == Inf)
   dens <- y
-  dens[!y_inf] <-  ph_laplace_der_nocons(fn(beta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(beta, y[!y_inf])
+  dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
   dens[y_inf] <- 0
   return(dens)
 })
@@ -157,15 +157,15 @@ setMethod("dens", c(x = "frailty"), function(x, y) {
 setMethod("cdf", c(x = "frailty"), function(x,
                                         q,
                                         lower.tail = TRUE) {
-  beta <- x@bhaz$pars
+  theta <- x@bhaz$pars
   fn <- x@bhaz$cum_hazard
   q_inf <- (q == Inf)
   cdf <- q
   if (lower.tail) {
-    cdf[!q_inf] <- 1 - ph_laplace(fn(beta, q[!q_inf]), x@pars$alpha, x@pars$S)
+    cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
   }
   else {
-    cdf[!q_inf] <- ph_laplace(fn(beta, q[!q_inf]), x@pars$alpha, x@pars$S)
+    cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
   }
   cdf[q_inf] <- as.numeric(1 * lower.tail)
   return(cdf)
