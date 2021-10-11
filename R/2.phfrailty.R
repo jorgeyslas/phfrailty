@@ -1,6 +1,6 @@
 #' Phase type frailty model
 #'
-#' Class of objects for phase type frailty models
+#' Class of objects for univariate phase type frailty models
 #'
 #' @slot name name of the phase type distribution.
 #' @slot bhaz a list comprising of the parameters.
@@ -17,7 +17,7 @@ setClass("frailty",
   )
 )
 
-#' Constructor function for phase type frailty models
+#' Constructor function for univariate phase type frailty models
 #'
 #' @param ph an object of class \linkS4class{phasetype}.
 #' @param alpha a probability vector.
@@ -89,7 +89,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = 
 }
 
 
-#' Show method for phase type frailty models
+#' Show method for univariate phase type frailty models
 #'
 #' @param object an object of class \linkS4class{frailty}.
 #' @importFrom methods show
@@ -105,7 +105,7 @@ setMethod("show", "frailty", function(object) {
   methods::show(object@bhaz$pars)
 })
 
-#' Simulation method for phase type frailty models
+#' Simulation method for univariate phase type frailty models
 #'
 #' @param x an object of class \linkS4class{frailty}.
 #' @param n an integer of length of realization.
@@ -123,7 +123,7 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
   return(U)
 })
 
-#' Density method for phase type frailty models
+#' Density method for univariate phase type frailty models
 #'
 #' @param x an object of class \linkS4class{frailty}.
 #' @param y a vector of locations.
@@ -145,7 +145,7 @@ setMethod("dens", c(x = "frailty"), function(x, y) {
   return(dens)
 })
 
-#' Distribution method for phase type frailty models
+#' Distribution method for univariate phase type frailty models
 #'
 #' @param x an object of class \linkS4class{frailty}.
 #' @param q a vector of locations.
@@ -172,7 +172,7 @@ setMethod("cdf", c(x = "frailty"), function(x,
 })
 
 
-#' Coef method for frailty class
+#' Coef method for univariate frailty class
 #'
 #' @param object an object of class \linkS4class{frailty}.
 #'

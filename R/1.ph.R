@@ -234,16 +234,16 @@ setMethod(
     chaz <- x@bhaz$cum_hazard
     haz <- x@bhaz$hazard
 
-    LL <- function(alphafn, Sfn, beta, obs, cens) {
-      sum(log(ph_laplace_der_nocons(chaz(beta, obs), 2, alphafn, Sfn) * haz(beta, obs))) + sum(log(ph_laplace(chaz(beta, cens), alphafn, Sfn)))
+    LL <- function(alphafn, Sfn, theta, obs, cens) {
+      sum(log(ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn) * haz(theta, obs))) + sum(log(ph_laplace(chaz(theta, cens), alphafn, Sfn)))
     }
 
-    conditional_density <- function(z, alphafn, Sfn, beta, obs, cens) {
-      (sum(z * exp(- z * chaz(beta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(beta, obs), 2, alphafn, Sfn)) + sum(exp(- z * chaz(beta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(beta, cens), alphafn, Sfn))) / (length(obs) + length(cens))
+    conditional_density <- function(z, alphafn, Sfn, theta, obs, cens) {
+      (sum(z * exp(- z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(exp(- z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (length(obs) + length(cens))
     }
 
-    Ezgiveny <- function(betamax, alphafn, Sfn, beta, obs, cens) {
-      -sum(log(haz(betamax, obs))  - chaz(betamax, obs) * 2 * ph_laplace_der_nocons(chaz(beta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(beta, obs), 2, alphafn, Sfn)) + sum(chaz(betamax, cens) * ph_laplace_der_nocons(chaz(beta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(beta, cens), alphafn, Sfn) )
+    Ezgiveny <- function(thetamax, alphafn, Sfn, theta, obs, cens) {
+      -sum(log(haz(thetamax, obs))  - chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn) )
     }
 
     ph_par <- x@pars
@@ -257,7 +257,7 @@ setMethod(
       par_haz_fit <- suppressWarnings(
         stats::optim(par = par_haz,
               fn = Ezgiveny,
-              beta = par_haz,
+              theta = par_haz,
               alphafn = alpha_fit,
               Sfn = S_fit,
               obs = y,
