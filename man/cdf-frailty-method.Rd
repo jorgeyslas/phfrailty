@@ -21,3 +21,7 @@ A list containing the locations and corresponding CDF evaluations.
 \description{
 Distribution method for univariate phase type frailty models
 }
+\examples{
+obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
+cdf(obj, c(1, 2, 3))
+}

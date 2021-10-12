@@ -180,6 +180,9 @@ setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
 #' @return A list containing the locations and corresponding CDF evaluations.
 #' @export
 #'
+#' @examples
+#' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
+#' cdf(obj, c(1, 2, 3))
 setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = TRUE) {
   theta <- x@bhaz$pars
   fn <- x@bhaz$cum_hazard
@@ -227,6 +230,23 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
   }
 })
 
+#' Hazard rate method for univariate phase type frailty models
+#'
+#' @param x an object of class \linkS4class{frailty}.
+#' @param y a vector of locations.
+#' @param X a matrix of covariates.
+#'
+#' @return A list containing the locations and corresponding hazard rate evaluations.
+#' @export
+#'
+#' @examples
+#' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
+#' haz(obj, c(1, 2, 3))
+setMethod("haz", c(x = "frailty"), function(x, y, X = numeric(0)) {
+  d <- dens(x, y, X)
+  s <- cdf(x, y, X, lower.tail = FALSE)
+  return(d / s)
+})
 
 #' Coef method for univariate frailty class
 #'

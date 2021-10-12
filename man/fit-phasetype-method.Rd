@@ -8,6 +8,7 @@
   x,
   y,
   rcen = numeric(0),
+  X = numeric(0),
   stepsEM = 1000,
   stepsPH = 50,
   initialpoint = 1e-04,
@@ -25,6 +26,8 @@
 \item{y}{vector or data.}
 
 \item{rcen}{vector of right-censored observations}
+
+\item{X}{a matrix of covariates.}
 
 \item{stepsEM}{number of EM steps to be performed.}
 
