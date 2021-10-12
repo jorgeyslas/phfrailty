@@ -4,12 +4,14 @@
 \alias{cdf,frailty-method}
 \title{Distribution method for univariate phase type frailty models}
 \usage{
-\S4method{cdf}{frailty}(x, q, lower.tail = TRUE)
+\S4method{cdf}{frailty}(x, q, X = numeric(0), lower.tail = TRUE)
 }
 \arguments{
 \item{x}{an object of class \linkS4class{frailty}.}
 
 \item{q}{a vector of locations.}
+
+\item{X}{a matrix of covariates}
 
 \item{lower.tail}{logical parameter specifying whether lower tail (cdf) or upper tail is computed.}
 }

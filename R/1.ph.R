@@ -143,9 +143,7 @@ setMethod("dens", c(x = "phasetype"), function(x, y) {
 #' @examples
 #' obj <- phasetype(structure = "general")
 #' cdf(obj, c(1, 2, 3))
-setMethod("cdf", c(x = "phasetype"), function(x,
-                                       q,
-                                       lower.tail = TRUE) {
+setMethod("cdf", c(x = "phasetype"), function(x, q, lower.tail = TRUE) {
   q_inf <- (q == Inf)
   cdf <- q
   cdf[!q_inf] <- ph_cdf(q[!q_inf], x@pars$alpha, x@pars$S, lower.tail)
@@ -181,8 +179,7 @@ setMethod("haz", c(x = "phasetype"), function(x, y) {
 #' @examples
 #' obj <- phasetype(structure = "general")
 #' quan(obj, c(0.5, 0.9, 0.99))
-setMethod("quan", c(x = "phasetype"), function(x,
-                                        p) {
+setMethod("quan", c(x = "phasetype"), function(x, p) {
   quan <- numeric(length(p))
   for (i in seq_along(p)) {
     quan[i] <- stats::uniroot(f = function(q) p[i] - cdf(x, 1 / (1 - q) - 1), interval = c(0, 1))$root
@@ -213,7 +210,7 @@ setMethod("quan", c(x = "phasetype"), function(x,
 #' @examples
 #' obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 #' data <- sim(obj, n = 100)
-#' fit(obj, data, stepsEM = 1000, every = 200)
+#' fit(obj, data, stepsEM = 50, every = 10)
 setMethod(
   "fit", c(x = "phasetype", y = "ANY"),
   function(x,

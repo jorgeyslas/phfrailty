@@ -33,7 +33,7 @@ setClass("frailty",
 #'
 #' @examples
 #' frailty(phasetype(structure = "coxian", dimension = 4), bhaz = "weibull", bhaz_pars = 3)
-frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, alpha = NULL, S = NULL, structure = NULL, dimension = 3, B = numeric(0)) {
+frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
   if (all(is.null(c(bhaz, bhaz_pars)))) {
     stop("input baseline hazard function and parameters")
   }
@@ -103,6 +103,8 @@ setMethod("show", "frailty", function(object) {
   cat("b-hazard name: ", object@bhaz$name, "\n", sep = "")
   cat("parameters: ", "\n", sep = "")
   methods::show(object@bhaz$pars)
+  cat("coefficients: ", "\n", sep = "")
+  print(object@coefs)
 })
 
 #' Simulation method for univariate phase type frailty models
@@ -127,6 +129,7 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 #'
 #' @param x an object of class \linkS4class{frailty}.
 #' @param y a vector of locations.
+#' @param X a matrix of covariates.
 #'
 #' @return A list containing the locations and corresponding density evaluations.
 #' @export
@@ -134,41 +137,94 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 #' @examples
 #' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
 #' dens(obj, c(1, 2, 3))
-setMethod("dens", c(x = "frailty"), function(x, y) {
+setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
   theta <- x@bhaz$pars
   fn <- x@bhaz$cum_hazard
   fn_der <- x@bhaz$hazard
+  B0 <- x@coefs$B
   y_inf <- (y == Inf)
   dens <- y
-  dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
-  dens[y_inf] <- 0
-  return(dens)
+  X <- as.matrix(X)
+  if (any(dim(X) == 0)) {
+    dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
+    dens[y_inf] <- 0
+    return(dens)
+  } else {
+    if (length(B0) == 0) {
+      dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
+      dens[y_inf] <- 0
+      warning("empty regression parameter, returns density without covariate information")
+      return(dens)
+    } else {
+        if (length(B0) != dim(X)[2]) {
+          stop("dimension of covariates different from regression parameter")
+        } else if (length(y) != dim(X)[1]) {
+          stop("dimension of observations different from covariates")
+        } else {
+          ex <- exp(X%*%B0)
+          dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]) * ex, 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf]) * ex
+          dens[y_inf] <- 0
+          return(dens)
+        }
+      }
+  }
 })
 
 #' Distribution method for univariate phase type frailty models
 #'
 #' @param x an object of class \linkS4class{frailty}.
 #' @param q a vector of locations.
+#' @param X a matrix of covariates
 #' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
 #' @return A list containing the locations and corresponding CDF evaluations.
 #' @export
 #'
-setMethod("cdf", c(x = "frailty"), function(x,
-                                        q,
-                                        lower.tail = TRUE) {
+setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = TRUE) {
   theta <- x@bhaz$pars
   fn <- x@bhaz$cum_hazard
+  B0 <- x@coefs$B
   q_inf <- (q == Inf)
   cdf <- q
-  if (lower.tail) {
-    cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
+  X <- as.matrix(X)
+  if (any(dim(X) == 0)) {
+    if (lower.tail) {
+      cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
+    }
+    else {
+      cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
+    }
+    cdf[q_inf] <- as.numeric(1 * lower.tail)
+    return(cdf)
+  } else {
+    if (length(B0) == 0) {
+      if (lower.tail) {
+        cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
+      }
+      else {
+        cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
+      }
+      cdf[q_inf] <- as.numeric(1 * lower.tail)
+      warning("empty regression parameter, returns cdf without covariate information")
+      return(cdf)
+    } else {
+      if (length(B0) != dim(X)[2]) {
+        stop("dimension of covariates different from regression parameter")
+      } else if (length(q) != dim(X)[1]) {
+        stop("dimension of observations different from covariates")
+      } else {
+        ex <- exp(X%*%B0)
+        if (lower.tail) {
+          cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]) * ex, x@pars$alpha, x@pars$S)
+        }
+        else {
+          cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]) * ex, x@pars$alpha, x@pars$S)
+        }
+        cdf[q_inf] <- as.numeric(1 * lower.tail)
+        return(cdf)
+      }
+    }
   }
-  else {
-    cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
-  }
-  cdf[q_inf] <- as.numeric(1 * lower.tail)
-  return(cdf)
 })
 
 
@@ -184,6 +240,7 @@ setMethod("cdf", c(x = "frailty"), function(x,
 #' coef(obj)
 setMethod("coef", c(object = "frailty"), function(object) {
   L <- object@pars
-  L$gpars <- object@bhaz$pars
+  L$bhazpars <- object@bhaz$pars
+  L$B <- object@coefs$B
   L
 })

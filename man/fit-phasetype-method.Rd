@@ -53,5 +53,5 @@ Fit method for phase-type frailty models
 \examples{
 obj <- frailty(phasetype(structure = "general", dimension = 2), bhaz = "weibull", bhaz_pars = 2)
 data <- sim(obj, n = 100)
-fit(obj, data, stepsEM = 1000, every = 200)
+fit(obj, data, stepsEM = 50, every = 10)
 }

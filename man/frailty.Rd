@@ -8,11 +8,11 @@ frailty(
   ph = NULL,
   bhaz = NULL,
   bhaz_pars = NULL,
+  B = numeric(0),
   alpha = NULL,
   S = NULL,
   structure = NULL,
-  dimension = 3,
-  B = numeric(0)
+  dimension = 3
 )
 }
 \arguments{
@@ -22,6 +22,8 @@ frailty(
 
 \item{bhaz_pars}{the parameters of the baseline hazard function}
 
+\item{B}{regression parameters}
+
 \item{alpha}{a probability vector.}
 
 \item{S}{a sub-intensity matrix.}
@@ -29,8 +31,6 @@ frailty(
 \item{structure}{a valid phase-type structure}
 
 \item{dimension}{the dimension of the phase-type structure (if provided)}
-
-\item{B}{regression parameters}
 }
 \value{
 An object of class \linkS4class{frailty}.

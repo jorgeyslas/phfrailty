@@ -4,12 +4,14 @@
 \alias{dens,frailty-method}
 \title{Density method for univariate phase type frailty models}
 \usage{
-\S4method{dens}{frailty}(x, y)
+\S4method{dens}{frailty}(x, y, X = numeric(0))
 }
 \arguments{
 \item{x}{an object of class \linkS4class{frailty}.}
 
 \item{y}{a vector of locations.}
+
+\item{X}{a matrix of covariates.}
 }
 \value{
 A list containing the locations and corresponding density evaluations.
