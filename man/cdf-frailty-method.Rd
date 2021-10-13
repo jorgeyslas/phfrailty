@@ -16,7 +16,7 @@
 \item{lower.tail}{logical parameter specifying whether lower tail (cdf) or upper tail is computed.}
 }
 \value{
-A list containing the locations and corresponding CDF evaluations.
+A vector containing the corresponding CDF evaluations.
 }
 \description{
 Distribution method for univariate phase type frailty models

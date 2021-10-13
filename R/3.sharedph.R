@@ -168,7 +168,53 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
 })
 
 
+#' Survival method for shared phase type frailty models
+#'
+#' @param x an object of class \linkS4class{shared}.
+#' @param q a matrix of locations.
+#' @param X a matrix of covariates.
+#'
+#' @return A vector containing the locations and corresponding joint survival evaluations.
+#' @export
+#'
+#' @examples
+#' ph_obj <- phasetype(structure = "coxian")
+#' shared_obj <- shared(ph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' surv(shared_obj, matrix(c(1, 2), ncol = 2))
+setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
+  theta1 <- x@bhaz1$pars
+  fn1 <- x@bhaz1$cum_hazard
+  theta2 <- x@bhaz2$pars
+  fn2 <- x@bhaz2$cum_hazard
+  B0 <- x@coefs$B
+  q <- as.matrix(q)
+  X <- as.matrix(X)
 
+  if (dim(q)[2] != 2) {
+    stop("the matrix of locations must have two columns")
+  }
+
+  if (any(dim(X) == 0)) {
+    sur <- ph_laplace(fn1(theta1, q[,1]) + fn2(theta2, q[,2]), x@pars$alpha, x@pars$S)
+    return(sur)
+  } else {
+    if (length(B0) == 0) {
+      sur <- ph_laplace(fn1(theta1, q[,1]) + fn2(theta2, q[,2]), x@pars$alpha, x@pars$S)
+      warning("empty regression parameter, returns cdf without covariate information")
+      return(sur)
+    } else {
+      if (length(B0) != dim(X)[2]) {
+        stop("dimension of covariates different from regression parameter")
+      } else if (dim(q)[1] != dim(X)[1]) {
+        stop("dimension of observations different from covariates")
+      } else {
+        ex <- exp(X%*%B0)
+        sur <- ph_laplace((fn1(theta1, q[,1]) + fn2(theta2, q[,2])) * ex, x@pars$alpha, x@pars$S)
+        return(sur)
+      }
+    }
+  }
+})
 
 #' Coef method for shared frailty class
 #'

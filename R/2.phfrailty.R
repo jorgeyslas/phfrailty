@@ -139,7 +139,7 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 #' @param y a vector of locations.
 #' @param X a matrix of covariates.
 #'
-#' @return A list containing the locations and corresponding density evaluations.
+#' @return A vector containing the corresponding density evaluations.
 #' @export
 #'
 #' @examples
@@ -185,7 +185,7 @@ setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
 #' @param X a matrix of covariates
 #' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
-#' @return A list containing the locations and corresponding CDF evaluations.
+#' @return A vector containing the corresponding CDF evaluations.
 #' @export
 #'
 #' @examples

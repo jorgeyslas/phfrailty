@@ -14,7 +14,7 @@
 \item{X}{a matrix of covariates.}
 }
 \value{
-A list containing the locations and corresponding density evaluations.
+A vector containing the corresponding density evaluations.
 }
 \description{
 Density method for univariate phase type frailty models

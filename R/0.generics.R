@@ -69,6 +69,22 @@ setGeneric("cdf", function(x, ...) {
   standardGeneric("cdf")
 })
 
+
+#' New generic for the survival function of matrix distributions
+#'
+#' Methods are available for objects of class \linkS4class{phasetype}
+#'
+#' @param x an object of the model class.
+#' @param ... further parameters to be passed on
+#'
+#' @return survival function from the matrix distribution.
+#'
+#'
+setGeneric("surv", function(x, ...) {
+  standardGeneric("surv")
+})
+
+
 #' New generic for the quantile of matrix distributions
 #'
 #' Methods are available for objects of class \linkS4class{phasetype}
