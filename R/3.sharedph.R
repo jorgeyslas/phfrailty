@@ -167,6 +167,56 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
   return(matrix(c(U1,U2), ncol = 2))
 })
 
+#' Density method for shared phase type frailty models
+#'
+#' @param x an object of class \linkS4class{shared}.
+#' @param y a matrix of locations.
+#' @param X a matrix of covariates.
+#'
+#' @return A vector containing the corresponding joint density evaluations.
+#' @export
+#'
+#' @examples
+#' ph_obj <- phasetype(structure = "coxian")
+#' shared_obj <- shared(ph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' dens(shared_obj, matrix(c(1, 2), ncol = 2))
+setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
+  theta1 <- x@bhaz1$pars
+  fn1 <- x@bhaz1$cum_hazard
+  fn1_der <- x@bhaz1$hazard
+  theta2 <- x@bhaz2$pars
+  fn2 <- x@bhaz2$cum_hazard
+  fn2_der <- x@bhaz2$hazard
+  B0 <- x@coefs$B
+  y <- as.matrix(y)
+  X <- as.matrix(X)
+
+  if (dim(y)[2] != 2) {
+    stop("the matrix of locations must have two columns")
+  }
+
+  if (any(dim(X) == 0)) {
+    den <- 2 * fn1_der(theta1, y[,1]) * fn2_der(theta2, y[,2]) * ph_laplace_der_nocons(fn1(theta1, y[,1]) + fn2(theta2, y[,2]), 3, x@pars$alpha, x@pars$S)
+    return(den)
+  } else {
+    if (length(B0) == 0) {
+      den <- 2 * fn1_der(theta1, y[,1]) * fn2_der(theta2, y[,2]) * ph_laplace_der_nocons(fn1(theta1, y[,1]) + fn2(theta2, y[,2]), 3, x@pars$alpha, x@pars$S)
+      warning("empty regression parameter, returns joint density without covariate information")
+      return(den)
+    } else {
+      if (length(B0) != dim(X)[2]) {
+        stop("dimension of covariates different from regression parameter")
+      } else if (dim(y)[1] != dim(X)[1]) {
+        stop("dimension of observations different from covariates")
+      } else {
+        ex <- exp(X%*%B0)
+        den <- 2 * ex * fn1_der(theta1, y[,1]) * fn2_der(theta2, y[,2]) * ph_laplace_der_nocons((fn1(theta1, y[,1]) + fn2(theta2, y[,2])) * ex, 3, x@pars$alpha, x@pars$S)
+        return(den)
+      }
+    }
+  }
+})
+
 
 #' Survival method for shared phase type frailty models
 #'
@@ -174,7 +224,7 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
 #' @param q a matrix of locations.
 #' @param X a matrix of covariates.
 #'
-#' @return A vector containing the locations and corresponding joint survival evaluations.
+#' @return A vector containing the corresponding joint survival evaluations.
 #' @export
 #'
 #' @examples
@@ -200,7 +250,7 @@ setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
   } else {
     if (length(B0) == 0) {
       sur <- ph_laplace(fn1(theta1, q[,1]) + fn2(theta2, q[,2]), x@pars$alpha, x@pars$S)
-      warning("empty regression parameter, returns cdf without covariate information")
+      warning("empty regression parameter, returns joint survival without covariate information")
       return(sur)
     } else {
       if (length(B0) != dim(X)[2]) {
