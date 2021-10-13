@@ -338,12 +338,12 @@ setMethod(
       }
 
       conditional_density_cov <- function(z, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens) {
-        (sum(z * scaleobs * exp(- z * chaz(theta, obs) * scaleobs) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(exp(- z * chaz(theta, cens) * scalecens) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))) / (length(obs) + length(cens))
+        (sum(z * exp(- z * chaz(theta, obs) * scaleobs) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(exp(- z * chaz(theta, cens) * scalecens) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))) / (length(obs) + length(cens))
       }
 
       Ezgiveny_cov <- function(parmax, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens, covinf) {
-        thetamax <- parmax[1];
-        Bmax <- parmax[2:length(parmax)]
+        thetamax <- parmax[1:length(theta)];
+        Bmax <- parmax[(length(theta) + 1):length(parmax)]
         exmax <- exp(covinf%*%Bmax)
         scaleobsmax <- exmax[1:length(obs)]
         scalecensmax <- utils::tail(exmax, length(cens))
@@ -369,7 +369,6 @@ setMethod(
       scale2 <- utils::tail(ex, length(rcen))
 
       for (k in 1:stepsEM) {
-
         par_fit <- suppressWarnings(
           stats::optim(par = c(par_haz, B_fit),
                        fn = Ezgiveny_cov,
@@ -423,8 +422,8 @@ setMethod(
           EMstep(alpha_fit, S_fit, value, prob)
         }
 
-        par_haz <- par_fit[1]
-        B_fit <- par_fit[2:length(par_fit)]
+        par_haz <- par_fit[1:length(par_haz)]
+        B_fit <- par_fit[(length(par_haz) + 1):length(par_fit)]
 
         ex <- exp(X%*%B_fit)
         scale1 <- ex[1:length(y)]

@@ -43,7 +43,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
   if (!bhaz %in% c("exponential", "weibull", "gompertz")) {
     stop("invalid bhaz")
   }
-  if (bhaz %in% c("weibull",  "gompertz")) {
+  if (bhaz %in% c("exponential", "weibull")) {
     if(is.null(bhaz_pars))bhaz_pars <- 1
     if (length(bhaz_pars) != 1 | sum(bhaz_pars <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
@@ -51,28 +51,36 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
       names(bhaz_pars) <- "theta"
     }
   }
-  if (bhaz %in% c("exponential")) {
-    bhaz_pars <- 1
-    names(bhaz_pars) <- "theta"
-    if(!is.null(bhaz_pars)) {
-      warning("exponential only admits value constant equal to one")
+  if (bhaz %in% c("gompertz")) {
+    if(is.null(bhaz_pars))bhaz_pars <- c(0.1, 1)
+    if (length(bhaz_pars) != 2 | (bhaz_pars[1] <= 0) | (bhaz_pars[2] <= 0)) {
+      stop("bhaz parameter should be positive and of length two: a, b > 0")
+    } else {
+      names(bhaz_pars) <- c("b", "c")
     }
   }
-  f1 <- function(theta, t) 1
+  #if (bhaz %in% c("exponential")) {
+  #  bhaz_pars <- 1
+  #  names(bhaz_pars) <- "theta"
+  #  if(!is.null(bhaz_pars)) {
+  #    warning("exponential only admits value constant equal to one")
+  #  }
+  #}
+  f1 <- function(theta, t) theta
   f2 <- function(theta, t)  theta * t^{theta - 1}
-  f3 <- function(theta, t) exp(theta * t)
+  f3 <- function(theta, t) theta[1] * exp(theta[2] * t)
   nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  f1 <- function(theta, t) t
+  f1 <- function(theta, t) theta * t
   f2 <- function(theta, t) t^{theta}
-  f3 <- function(theta, t) (exp(theta * t) - 1) / theta
+  f3 <- function(theta, t) theta[1] * (exp(theta[2] * t) - 1) / theta[2]
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   c_hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  f1 <- function(theta, t) t
+  f1 <- function(theta, t) t / theta
   f2 <- function(theta, t) t^{1 / theta}
-  f3 <- function(theta, t)  log(theta * t + 1) / theta
+  f3 <- function(theta, t)  log(theta[2] * t / theta[1] + 1) / theta[2]
   nb <- which(bhaz == c("exponential","weibull", "gompertz"))
   c_hz_inv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
