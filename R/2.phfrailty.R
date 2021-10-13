@@ -260,7 +260,7 @@ setMethod("haz", c(x = "frailty"), function(x, y, X = numeric(0)) {
 #'
 #' @param object an object of class \linkS4class{frailty}.
 #'
-#' @return parameters of frailty model.
+#' @return parameters of univariate phase type frailty model.
 #' @export
 #'
 #' @examples
