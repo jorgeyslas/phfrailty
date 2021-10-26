@@ -7,13 +7,13 @@
 \S4method{cdf}{frailty}(x, q, X = numeric(0), lower.tail = TRUE)
 }
 \arguments{
-\item{x}{an object of class \linkS4class{frailty}.}
+\item{x}{An object of class \linkS4class{frailty}.}
 
-\item{q}{a vector of locations.}
+\item{q}{A vector of locations.}
 
-\item{X}{a matrix of covariates}
+\item{X}{A matrix of covariates.}
 
-\item{lower.tail}{logical parameter specifying whether lower tail (cdf) or upper tail is computed.}
+\item{lower.tail}{Logical parameter specifying whether lower tail (cdf) or upper tail is computed.}
 }
 \value{
 A vector containing the corresponding CDF evaluations.

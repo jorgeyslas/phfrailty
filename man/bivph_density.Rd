@@ -7,18 +7,18 @@
 bivph_density(x, alpha, S11, S12, S22)
 }
 \arguments{
-\item{x}{matrix of values}
+\item{x}{Matrix of values.}
 
-\item{alpha}{vector of initial probabilities}
+\item{alpha}{Vector of initial probabilities.}
 
-\item{S11}{sub-intensity matrix}
+\item{S11}{Sub-intensity matrix.}
 
-\item{S12}{matrix}
+\item{S12}{Matrix.}
 
-\item{S22}{sub-intensity matrix}
+\item{S22}{Sub-intensity matrix.}
 }
 \value{
-Joint density at \code{x}
+Joint density at \code{x}.
 }
 \description{
 Bivariate phase-type joint density

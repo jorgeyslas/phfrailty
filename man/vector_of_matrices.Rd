@@ -4,14 +4,17 @@
 \alias{vector_of_matrices}
 \title{Computes elements S^n until the value size}
 \usage{
-vector_of_matrices(theVector, S, sizevect)
+vector_of_matrices(the_vector, S, size_vec)
 }
 \arguments{
-\item{theVector}{a vector}
+\item{the_vector}{A vector to save results.}
 
-\item{S}{sub-intensity matrix}
+\item{S}{Sub-intensity matrix.}
 
-\item{sizevect}{size of vector}
+\item{size_vec}{Size of vector.}
+}
+\value{
+Modified vector with the elements S^n.
 }
 \description{
 Computes elements S^n until the value size

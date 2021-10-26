@@ -7,14 +7,14 @@
 matrix_VanLoan(A1, A2, B1)
 }
 \arguments{
-\item{A1}{a matrix}
+\item{A1}{A matrix.}
 
-\item{A2}{a matrix}
+\item{A2}{A matrix.}
 
-\item{B1}{a matrix}
+\item{B1}{A matrix.}
 }
 \value{
-the matrix (A1, B1 ; 0, A2)
+The matrix (A1, B1 ; 0, A2).
 }
 \description{
 Creates the matrix  (A1, B1 ; 0, A2)

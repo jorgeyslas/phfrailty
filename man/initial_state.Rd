@@ -4,17 +4,18 @@
 \alias{initial_state}
 \title{Initial state of Markov jump process}
 \usage{
-initial_state(cum_pi, u)
+initial_state(cum_alpha, u)
 }
 \arguments{
-\item{cum_pi}{a vector}
+\item{cum_alpha}{A vector.}
 
-\item{u}{random value in (0,1)}
+\item{u}{Random value in (0,1).}
 }
 \value{
-initial state of the Markov jump process
+Initial state of the Markov jump process.
 }
 \description{
-Given the accumulated values of the initial probabilities \code{Pi} and a uniform value \code{u}, it returns the initial state of a Markov jump process
-This corresponds to the states satisfying cum_pi_(k-1)<u<cum_pi_(k)
+Given the accumulated values of the initial probabilities \code{Pi} and a
+uniform value \code{u}, it returns the initial state of a Markov jump process.
+This corresponds to the states satisfying cum_pi_(k-1)<u<cum_pi_(k).
 }

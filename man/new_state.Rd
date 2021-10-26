@@ -4,18 +4,19 @@
 \alias{new_state}
 \title{New state in a Markov jump process}
 \usage{
-new_state(previous_state, cum_embedded_mc, u)
+new_state(prev_state, cum_embedded_mc, u)
 }
 \arguments{
-\item{previous_state}{previous state of the Markov jump process}
+\item{prev_state}{Previous state of the Markov jump process.}
 
-\item{cum_embedded_mc}{transition matrix}
+\item{cum_embedded_mc}{Transition matrix.}
 
-\item{u}{random value in (0,1)}
+\item{u}{Random value in (0,1).}
 }
 \value{
-next state of the Markov jump process
+Next state of the Markov jump process.
 }
 \description{
-Given a transition matrix \code{Q}, a uniform value \code{u}, and a previous state \code{k}, it returns the new state of a Markov jump process
+Given a transition matrix \code{Q}, a uniform value \code{u}, and a previous
+state \code{k}, it returns the new state of a Markov jump process.
 }

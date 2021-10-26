@@ -7,10 +7,10 @@
 \S4method{coef}{frailty}(object)
 }
 \arguments{
-\item{object}{an object of class \linkS4class{frailty}.}
+\item{object}{An object of class \linkS4class{frailty}.}
 }
 \value{
-parameters of univariate phase type frailty model.
+Parameters of univariate phase type frailty model.
 }
 \description{
 Coef method for univariate frailty class

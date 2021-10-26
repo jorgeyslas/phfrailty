@@ -2,22 +2,22 @@
 % Please edit documentation in R/RcppExports.R
 \name{EMstep}
 \alias{EMstep}
-\title{EM using Matlab algorithm for matrix exponential in combination with Armadillo}
+\title{EM using Pade for matrix exponential}
 \usage{
 EMstep(alpha, S, obs, weight)
 }
 \arguments{
-\item{alpha}{initial probabilities}
+\item{alpha}{Initial probabilities.}
 
-\item{S}{sub-intensity}
+\item{S}{Sub-intensity.}
 
-\item{obs}{the observations}
+\item{obs}{The observations.}
 
-\item{weight}{the weights for the observations}
+\item{weight}{The weights for the observations.}
 }
 \value{
-fitted alpha and S after one iteration
+Fitted alpha and S after one iteration.
 }
 \description{
-EM using Matlab algorithm for matrix exponential in combination with Armadillo
+EM using Pade for matrix exponential
 }

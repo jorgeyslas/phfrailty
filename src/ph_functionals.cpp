@@ -7,11 +7,12 @@
 
 //' Phase-type density
 //'
-//' Computes the density of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
-//' @param x non-negative value
-//' @param alpha vector of initial probabilities
-//' @param S sub-intensity matrix
-//' @return The density at \code{x}
+//' Computes the density of a phase-type distribution with parameters
+//' \code{alpha} and \code{S} at \code{x}.
+//' @param x Non-negative values.
+//' @param alpha Vector of initial probabilities.
+//' @param S Sub-intensity matrix.
+//' @return The density at \code{x}.
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector ph_density(Rcpp::NumericVector x, arma::vec alpha, arma::mat S) {
@@ -38,12 +39,13 @@ Rcpp::NumericVector ph_density(Rcpp::NumericVector x, arma::vec alpha, arma::mat
 
 //' Phase-type cdf or tail
 //'
-//' Computes the cdf or tail of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
-//' @param x non-negative values
-//' @param alpha vector of initial probabilities
-//' @param S sub-intensity matrix
-//' @param lower_tail cdf or tail
-//' @return The density at \code{x}
+//' Computes the cdf or tail of a phase-type distribution with parameters
+//' \code{alpha} and \code{S} at \code{x}.
+//' @param x Non-negative values.
+//' @param alpha Vector of initial probabilities.
+//' @param S Sub-intensity matrix.
+//' @param lower_tail Cdf or tail.
+//' @return The density at \code{x}.
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector ph_cdf(Rcpp::NumericVector x, arma::vec alpha, arma::mat S, bool lower_tail = true) {
@@ -74,11 +76,12 @@ Rcpp::NumericVector ph_cdf(Rcpp::NumericVector x, arma::vec alpha, arma::mat S, 
 
 //' Laplace transform of a phase-type distribution
 //'
-//' Computes the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
-//' @param r real value
-//' @param alpha vector of initial probabilities
-//' @param S sub-intensity matrix
-//' @return Laplace transform at \code{r}
+//' Computes the Laplace transform at \code{r} of a phase-type distribution with
+//' parameters \code{alpha} and \code{S}
+//' @param r Real value.
+//' @param alpha Vector of initial probabilities.
+//' @param S Sub-intensity matrix.
+//' @return Laplace transform at \code{r}.
 //' @export
 //' @examples
 //' alpha <- c(0.5, 0.3, 0.2)
@@ -104,14 +107,17 @@ Rcpp::NumericVector ph_laplace(Rcpp::NumericVector r, arma::vec alpha, arma::mat
 }
 
 
-//' Derivative of order n of the Laplace transform of a phase-type distribution without the multiplying constant
+//' Derivative of order n of the Laplace transform of a phase-type distribution
+//' without the multiplying constant
 //'
-//' Computes the derivative of order n (without the multiplying constant) of the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
-//' @param r real value
-//' @param n an integer
-//' @param alpha vector of initial probabilities
-//' @param S sub-intensity matrix
-//' @return Laplace transform at \code{r}
+//' Computes the derivative of order n (without the multiplying constant) of the
+//' Laplace transform at \code{r} of a phase-type distribution with parameters
+//' \code{alpha} and \code{S}.
+//' @param r Real value.
+//' @param n An integer.
+//' @param alpha Vector of initial probabilities.
+//' @param S Sub-intensity matrix.
+//' @return Laplace transform at \code{r}.
 //' @export
 //' @examples
 //' alpha <- c(0.5, 0.3, 0.2)
@@ -143,12 +149,12 @@ Rcpp::NumericVector ph_laplace_der_nocons(Rcpp::NumericVector r, int n, arma::ve
 
 //' Bivariate phase-type joint density
 //'
-//' @param x matrix of values
-//' @param alpha vector of initial probabilities
-//' @param S11 sub-intensity matrix
-//' @param S12 matrix
-//' @param S22 sub-intensity matrix
-//' @return Joint density at \code{x}
+//' @param x Matrix of values.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return Joint density at \code{x}.
 //' @export
 //' @examples
 //' alpha <- c(0.15, 0.85)
@@ -178,12 +184,12 @@ Rcpp::NumericVector bivph_density(Rcpp::NumericMatrix x, arma::vec alpha, arma::
 
 //' Bivariate phase-type joint tail
 //'
-//' @param x matrix of values
-//' @param alpha vector of initial probabilities
-//' @param S11 sub-intensity matrix
-//' @param S12 matrix
-//' @param S22 sub-intensity matrix
-//' @return Joint tail at \code{x}
+//' @param x Matrix of values.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return Joint tail at \code{x}.
 //' @export
 //' @examples
 //' alpha <- c(0.15, 0.85)
@@ -213,12 +219,12 @@ Rcpp::NumericVector bivph_tail(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat
 
 //' Bivariate phase-type joint Laplace
 //'
-//' @param r matrix of values
-//' @param alpha vector of initial probabilities
-//' @param S11 sub-intensity matrix
-//' @param S12 matrix
-//' @param S22 sub-intensity matrix
-//' @return Joint laplace at \code{r}
+//' @param r Matrix of values.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return Joint laplace at \code{r}.
 //' @export
 //' @examples
 //' alpha <- c(0.15, 0.85)
@@ -255,14 +261,14 @@ Rcpp::NumericVector bivph_laplace(Rcpp::NumericMatrix r, arma::vec alpha, arma::
 
 //' Derivative of order (n,m) of the joint Laplace of a bivariate phase-type
 //'
-//' @param r matrix of values
-//' @param n order of first component
-//' @param m order of second component
-//' @param alpha vector of initial probabilities
-//' @param S11 sub-intensity matrix
-//' @param S12 matrix
-//' @param S22 sub-intensity matrix
-//' @return Derivative of joint laplace at \code{r}, without multiplicative constants
+//' @param r Matrix of values.
+//' @param n Order of first component.
+//' @param m Order of second component.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return Derivative of joint laplace at \code{r}, without multiplicative constants.
 //' @export
 //' @examples
 //' alpha <- c(0.15, 0.85)

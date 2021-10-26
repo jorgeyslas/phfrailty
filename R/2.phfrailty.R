@@ -1,12 +1,12 @@
 #' Phase type frailty model
 #'
-#' Class of objects for univariate phase type frailty models
+#' Class of objects for univariate phase type frailty models.
 #'
-#' @slot name name of the phase type distribution.
-#' @slot bhaz a list comprising of the parameters.
-#' @slot coefs regression parameters
+#' @slot name Name of the phase type distribution.
+#' @slot bhaz A list comprising of the parameters.
+#' @slot coefs Regression parameters.
 #'
-#' @return Class object
+#' @return Class object.
 #' @export
 #'
 setClass("frailty",
@@ -19,14 +19,14 @@ setClass("frailty",
 
 #' Constructor function for univariate phase type frailty models
 #'
-#' @param ph an object of class \linkS4class{phasetype}.
-#' @param alpha a probability vector.
-#' @param S a sub-intensity matrix.
-#' @param structure a valid phase-type structure
-#' @param dimension the dimension of the phase-type structure (if provided)
-#' @param bhaz baseline hazard function
-#' @param bhaz_pars the parameters of the baseline hazard function
-#' @param B regression parameters
+#' @param ph An object of class \linkS4class{phasetype}.
+#' @param alpha A probability vector.
+#' @param S A sub-intensity matrix.
+#' @param structure A valid phase-type structure.
+#' @param dimension The dimension of the phase-type structure (if provided).
+#' @param bhaz Baseline hazard function.
+#' @param bhaz_pars The parameters of the baseline hazard function.
+#' @param B Regression parameters.
 #'
 #' @return An object of class \linkS4class{frailty}.
 #' @export
@@ -44,7 +44,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
     stop("invalid bhaz")
   }
   if (bhaz %in% c("exponential", "weibull")) {
-    if(is.null(bhaz_pars))bhaz_pars <- 1
+    if (is.null(bhaz_pars)) bhaz_pars <- 1
     if (length(bhaz_pars) != 1 | sum(bhaz_pars <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
     } else {
@@ -52,39 +52,33 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
     }
   }
   if (bhaz %in% c("gompertz")) {
-    if(is.null(bhaz_pars))bhaz_pars <- c(0.1, 1)
+    if (is.null(bhaz_pars)) bhaz_pars <- c(0.1, 1)
     if (length(bhaz_pars) != 2 | (bhaz_pars[1] <= 0) | (bhaz_pars[2] <= 0)) {
       stop("bhaz parameter should be positive and of length two: a, b > 0")
     } else {
       names(bhaz_pars) <- c("b", "c")
     }
   }
-  #if (bhaz %in% c("exponential")) {
-  #  bhaz_pars <- 1
-  #  names(bhaz_pars) <- "theta"
-  #  if(!is.null(bhaz_pars)) {
-  #    warning("exponential only admits value constant equal to one")
-  #  }
-  #}
+
   f1 <- function(theta, t) theta
-  f2 <- function(theta, t)  theta * t^{theta - 1}
+  f2 <- function(theta, t)  theta * t^(theta - 1)
   f3 <- function(theta, t) theta[1] * exp(theta[2] * t)
   nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   f1 <- function(theta, t) theta * t
-  f2 <- function(theta, t) t^{theta}
+  f2 <- function(theta, t) t^theta
   f3 <- function(theta, t) theta[1] * (exp(theta[2] * t) - 1) / theta[2]
-  nb <- which(bhaz == c("exponential","weibull", "gompertz"))
+  nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   c_hz <- base::eval(parse(text = paste("f", nb, sep = "")))
 
   f1 <- function(theta, t) t / theta
-  f2 <- function(theta, t) t^{1 / theta}
+  f2 <- function(theta, t) t^(1 / theta)
   f3 <- function(theta, t)  log(theta[2] * t / theta[1] + 1) / theta[2]
-  nb <- which(bhaz == c("exponential","weibull", "gompertz"))
+  nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   c_hz_inv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  name <- if(methods::is(ph, "frailty")){ph@name}else{paste("frailty ", ph@name, sep = "")}
+  name <- if(methods::is(ph, "frailty")) ph@name else paste("frailty ", ph@name, sep = "")
 
   methods::new("frailty",
     name = name,
@@ -99,7 +93,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
 
 #' Show method for univariate phase type frailty models
 #'
-#' @param object an object of class \linkS4class{frailty}.
+#' @param object An object of class \linkS4class{frailty}.
 #' @importFrom methods show
 #' @export
 #'
@@ -117,8 +111,8 @@ setMethod("show", "frailty", function(object) {
 
 #' Simulation method for univariate phase type frailty models
 #'
-#' @param x an object of class \linkS4class{frailty}.
-#' @param n an integer of length of realization.
+#' @param x An object of class \linkS4class{frailty}.
+#' @param n An integer of length of realization.
 #'
 #' @return A realization of independent and identically distributed phase-type frailty variables.
 #' @export
@@ -135,9 +129,9 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 
 #' Density method for univariate phase type frailty models
 #'
-#' @param x an object of class \linkS4class{frailty}.
-#' @param y a vector of locations.
-#' @param X a matrix of covariates.
+#' @param x An object of class \linkS4class{frailty}.
+#' @param y A vector of locations.
+#' @param X A matrix of covariates.
 #'
 #' @return A vector containing the corresponding density evaluations.
 #' @export
@@ -180,10 +174,10 @@ setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
 
 #' Distribution method for univariate phase type frailty models
 #'
-#' @param x an object of class \linkS4class{frailty}.
-#' @param q a vector of locations.
-#' @param X a matrix of covariates
-#' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
+#' @param x An object of class \linkS4class{frailty}.
+#' @param q A vector of locations.
+#' @param X A matrix of covariates.
+#' @param lower.tail Logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
 #' @return A vector containing the corresponding CDF evaluations.
 #' @export
@@ -240,9 +234,9 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
 
 #' Hazard rate method for univariate phase type frailty models
 #'
-#' @param x an object of class \linkS4class{frailty}.
-#' @param y a vector of locations.
-#' @param X a matrix of covariates.
+#' @param x An object of class \linkS4class{frailty}.
+#' @param y A vector of locations.
+#' @param X A matrix of covariates.
 #'
 #' @return A list containing the locations and corresponding hazard rate evaluations.
 #' @export
@@ -258,9 +252,9 @@ setMethod("haz", c(x = "frailty"), function(x, y, X = numeric(0)) {
 
 #' Coef method for univariate frailty class
 #'
-#' @param object an object of class \linkS4class{frailty}.
+#' @param object An object of class \linkS4class{frailty}.
 #'
-#' @return parameters of univariate phase type frailty model.
+#' @return Parameters of univariate phase type frailty model.
 #' @export
 #'
 #' @examples

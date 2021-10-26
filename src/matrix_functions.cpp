@@ -5,8 +5,8 @@
 //'
 //' Computes the inf norm of a matrix A, defined as
 //' L-oo A =  max ( 1 <= I <= M ) sum ( 1 <= J <= N ) abs ( A(I,J) ).
-//' @param A a matrix
-//' @return The norm
+//' @param A A matrix.
+//' @return The inf norm of A.
 //'
 // [[Rcpp::export]]
 double inf_norm(arma::mat A) {
@@ -25,20 +25,20 @@ double inf_norm(arma::mat A) {
 
 //' Matrix exponential algorithm
 //'
-//' MATLAB's built-in algorithm - Pade approximation
-//' @param A a matrix
-//' @return exp(A)
+//' MATLAB's built-in algorithm - Pade approximation.
+//' @param A A matrix.
+//' @return exp(A).
 //'
 // [[Rcpp::export]]
 arma::mat matrix_exponential(arma::mat A) {
   const int q{6};
 
   arma::mat matrixAuxiliar(A.n_rows,A.n_cols);
-  arma::mat ExpM(A.n_rows,A.n_cols);
+  arma::mat mexp(A.n_rows,A.n_cols);
 
-  double aNorm{inf_norm(A)};
+  double a_norm{inf_norm(A)};
 
-  int ee{static_cast<int>(log2(aNorm)) + 1};
+  int ee{static_cast<int>(log2(a_norm)) + 1};
 
   int s{std::max(0, ee + 1)};
 
@@ -49,9 +49,9 @@ arma::mat matrix_exponential(arma::mat A) {
 
   double c{0.5};
 
-  ExpM.eye(size(A));
+  mexp.eye(size(A));
 
-  ExpM = ExpM + (a2 * c);
+  mexp = mexp + (a2 * c);
 
   arma::mat d;
   d.eye(size(A));
@@ -65,7 +65,7 @@ arma::mat matrix_exponential(arma::mat A) {
 
     x = (a2 * x);
 
-    ExpM = (x * c) + ExpM;
+    mexp = (x * c) + mexp;
 
     if (p) {
       d = (x * c) + d;
@@ -76,21 +76,21 @@ arma::mat matrix_exponential(arma::mat A) {
     p = !p;
   }
 
-  ExpM = inv(d) * ExpM;
+  mexp = inv(d) * mexp;
 
   for (int k{1}; k <= s; ++k) {
-    ExpM = ExpM * ExpM;
+    mexp = mexp * mexp;
   }
-  return ExpM;
+  return mexp;
 }
 
 
 
 //' Computes A^n
 //'
-//' @param A a matrix
-//' @param n an integer
-//' @return A^n
+//' @param A A matrix.
+//' @param n An integer.
+//' @return A^n.
 //' @export
 // [[Rcpp::export]]
 arma::mat matrix_power(int n, arma::mat A) {
@@ -100,39 +100,41 @@ arma::mat matrix_power(int n, arma::mat A) {
   else if (n == 2) {
     return A * A;
   }
-  arma::mat previousMatrix = A * A;
-  arma::mat newMatrix = A * previousMatrix;
+  arma::mat previous_matrix = A * A;
+  arma::mat new_matrix = A * previous_matrix;
   for (int i{4}; i <= n; ++i) {
-    previousMatrix = newMatrix;
-    newMatrix = A * previousMatrix;
+    previous_matrix = new_matrix;
+    new_matrix = A * previous_matrix;
   }
-  return newMatrix;
+  return new_matrix;
 }
 
 
 //' Computes elements S^n until the value size
-//' @param theVector a vector
-//' @param S sub-intensity matrix
-//' @param sizevect size of vector
+//'
+//' @param the_vector A vector to save results.
+//' @param S Sub-intensity matrix.
+//' @param size_vec Size of vector.
+//' @return Modified vector with the elements S^n.
 // [[Rcpp::export]]
-void vector_of_matrices(std::vector<arma::mat> & theVector, const arma::mat & S, int sizevect) {
-  arma::mat I;
-  I.eye(size(S));
+void vector_of_matrices(std::vector<arma::mat> & the_vector, const arma::mat & S, int size_vec) {
+  arma::mat Id;
+  Id.eye(size(S));
 
-  theVector.push_back(I);
+  the_vector.push_back(Id);
 
-  for (int k{1}; k <= sizevect; ++k) {
-    theVector.push_back( S * theVector[k - 1]);
+  for (int k{1}; k <= size_vec; ++k) {
+    the_vector.push_back( S * the_vector[k - 1]);
   }
 }
 
 
 //' Creates the matrix  (A1, B1 ; 0, A2)
 //'
-//' @param A1 a matrix
-//' @param A2 a matrix
-//' @param B1 a matrix
-//' @return the matrix (A1, B1 ; 0, A2)
+//' @param A1 A matrix.
+//' @param A2 A matrix.
+//' @param B1 A matrix.
+//' @return The matrix (A1, B1 ; 0, A2).
 //'
 // [[Rcpp::export]]
 arma::mat matrix_VanLoan(const arma::mat & A1, const arma::mat & A2, const arma::mat & B1) {
@@ -140,23 +142,23 @@ arma::mat matrix_VanLoan(const arma::mat & A1, const arma::mat & A2, const arma:
   unsigned p2{A2.n_cols};
   unsigned p{p1 + p2};
 
-  arma::mat auxiliarMatrix(p, p);
+  arma::mat aux_matrix(p, p);
 
   for (int i{0}; i < p; ++i) {
     for (int j{0}; j < p; ++j) {
       if (i < p1 && j < p1) {
-        auxiliarMatrix(i,j) = A1(i,j);
+        aux_matrix(i,j) = A1(i,j);
       }
       else if (i >= p1 && j < p1) {
-        auxiliarMatrix(i,j) = 0;
+        aux_matrix(i,j) = 0;
       }
       else if (i < p1 && j >= p1) {
-        auxiliarMatrix(i,j) = B1(i,j - p1);
+        aux_matrix(i,j) = B1(i,j - p1);
       }
       else {
-        auxiliarMatrix(i,j) = A2(i - p1,j - p1);
+        aux_matrix(i,j) = A2(i - p1,j - p1);
       }
     }
   }
-  return auxiliarMatrix;
+  return aux_matrix;
 }

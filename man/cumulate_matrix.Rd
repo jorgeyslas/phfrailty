@@ -7,11 +7,11 @@
 cumulate_matrix(A)
 }
 \arguments{
-\item{A}{a matrix}
+\item{A}{A matrix.}
 }
 \value{
-the cumulated matrix
+The cumulated matrix.
 }
 \description{
-Creates a new matrix with entries the cumulated rows of \code{A}
+Creates a new matrix with entries the cumulated rows of \code{A}.
 }

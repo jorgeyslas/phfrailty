@@ -7,11 +7,11 @@
 matrix_exponential(A)
 }
 \arguments{
-\item{A}{a matrix}
+\item{A}{A matrix.}
 }
 \value{
-exp(A)
+exp(A).
 }
 \description{
-MATLAB's built-in algorithm - Pade approximation
+MATLAB's built-in algorithm - Pade approximation.
 }

@@ -7,11 +7,12 @@
 embedded_mc(S)
 }
 \arguments{
-\item{S}{sub-intensity matrix}
+\item{S}{Sub-intensity matrix.}
 }
 \value{
-the embedded Markov chain
+The embedded Markov chain.
 }
 \description{
-Returns the transition probabilities of the embedded Markov chain determined the sub-intensity matrix
+Returns the transition probabilities of the embedded Markov chain determined
+the sub-intensity matrix.
 }

@@ -81,14 +81,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // vector_of_matrices
-void vector_of_matrices(std::vector<arma::mat>& theVector, const arma::mat& S, int sizevect);
-RcppExport SEXP _phfrailty_vector_of_matrices(SEXP theVectorSEXP, SEXP SSEXP, SEXP sizevectSEXP) {
+void vector_of_matrices(std::vector<arma::mat>& the_vector, const arma::mat& S, int size_vec);
+RcppExport SEXP _phfrailty_vector_of_matrices(SEXP the_vectorSEXP, SEXP SSEXP, SEXP size_vecSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<arma::mat>& >::type theVector(theVectorSEXP);
+    Rcpp::traits::input_parameter< std::vector<arma::mat>& >::type the_vector(the_vectorSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
-    Rcpp::traits::input_parameter< int >::type sizevect(sizevectSEXP);
-    vector_of_matrices(theVector, S, sizevect);
+    Rcpp::traits::input_parameter< int >::type size_vec(size_vecSEXP);
+    vector_of_matrices(the_vector, S, size_vec);
     return R_NilValue;
 END_RCPP
 }
@@ -283,27 +283,27 @@ BEGIN_RCPP
 END_RCPP
 }
 // initial_state
-long initial_state(arma::vec cum_pi, double u);
-RcppExport SEXP _phfrailty_initial_state(SEXP cum_piSEXP, SEXP uSEXP) {
+long initial_state(arma::vec cum_alpha, double u);
+RcppExport SEXP _phfrailty_initial_state(SEXP cum_alphaSEXP, SEXP uSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type cum_pi(cum_piSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type cum_alpha(cum_alphaSEXP);
     Rcpp::traits::input_parameter< double >::type u(uSEXP);
-    rcpp_result_gen = Rcpp::wrap(initial_state(cum_pi, u));
+    rcpp_result_gen = Rcpp::wrap(initial_state(cum_alpha, u));
     return rcpp_result_gen;
 END_RCPP
 }
 // new_state
-long new_state(long previous_state, arma::mat cum_embedded_mc, double u);
-RcppExport SEXP _phfrailty_new_state(SEXP previous_stateSEXP, SEXP cum_embedded_mcSEXP, SEXP uSEXP) {
+long new_state(long prev_state, arma::mat cum_embedded_mc, double u);
+RcppExport SEXP _phfrailty_new_state(SEXP prev_stateSEXP, SEXP cum_embedded_mcSEXP, SEXP uSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< long >::type previous_state(previous_stateSEXP);
+    Rcpp::traits::input_parameter< long >::type prev_state(prev_stateSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type cum_embedded_mc(cum_embedded_mcSEXP);
     Rcpp::traits::input_parameter< double >::type u(uSEXP);
-    rcpp_result_gen = Rcpp::wrap(new_state(previous_state, cum_embedded_mc, u));
+    rcpp_result_gen = Rcpp::wrap(new_state(prev_state, cum_embedded_mc, u));
     return rcpp_result_gen;
 END_RCPP
 }

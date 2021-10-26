@@ -7,15 +7,16 @@
 ph_density(x, alpha, S)
 }
 \arguments{
-\item{x}{non-negative value}
+\item{x}{Non-negative values.}
 
-\item{alpha}{vector of initial probabilities}
+\item{alpha}{Vector of initial probabilities.}
 
-\item{S}{sub-intensity matrix}
+\item{S}{Sub-intensity matrix.}
 }
 \value{
-The density at \code{x}
+The density at \code{x}.
 }
 \description{
-Computes the density of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
+Computes the density of a phase-type distribution with parameters
+\code{alpha} and \code{S} at \code{x}.
 }

@@ -7,7 +7,7 @@
 \S4method{show}{frailty}(object)
 }
 \arguments{
-\item{object}{an object of class \linkS4class{frailty}.}
+\item{object}{An object of class \linkS4class{frailty}.}
 }
 \description{
 Show method for univariate phase type frailty models

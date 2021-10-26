@@ -7,10 +7,10 @@
 inf_norm(A)
 }
 \arguments{
-\item{A}{a matrix}
+\item{A}{A matrix.}
 }
 \value{
-The norm
+The inf norm of A.
 }
 \description{
 Computes the inf norm of a matrix A, defined as

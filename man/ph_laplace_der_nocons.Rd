@@ -2,24 +2,27 @@
 % Please edit documentation in R/RcppExports.R
 \name{ph_laplace_der_nocons}
 \alias{ph_laplace_der_nocons}
-\title{Derivative of order n of the Laplace transform of a phase-type distribution without the multiplying constant}
+\title{Derivative of order n of the Laplace transform of a phase-type distribution
+without the multiplying constant}
 \usage{
 ph_laplace_der_nocons(r, n, alpha, S)
 }
 \arguments{
-\item{r}{real value}
+\item{r}{Real value.}
 
-\item{n}{an integer}
+\item{n}{An integer.}
 
-\item{alpha}{vector of initial probabilities}
+\item{alpha}{Vector of initial probabilities.}
 
-\item{S}{sub-intensity matrix}
+\item{S}{Sub-intensity matrix.}
 }
 \value{
-Laplace transform at \code{r}
+Laplace transform at \code{r}.
 }
 \description{
-Computes the derivative of order n (without the multiplying constant) of the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
+Computes the derivative of order n (without the multiplying constant) of the
+Laplace transform at \code{r} of a phase-type distribution with parameters
+\code{alpha} and \code{S}.
 }
 \examples{
 alpha <- c(0.5, 0.3, 0.2)

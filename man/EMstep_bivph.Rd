@@ -2,26 +2,26 @@
 % Please edit documentation in R/RcppExports.R
 \name{EMstep_bivph}
 \alias{EMstep_bivph}
-\title{EM  for bivariate PH using Matlab algorithm for matrix exponential}
+\title{EM for bivariate PH using Pade for matrix exponential}
 \usage{
 EMstep_bivph(alpha, S11, S12, S22, obs, weight)
 }
 \arguments{
-\item{alpha}{initial probabilities}
+\item{alpha}{Initial probabilities.}
 
-\item{S11}{sub-intensity}
+\item{S11}{Sub-intensity.}
 
-\item{S12}{a matrix}
+\item{S12}{A matrix.}
 
-\item{S22}{sub-intensity}
+\item{S22}{Sub-intensity.}
 
-\item{obs}{the observations}
+\item{obs}{The observations.}
 
-\item{weight}{the weights for the observations}
+\item{weight}{The weights for the observations.}
 }
 \value{
-fitted alpha, S11, S12 and S22 after one iteration
+Fitted alpha, S11, S12 and S22 after one iteration.
 }
 \description{
-EM  for bivariate PH using Matlab algorithm for matrix exponential
+EM for bivariate PH using Pade for matrix exponential
 }

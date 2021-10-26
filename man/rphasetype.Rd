@@ -2,20 +2,21 @@
 % Please edit documentation in R/RcppExports.R
 \name{rphasetype}
 \alias{rphasetype}
-\title{Random phase-type}
+\title{Simulate phase-type}
 \usage{
 rphasetype(n, alpha, S)
 }
 \arguments{
-\item{n}{sample size}
+\item{n}{Sample size.}
 
-\item{alpha}{vector of initial probabilities}
+\item{alpha}{Vector of initial probabilities.}
 
-\item{S}{sub-intensity matrix}
+\item{S}{Sub-intensity matrix.}
 }
 \value{
-simulated sample
+Simulated sample.
 }
 \description{
-Generates a sample of size \code{n} from a phase-type distribution with parameters \code{alpha} and \code{S}
+Generates a sample of size \code{n} from a phase-type distribution with
+parameters \code{alpha} and \code{S}.
 }

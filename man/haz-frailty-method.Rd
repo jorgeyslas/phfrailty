@@ -7,11 +7,11 @@
 \S4method{haz}{frailty}(x, y, X = numeric(0))
 }
 \arguments{
-\item{x}{an object of class \linkS4class{frailty}.}
+\item{x}{An object of class \linkS4class{frailty}.}
 
-\item{y}{a vector of locations.}
+\item{y}{A vector of locations.}
 
-\item{X}{a matrix of covariates.}
+\item{X}{A matrix of covariates.}
 }
 \value{
 A list containing the locations and corresponding hazard rate evaluations.

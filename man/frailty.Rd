@@ -16,21 +16,21 @@ frailty(
 )
 }
 \arguments{
-\item{ph}{an object of class \linkS4class{phasetype}.}
+\item{ph}{An object of class \linkS4class{phasetype}.}
 
-\item{bhaz}{baseline hazard function}
+\item{bhaz}{Baseline hazard function.}
 
-\item{bhaz_pars}{the parameters of the baseline hazard function}
+\item{bhaz_pars}{The parameters of the baseline hazard function.}
 
-\item{B}{regression parameters}
+\item{B}{Regression parameters.}
 
-\item{alpha}{a probability vector.}
+\item{alpha}{A probability vector.}
 
-\item{S}{a sub-intensity matrix.}
+\item{S}{A sub-intensity matrix.}
 
-\item{structure}{a valid phase-type structure}
+\item{structure}{A valid phase-type structure.}
 
-\item{dimension}{the dimension of the phase-type structure (if provided)}
+\item{dimension}{The dimension of the phase-type structure (if provided).}
 }
 \value{
 An object of class \linkS4class{frailty}.

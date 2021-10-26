@@ -5,18 +5,18 @@
 \alias{frailty-class}
 \title{Phase type frailty model}
 \value{
-Class object
+Class object.
 }
 \description{
-Class of objects for univariate phase type frailty models
+Class of objects for univariate phase type frailty models.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{name of the phase type distribution.}
+\item{\code{name}}{Name of the phase type distribution.}
 
-\item{\code{bhaz}}{a list comprising of the parameters.}
+\item{\code{bhaz}}{A list comprising of the parameters.}
 
-\item{\code{coefs}}{regression parameters}
+\item{\code{coefs}}{Regression parameters.}
 }}
 

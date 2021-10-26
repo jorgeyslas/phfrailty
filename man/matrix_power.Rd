@@ -7,12 +7,12 @@
 matrix_power(n, A)
 }
 \arguments{
-\item{n}{an integer}
+\item{n}{An integer.}
 
-\item{A}{a matrix}
+\item{A}{A matrix.}
 }
 \value{
-A^n
+A^n.
 }
 \description{
 Computes A^n

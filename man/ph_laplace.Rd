@@ -7,17 +7,18 @@
 ph_laplace(r, alpha, S)
 }
 \arguments{
-\item{r}{real value}
+\item{r}{Real value.}
 
-\item{alpha}{vector of initial probabilities}
+\item{alpha}{Vector of initial probabilities.}
 
-\item{S}{sub-intensity matrix}
+\item{S}{Sub-intensity matrix.}
 }
 \value{
-Laplace transform at \code{r}
+Laplace transform at \code{r}.
 }
 \description{
-Computes the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
+Computes the Laplace transform at \code{r} of a phase-type distribution with
+parameters \code{alpha} and \code{S}
 }
 \examples{
 alpha <- c(0.5, 0.3, 0.2)

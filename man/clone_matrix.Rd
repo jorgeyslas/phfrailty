@@ -7,7 +7,10 @@
 clone_matrix(m)
 }
 \arguments{
-\item{m}{a matrix}
+\item{m}{A matrix.}
+}
+\value{
+A clone of the matrix.
 }
 \description{
 Clone a matrix

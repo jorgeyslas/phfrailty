@@ -7,11 +7,11 @@
 cumulate_vector(A)
 }
 \arguments{
-\item{A}{a vector}
+\item{A}{A vector.}
 }
 \value{
-the cumulated vector
+The cumulated vector.
 }
 \description{
-Creates a new vector with entries the cumulated entries of \code{A}
+Creates a new vector with entries the cumulated entries of \code{A}.
 }

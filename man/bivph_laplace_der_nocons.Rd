@@ -7,22 +7,22 @@
 bivph_laplace_der_nocons(r, n, m, alpha, S11, S12, S22)
 }
 \arguments{
-\item{r}{matrix of values}
+\item{r}{Matrix of values.}
 
-\item{n}{order of first component}
+\item{n}{Order of first component.}
 
-\item{m}{order of second component}
+\item{m}{Order of second component.}
 
-\item{alpha}{vector of initial probabilities}
+\item{alpha}{Vector of initial probabilities.}
 
-\item{S11}{sub-intensity matrix}
+\item{S11}{Sub-intensity matrix.}
 
-\item{S12}{matrix}
+\item{S12}{Matrix.}
 
-\item{S22}{sub-intensity matrix}
+\item{S22}{Sub-intensity matrix.}
 }
 \value{
-Derivative of joint laplace at \code{r}, without multiplicative constants
+Derivative of joint laplace at \code{r}, without multiplicative constants.
 }
 \description{
 Derivative of order (n,m) of the joint Laplace of a bivariate phase-type

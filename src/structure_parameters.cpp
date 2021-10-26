@@ -3,7 +3,8 @@ using namespace Rcpp;
 
 //' Clone a vector
 //'
-//' @param v a vector
+//' @param v A vector.
+//' @return A clone of the vector.
 //'
 // [[Rcpp::export]]
 NumericVector clone_vector(NumericVector v) {
@@ -13,7 +14,8 @@ NumericVector clone_vector(NumericVector v) {
 
 //' Clone a matrix
 //'
-//' @param m a matrix
+//' @param m A matrix.
+//' @return A clone of the matrix.
 //'
 // [[Rcpp::export]]
 NumericMatrix clone_matrix(NumericMatrix m) {
@@ -23,11 +25,13 @@ NumericMatrix clone_matrix(NumericMatrix m) {
 
 //' Random structure of a phase-type
 //'
-//' Generates random parameters \code{alpha} and \code{S} of a phase-type distribution of dimension \code{p} with chosen structure
-//' @param p Dimension of the phase-type
-//' @param structure Type of structure: "general", "hyperexponential", "gerlang", "coxian" or "gcoxian"
-//' @param scale_factor A factor that multiplies the sub-intensity matrix
-//' @return Random parameters \code{alpha} and \code{S} of a phase-type
+//' Generates random parameters \code{alpha} and \code{S} of a phase-type
+//' distribution of dimension \code{p} with chosen structure.
+//' @param p Dimension of the phase-type.
+//' @param structure Type of structure: "general", "hyperexponential", "gerlang",
+//'  "coxian" or "gcoxian".
+//' @param scale_factor A factor that multiplies the sub-intensity matrix.
+//' @return Random parameters \code{alpha} and \code{S} of a phase-type.
 //'
 // [[Rcpp::export]]
 List random_structure(int p, String structure = "general", double scale_factor = 1) {

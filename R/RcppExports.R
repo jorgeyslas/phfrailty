@@ -36,8 +36,8 @@ discretizate_bivdensity <- function(density, parameters, ini_point1, truncation_
 #'
 #' Computes the inf norm of a matrix A, defined as
 #' L-oo A =  max ( 1 <= I <= M ) sum ( 1 <= J <= N ) abs ( A(I,J) ).
-#' @param A a matrix
-#' @return The norm
+#' @param A A matrix.
+#' @return The inf norm of A.
 #'
 inf_norm <- function(A) {
     .Call(`_phfrailty_inf_norm`, A)
@@ -45,9 +45,9 @@ inf_norm <- function(A) {
 
 #' Matrix exponential algorithm
 #'
-#' MATLAB's built-in algorithm - Pade approximation
-#' @param A a matrix
-#' @return exp(A)
+#' MATLAB's built-in algorithm - Pade approximation.
+#' @param A A matrix.
+#' @return exp(A).
 #'
 matrix_exponential <- function(A) {
     .Call(`_phfrailty_matrix_exponential`, A)
@@ -55,54 +55,56 @@ matrix_exponential <- function(A) {
 
 #' Computes A^n
 #'
-#' @param A a matrix
-#' @param n an integer
-#' @return A^n
+#' @param A A matrix.
+#' @param n An integer.
+#' @return A^n.
 #' @export
 matrix_power <- function(n, A) {
     .Call(`_phfrailty_matrix_power`, n, A)
 }
 
 #' Computes elements S^n until the value size
-#' @param theVector a vector
-#' @param S sub-intensity matrix
-#' @param sizevect size of vector
-vector_of_matrices <- function(theVector, S, sizevect) {
-    invisible(.Call(`_phfrailty_vector_of_matrices`, theVector, S, sizevect))
+#'
+#' @param the_vector A vector to save results.
+#' @param S Sub-intensity matrix.
+#' @param size_vec Size of vector.
+#' @return Modified vector with the elements S^n.
+vector_of_matrices <- function(the_vector, S, size_vec) {
+    invisible(.Call(`_phfrailty_vector_of_matrices`, the_vector, S, size_vec))
 }
 
 #' Creates the matrix  (A1, B1 ; 0, A2)
 #'
-#' @param A1 a matrix
-#' @param A2 a matrix
-#' @param B1 a matrix
-#' @return the matrix (A1, B1 ; 0, A2)
+#' @param A1 A matrix.
+#' @param A2 A matrix.
+#' @param B1 A matrix.
+#' @return The matrix (A1, B1 ; 0, A2).
 #'
 matrix_VanLoan <- function(A1, A2, B1) {
     .Call(`_phfrailty_matrix_VanLoan`, A1, A2, B1)
 }
 
-#' EM using Matlab algorithm for matrix exponential in combination with Armadillo
+#' EM using Pade for matrix exponential
 #'
-#' @param alpha initial probabilities
-#' @param S sub-intensity
-#' @param obs the observations
-#' @param weight the weights for the observations
-#' @return fitted alpha and S after one iteration
+#' @param alpha Initial probabilities.
+#' @param S Sub-intensity.
+#' @param obs The observations.
+#' @param weight The weights for the observations.
+#' @return Fitted alpha and S after one iteration.
 #' @export
 EMstep <- function(alpha, S, obs, weight) {
     invisible(.Call(`_phfrailty_EMstep`, alpha, S, obs, weight))
 }
 
-#' EM  for bivariate PH using Matlab algorithm for matrix exponential
+#' EM for bivariate PH using Pade for matrix exponential
 #'
-#' @param alpha initial probabilities
-#' @param S11 sub-intensity
-#' @param S12 a matrix
-#' @param S22 sub-intensity
-#' @param obs the observations
-#' @param weight the weights for the observations
-#' @return fitted alpha, S11, S12 and S22 after one iteration
+#' @param alpha Initial probabilities.
+#' @param S11 Sub-intensity.
+#' @param S12 A matrix.
+#' @param S22 Sub-intensity.
+#' @param obs The observations.
+#' @param weight The weights for the observations.
+#' @return Fitted alpha, S11, S12 and S22 after one iteration.
 #' @export
 EMstep_bivph <- function(alpha, S11, S12, S22, obs, weight) {
     invisible(.Call(`_phfrailty_EMstep_bivph`, alpha, S11, S12, S22, obs, weight))
@@ -110,11 +112,12 @@ EMstep_bivph <- function(alpha, S11, S12, S22, obs, weight) {
 
 #' Phase-type density
 #'
-#' Computes the density of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
-#' @param x non-negative value
-#' @param alpha vector of initial probabilities
-#' @param S sub-intensity matrix
-#' @return The density at \code{x}
+#' Computes the density of a phase-type distribution with parameters
+#' \code{alpha} and \code{S} at \code{x}.
+#' @param x Non-negative values.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return The density at \code{x}.
 #' @export
 ph_density <- function(x, alpha, S) {
     .Call(`_phfrailty_ph_density`, x, alpha, S)
@@ -122,12 +125,13 @@ ph_density <- function(x, alpha, S) {
 
 #' Phase-type cdf or tail
 #'
-#' Computes the cdf or tail of a phase-type distribution with parameters \code{alpha} and \code{S} at \code{x}
-#' @param x non-negative values
-#' @param alpha vector of initial probabilities
-#' @param S sub-intensity matrix
-#' @param lower_tail cdf or tail
-#' @return The density at \code{x}
+#' Computes the cdf or tail of a phase-type distribution with parameters
+#' \code{alpha} and \code{S} at \code{x}.
+#' @param x Non-negative values.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @param lower_tail Cdf or tail.
+#' @return The density at \code{x}.
 #' @export
 ph_cdf <- function(x, alpha, S, lower_tail = TRUE) {
     .Call(`_phfrailty_ph_cdf`, x, alpha, S, lower_tail)
@@ -135,11 +139,12 @@ ph_cdf <- function(x, alpha, S, lower_tail = TRUE) {
 
 #' Laplace transform of a phase-type distribution
 #'
-#' Computes the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
-#' @param r real value
-#' @param alpha vector of initial probabilities
-#' @param S sub-intensity matrix
-#' @return Laplace transform at \code{r}
+#' Computes the Laplace transform at \code{r} of a phase-type distribution with
+#' parameters \code{alpha} and \code{S}
+#' @param r Real value.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return Laplace transform at \code{r}.
 #' @export
 #' @examples
 #' alpha <- c(0.5, 0.3, 0.2)
@@ -149,14 +154,17 @@ ph_laplace <- function(r, alpha, S) {
     .Call(`_phfrailty_ph_laplace`, r, alpha, S)
 }
 
-#' Derivative of order n of the Laplace transform of a phase-type distribution without the multiplying constant
+#' Derivative of order n of the Laplace transform of a phase-type distribution
+#' without the multiplying constant
 #'
-#' Computes the derivative of order n (without the multiplying constant) of the Laplace transform at \code{r} of a phase-type distribution with parameters \code{alpha} and \code{S}
-#' @param r real value
-#' @param n an integer
-#' @param alpha vector of initial probabilities
-#' @param S sub-intensity matrix
-#' @return Laplace transform at \code{r}
+#' Computes the derivative of order n (without the multiplying constant) of the
+#' Laplace transform at \code{r} of a phase-type distribution with parameters
+#' \code{alpha} and \code{S}.
+#' @param r Real value.
+#' @param n An integer.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return Laplace transform at \code{r}.
 #' @export
 #' @examples
 #' alpha <- c(0.5, 0.3, 0.2)
@@ -168,12 +176,12 @@ ph_laplace_der_nocons <- function(r, n, alpha, S) {
 
 #' Bivariate phase-type joint density
 #'
-#' @param x matrix of values
-#' @param alpha vector of initial probabilities
-#' @param S11 sub-intensity matrix
-#' @param S12 matrix
-#' @param S22 sub-intensity matrix
-#' @return Joint density at \code{x}
+#' @param x Matrix of values.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return Joint density at \code{x}.
 #' @export
 #' @examples
 #' alpha <- c(0.15, 0.85)
@@ -188,12 +196,12 @@ bivph_density <- function(x, alpha, S11, S12, S22) {
 
 #' Bivariate phase-type joint tail
 #'
-#' @param x matrix of values
-#' @param alpha vector of initial probabilities
-#' @param S11 sub-intensity matrix
-#' @param S12 matrix
-#' @param S22 sub-intensity matrix
-#' @return Joint tail at \code{x}
+#' @param x Matrix of values.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return Joint tail at \code{x}.
 #' @export
 #' @examples
 #' alpha <- c(0.15, 0.85)
@@ -208,12 +216,12 @@ bivph_tail <- function(x, alpha, S11, S12, S22) {
 
 #' Bivariate phase-type joint Laplace
 #'
-#' @param r matrix of values
-#' @param alpha vector of initial probabilities
-#' @param S11 sub-intensity matrix
-#' @param S12 matrix
-#' @param S22 sub-intensity matrix
-#' @return Joint laplace at \code{r}
+#' @param r Matrix of values.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return Joint laplace at \code{r}.
 #' @export
 #' @examples
 #' alpha <- c(0.15, 0.85)
@@ -228,14 +236,14 @@ bivph_laplace <- function(r, alpha, S11, S12, S22) {
 
 #' Derivative of order (n,m) of the joint Laplace of a bivariate phase-type
 #'
-#' @param r matrix of values
-#' @param n order of first component
-#' @param m order of second component
-#' @param alpha vector of initial probabilities
-#' @param S11 sub-intensity matrix
-#' @param S12 matrix
-#' @param S22 sub-intensity matrix
-#' @return Derivative of joint laplace at \code{r}, without multiplicative constants
+#' @param r Matrix of values.
+#' @param n Order of first component.
+#' @param m Order of second component.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return Derivative of joint laplace at \code{r}, without multiplicative constants.
 #' @export
 #' @examples
 #' alpha <- c(0.15, 0.85)
@@ -250,9 +258,10 @@ bivph_laplace_der_nocons <- function(r, n, m, alpha, S11, S12, S22) {
 
 #' Embedded Markov chain of a sub-intensity matrix
 #'
-#' Returns the transition probabilities of the embedded Markov chain determined the sub-intensity matrix
-#' @param S sub-intensity matrix
-#' @return the embedded Markov chain
+#' Returns the transition probabilities of the embedded Markov chain determined
+#' the sub-intensity matrix.
+#' @param S Sub-intensity matrix.
+#' @return The embedded Markov chain.
 #'
 embedded_mc <- function(S) {
     .Call(`_phfrailty_embedded_mc`, S)
@@ -260,9 +269,9 @@ embedded_mc <- function(S) {
 
 #' Cumulate matrix
 #'
-#' Creates a new matrix with entries the cumulated rows of \code{A}
-#' @param A a matrix
-#' @return the cumulated matrix
+#' Creates a new matrix with entries the cumulated rows of \code{A}.
+#' @param A A matrix.
+#' @return The cumulated matrix.
 #'
 cumulate_matrix <- function(A) {
     .Call(`_phfrailty_cumulate_matrix`, A)
@@ -270,9 +279,9 @@ cumulate_matrix <- function(A) {
 
 #' Cumulate vector
 #'
-#' Creates a new vector with entries the cumulated entries of \code{A}
-#' @param A a vector
-#' @return the cumulated vector
+#' Creates a new vector with entries the cumulated entries of \code{A}.
+#' @param A A vector.
+#' @return The cumulated vector.
 #'
 cumulate_vector <- function(A) {
     .Call(`_phfrailty_cumulate_vector`, A)
@@ -280,35 +289,38 @@ cumulate_vector <- function(A) {
 
 #' Initial state of Markov jump process
 #'
-#' Given the accumulated values of the initial probabilities \code{Pi} and a uniform value \code{u}, it returns the initial state of a Markov jump process
-#' This corresponds to the states satisfying cum_pi_(k-1)<u<cum_pi_(k)
-#' @param cum_pi a vector
-#' @param u random value in (0,1)
-#' @return initial state of the Markov jump process
+#' Given the accumulated values of the initial probabilities \code{Pi} and a
+#' uniform value \code{u}, it returns the initial state of a Markov jump process.
+#' This corresponds to the states satisfying cum_pi_(k-1)<u<cum_pi_(k).
+#' @param cum_alpha A vector.
+#' @param u Random value in (0,1).
+#' @return Initial state of the Markov jump process.
 #'
-initial_state <- function(cum_pi, u) {
-    .Call(`_phfrailty_initial_state`, cum_pi, u)
+initial_state <- function(cum_alpha, u) {
+    .Call(`_phfrailty_initial_state`, cum_alpha, u)
 }
 
 #' New state in a Markov jump process
 #'
-#' Given a transition matrix \code{Q}, a uniform value \code{u}, and a previous state \code{k}, it returns the new state of a Markov jump process
-#' @param previous_state previous state of the Markov jump process
-#' @param cum_embedded_mc transition matrix
-#' @param u random value in (0,1)
-#' @return next state of the Markov jump process
+#' Given a transition matrix \code{Q}, a uniform value \code{u}, and a previous
+#' state \code{k}, it returns the new state of a Markov jump process.
+#' @param prev_state Previous state of the Markov jump process.
+#' @param cum_embedded_mc Transition matrix.
+#' @param u Random value in (0,1).
+#' @return Next state of the Markov jump process.
 #'
-new_state <- function(previous_state, cum_embedded_mc, u) {
-    .Call(`_phfrailty_new_state`, previous_state, cum_embedded_mc, u)
+new_state <- function(prev_state, cum_embedded_mc, u) {
+    .Call(`_phfrailty_new_state`, prev_state, cum_embedded_mc, u)
 }
 
-#' Random phase-type
+#' Simulate phase-type
 #'
-#' Generates a sample of size \code{n} from a phase-type distribution with parameters \code{alpha} and \code{S}
-#' @param n sample size
-#' @param alpha vector of initial probabilities
-#' @param S sub-intensity matrix
-#' @return simulated sample
+#' Generates a sample of size \code{n} from a phase-type distribution with
+#' parameters \code{alpha} and \code{S}.
+#' @param n Sample size.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return Simulated sample.
 #' @export
 #'
 rphasetype <- function(n, alpha, S) {
@@ -317,7 +329,8 @@ rphasetype <- function(n, alpha, S) {
 
 #' Clone a vector
 #'
-#' @param v a vector
+#' @param v A vector.
+#' @return A clone of the vector.
 #'
 clone_vector <- function(v) {
     .Call(`_phfrailty_clone_vector`, v)
@@ -325,7 +338,8 @@ clone_vector <- function(v) {
 
 #' Clone a matrix
 #'
-#' @param m a matrix
+#' @param m A matrix.
+#' @return A clone of the matrix.
 #'
 clone_matrix <- function(m) {
     .Call(`_phfrailty_clone_matrix`, m)
@@ -333,11 +347,13 @@ clone_matrix <- function(m) {
 
 #' Random structure of a phase-type
 #'
-#' Generates random parameters \code{alpha} and \code{S} of a phase-type distribution of dimension \code{p} with chosen structure
-#' @param p Dimension of the phase-type
-#' @param structure Type of structure: "general", "hyperexponential", "gerlang", "coxian" or "gcoxian"
-#' @param scale_factor A factor that multiplies the sub-intensity matrix
-#' @return Random parameters \code{alpha} and \code{S} of a phase-type
+#' Generates random parameters \code{alpha} and \code{S} of a phase-type
+#' distribution of dimension \code{p} with chosen structure.
+#' @param p Dimension of the phase-type.
+#' @param structure Type of structure: "general", "hyperexponential", "gerlang",
+#'  "coxian" or "gcoxian".
+#' @param scale_factor A factor that multiplies the sub-intensity matrix.
+#' @return Random parameters \code{alpha} and \code{S} of a phase-type.
 #'
 random_structure <- function(p, structure = "general", scale_factor = 1) {
     .Call(`_phfrailty_random_structure`, p, structure, scale_factor)
