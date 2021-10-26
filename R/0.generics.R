@@ -1,9 +1,9 @@
 #' New generic for simulating matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return A realization from the matrix distribution.
 #'
@@ -14,10 +14,10 @@ setGeneric("sim", function(x, ...) {
 
 #' New generic for moment of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return A realization from the matrix distribution.
 #'
@@ -29,10 +29,10 @@ setGeneric("moment", function(x, ...) {
 
 #' New generic for the density of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return Density from the matrix distribution.
 #'
@@ -43,10 +43,10 @@ setGeneric("dens", function(x, ...) {
 
 #' New generic for the hazard rate of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return Hazard rate from the matrix distribution.
 #'
@@ -57,10 +57,10 @@ setGeneric("haz", function(x, ...) {
 
 #' New generic for the distribution function of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return CDF from the matrix distribution.
 #'
@@ -72,12 +72,12 @@ setGeneric("cdf", function(x, ...) {
 
 #' New generic for the survival function of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
-#' @return survival function from the matrix distribution.
+#' @return Survival function from the matrix distribution.
 #'
 #'
 setGeneric("surv", function(x, ...) {
@@ -87,10 +87,10 @@ setGeneric("surv", function(x, ...) {
 
 #' New generic for the quantile of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return Quantile from the matrix distribution.
 #'
@@ -101,11 +101,11 @@ setGeneric("quan", function(x, ...) {
 
 #' New generic for estimation of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}
+#' Methods are available for objects of class \linkS4class{phasetype}.
 #'
-#' @param x an object of the model class.
-#' @param y a vector of data.
-#' @param ... further parameters to be passed on
+#' @param x An object of the model class.
+#' @param y A vector of data.
+#' @param ... Further parameters to be passed on.
 #'
 #' @return An object of the fitted model class.
 #'
