@@ -7,11 +7,11 @@
 \S4method{surv}{shared}(x, q, X = numeric(0))
 }
 \arguments{
-\item{x}{an object of class \linkS4class{shared}.}
+\item{x}{An object of class \linkS4class{shared}.}
 
-\item{q}{a matrix of locations.}
+\item{q}{A matrix of locations.}
 
-\item{X}{a matrix of covariates.}
+\item{X}{A matrix of covariates.}
 }
 \value{
 A vector containing the corresponding joint survival evaluations.

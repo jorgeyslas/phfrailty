@@ -7,12 +7,12 @@
 \S4method{sim}{shared}(x, n = 1000)
 }
 \arguments{
-\item{x}{an object of class \linkS4class{shared}.}
+\item{x}{An object of class \linkS4class{shared}.}
 
-\item{n}{an integer of length of realization.}
+\item{n}{An integer of length of realization.}
 }
 \value{
-A realization of independent and identically distributed shared phase-type frailty random vectors
+A realization of independent and identically distributed shared phase-type frailty random vectors.
 }
 \description{
 Simulation method for shared phase type frailty models

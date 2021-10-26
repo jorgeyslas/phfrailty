@@ -7,11 +7,11 @@
 \S4method{dens}{shared}(x, y, X = numeric(0))
 }
 \arguments{
-\item{x}{an object of class \linkS4class{shared}.}
+\item{x}{An object of class \linkS4class{shared}.}
 
-\item{y}{a matrix of locations.}
+\item{y}{A matrix of locations.}
 
-\item{X}{a matrix of covariates.}
+\item{X}{A matrix of covariates.}
 }
 \value{
 A vector containing the corresponding joint density evaluations.

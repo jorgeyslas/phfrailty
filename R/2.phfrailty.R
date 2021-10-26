@@ -61,7 +61,7 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
   }
 
   f1 <- function(theta, t) theta
-  f2 <- function(theta, t)  theta * t^(theta - 1)
+  f2 <- function(theta, t) theta * t^(theta - 1)
   f3 <- function(theta, t) theta[1] * exp(theta[2] * t)
   nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   hz <- base::eval(parse(text = paste("f", nb, sep = "")))
@@ -74,17 +74,19 @@ frailty <- function(ph = NULL, bhaz = NULL, bhaz_pars = NULL, B = numeric(0), al
 
   f1 <- function(theta, t) t / theta
   f2 <- function(theta, t) t^(1 / theta)
-  f3 <- function(theta, t)  log(theta[2] * t / theta[1] + 1) / theta[2]
+  f3 <- function(theta, t) log(theta[2] * t / theta[1] + 1) / theta[2]
   nb <- which(bhaz == c("exponential", "weibull", "gompertz"))
   c_hz_inv <- base::eval(parse(text = paste("f", nb, sep = "")))
 
-  name <- if(methods::is(ph, "frailty")) ph@name else paste("frailty ", ph@name, sep = "")
+  name <- if (methods::is(ph, "frailty")) ph@name else paste("frailty ", ph@name, sep = "")
 
   methods::new("frailty",
     name = name,
     pars = ph@pars,
-    bhaz = list(name = bhaz, pars = bhaz_pars, hazard = hz,
-                cum_hazard = c_hz, cum_hazard_inv = c_hz_inv),
+    bhaz = list(
+      name = bhaz, pars = bhaz_pars, hazard = hz,
+      cum_hazard = c_hz, cum_hazard_inv = c_hz_inv
+    ),
     coefs = list(B = B),
     fit = ph@fit
   )
@@ -148,27 +150,27 @@ setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
   dens <- y
   X <- as.matrix(X)
   if (any(dim(X) == 0)) {
-    dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
+    dens[!y_inf] <- ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
     dens[y_inf] <- 0
     return(dens)
   } else {
     if (length(B0) == 0) {
-      dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
+      dens[!y_inf] <- ph_laplace_der_nocons(fn(theta, y[!y_inf]), 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf])
       dens[y_inf] <- 0
       warning("empty regression parameter, returns density without covariate information")
       return(dens)
     } else {
-        if (length(B0) != dim(X)[2]) {
-          stop("dimension of covariates different from regression parameter")
-        } else if (length(y) != dim(X)[1]) {
-          stop("dimension of observations different from covariates")
-        } else {
-          ex <- exp(X%*%B0)
-          dens[!y_inf] <-  ph_laplace_der_nocons(fn(theta, y[!y_inf]) * ex, 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf]) * ex
-          dens[y_inf] <- 0
-          return(dens)
-        }
+      if (length(B0) != dim(X)[2]) {
+        stop("dimension of covariates different from regression parameter")
+      } else if (length(y) != dim(X)[1]) {
+        stop("dimension of observations different from covariates")
+      } else {
+        ex <- exp(X %*% B0)
+        dens[!y_inf] <- ph_laplace_der_nocons(fn(theta, y[!y_inf]) * ex, 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf]) * ex
+        dens[y_inf] <- 0
+        return(dens)
       }
+    }
   }
 })
 
@@ -195,8 +197,7 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
   if (any(dim(X) == 0)) {
     if (lower.tail) {
       cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
-    }
-    else {
+    } else {
       cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
     }
     cdf[q_inf] <- as.numeric(1 * lower.tail)
@@ -205,8 +206,7 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
     if (length(B0) == 0) {
       if (lower.tail) {
         cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
-      }
-      else {
+      } else {
         cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]), x@pars$alpha, x@pars$S)
       }
       cdf[q_inf] <- as.numeric(1 * lower.tail)
@@ -218,11 +218,10 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
       } else if (length(q) != dim(X)[1]) {
         stop("dimension of observations different from covariates")
       } else {
-        ex <- exp(X%*%B0)
+        ex <- exp(X %*% B0)
         if (lower.tail) {
           cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]) * ex, x@pars$alpha, x@pars$S)
-        }
-        else {
+        } else {
           cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]) * ex, x@pars$alpha, x@pars$S)
         }
         cdf[q_inf] <- as.numeric(1 * lower.tail)

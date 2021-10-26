@@ -5,20 +5,20 @@
 \alias{shared-class}
 \title{Shared phase type frailty model}
 \value{
-Class object
+Class object.
 }
 \description{
-Class of objects for shared phase type frailty models
+Class of objects for shared phase type frailty models.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{name of the phase type distribution.}
+\item{\code{name}}{Name of the phase type distribution.}
 
-\item{\code{bhaz1}}{a list comprising of the parameters.}
+\item{\code{bhaz1}}{A list comprising of the parameters.}
 
-\item{\code{bhaz2}}{a list comprising of the parameters.}
+\item{\code{bhaz2}}{A list comprising of the parameters.}
 
-\item{\code{coefs}}{regression parameters}
+\item{\code{coefs}}{Regression parameters.}
 }}
 

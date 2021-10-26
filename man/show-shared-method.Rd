@@ -7,7 +7,7 @@
 \S4method{show}{shared}(object)
 }
 \arguments{
-\item{object}{an object of class \linkS4class{shared}.}
+\item{object}{An object of class \linkS4class{shared}.}
 }
 \description{
 Show method for shared phase type frailty models

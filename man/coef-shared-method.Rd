@@ -7,10 +7,10 @@
 \S4method{coef}{shared}(object)
 }
 \arguments{
-\item{object}{an object of class \linkS4class{shared}.}
+\item{object}{An object of class \linkS4class{shared}.}
 }
 \value{
-parameters of shared phase type frailty model.
+Parameters of shared phase type frailty model.
 }
 \description{
 Coef method for shared frailty class

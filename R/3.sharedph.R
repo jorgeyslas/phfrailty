@@ -1,38 +1,38 @@
 #' Shared phase type frailty model
 #'
-#' Class of objects for shared phase type frailty models
+#' Class of objects for shared phase type frailty models.
 #'
-#' @slot name name of the phase type distribution.
-#' @slot bhaz1 a list comprising of the parameters.
-#' @slot bhaz2 a list comprising of the parameters.
-#' @slot coefs regression parameters
+#' @slot name Name of the phase type distribution.
+#' @slot bhaz1 A list comprising of the parameters.
+#' @slot bhaz2 A list comprising of the parameters.
+#' @slot coefs Regression parameters.
 #'
-#' @return Class object
+#' @return Class object.
 #' @export
 #'
 setClass("shared",
-         contains = c("phasetype"),
-         slots = list(
-           bhaz1 = "list",
-           bhaz2 = "list",
-           coefs = "list"
-         )
+  contains = c("phasetype"),
+  slots = list(
+    bhaz1 = "list",
+    bhaz2 = "list",
+    coefs = "list"
+  )
 )
 
 
 
 #' Constructor function for shared phase type frailty models
 #'
-#' @param ph an object of class \linkS4class{phasetype}.
-#' @param alpha a probability vector.
-#' @param S a sub-intensity matrix.
-#' @param structure a valid phase-type structure
-#' @param dimension the dimension of the phase-type structure (if provided)
-#' @param bhaz1 baseline hazard function of first marginal
-#' @param bhaz_pars1 the parameters of the baseline hazard function of first marginal
-#' @param bhaz2 baseline hazard function of first marginal
-#' @param bhaz_pars2 the parameters of the baseline hazard function of first marginal
-#' @param B regression parameters
+#' @param ph An object of class \linkS4class{phasetype}.
+#' @param alpha A probability vector.
+#' @param S A sub-intensity matrix.
+#' @param structure A valid phase-type structure.
+#' @param dimension The dimension of the phase-type structure (if provided).
+#' @param bhaz1 Baseline hazard function of first marginal.
+#' @param bhaz_pars1 The parameters of the baseline hazard function of first marginal.
+#' @param bhaz2 Baseline hazard function of first marginal.
+#' @param bhaz_pars2 The parameters of the baseline hazard function of first marginal.
+#' @param B Regression parameters.
 #'
 #' @return An object of class \linkS4class{shared}.
 #' @export
@@ -51,14 +51,14 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
     stop("invalid bhaz")
   }
   if (bhaz1 %in% c("exponential", "weibull")) {
-    if(is.null(bhaz_pars1)) bhaz_pars1 <- 1
+    if (is.null(bhaz_pars1)) bhaz_pars1 <- 1
     if (length(bhaz_pars1) != 1 | sum(bhaz_pars1 <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
     } else {
       names(bhaz_pars1) <- "theta"
     }
   } else if (bhaz1 %in% c("gompertz")) {
-    if(is.null(bhaz_pars1)) bhaz_pars1 <- c(0.1, 1)
+    if (is.null(bhaz_pars1)) bhaz_pars1 <- c(0.1, 1)
     if (length(bhaz_pars1) != 2 | (bhaz_pars1[1] <= 0) | (bhaz_pars1[2] <= 0)) {
       stop("bhaz parameter should be positive and of length two: a, b > 0")
     } else {
@@ -67,14 +67,14 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   }
 
   if (bhaz2 %in% c("exponential", "weibull")) {
-    if(is.null(bhaz_pars2)) bhaz_pars2 <- 1
+    if (is.null(bhaz_pars2)) bhaz_pars2 <- 1
     if (length(bhaz_pars2) != 1 | sum(bhaz_pars2 <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
     } else {
       names(bhaz_pars2) <- "theta"
     }
   } else if (bhaz2 %in% c("gompertz")) {
-    if(is.null(bhaz_pars2)) bhaz_pars2 <- c(0.1, 1)
+    if (is.null(bhaz_pars2)) bhaz_pars2 <- c(0.1, 1)
     if (length(bhaz_pars2) != 2 | (bhaz_pars2[1] <= 0) | (bhaz_pars2[2] <= 0)) {
       stop("bhaz parameter should be positive and of length two: a, b > 0")
     } else {
@@ -83,7 +83,7 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   }
 
   f1 <- function(theta, t) theta
-  f2 <- function(theta, t)  theta * t^{theta - 1}
+  f2 <- function(theta, t) theta * t^(theta - 1)
   f3 <- function(theta, t) theta[1] * exp(theta[2] * t)
   nb1 <- which(bhaz1 == c("exponential", "weibull", "gompertz"))
   nb2 <- which(bhaz2 == c("exponential", "weibull", "gompertz"))
@@ -91,32 +91,36 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   hz2 <- base::eval(parse(text = paste("f", nb2, sep = "")))
 
   f1 <- function(theta, t) theta * t
-  f2 <- function(theta, t) t^{theta}
+  f2 <- function(theta, t) t^theta
   f3 <- function(theta, t) theta[1] * (exp(theta[2] * t) - 1) / theta[2]
-  nb1 <- which(bhaz1 == c("exponential","weibull", "gompertz"))
-  nb2 <- which(bhaz2 == c("exponential","weibull", "gompertz"))
+  nb1 <- which(bhaz1 == c("exponential", "weibull", "gompertz"))
+  nb2 <- which(bhaz2 == c("exponential", "weibull", "gompertz"))
   c_hz1 <- base::eval(parse(text = paste("f", nb1, sep = "")))
   c_hz2 <- base::eval(parse(text = paste("f", nb2, sep = "")))
 
   f1 <- function(theta, t) t / theta
-  f2 <- function(theta, t) t^{1 / theta}
-  f3 <- function(theta, t)  log(theta[2] * t / theta[1] + 1) / theta[2]
-  nb1 <- which(bhaz1 == c("exponential","weibull", "gompertz"))
-  nb2 <- which(bhaz2 == c("exponential","weibull", "gompertz"))
+  f2 <- function(theta, t) t^(1 / theta)
+  f3 <- function(theta, t) log(theta[2] * t / theta[1] + 1) / theta[2]
+  nb1 <- which(bhaz1 == c("exponential", "weibull", "gompertz"))
+  nb2 <- which(bhaz2 == c("exponential", "weibull", "gompertz"))
   c_hz_inv1 <- base::eval(parse(text = paste("f", nb1, sep = "")))
   c_hz_inv2 <- base::eval(parse(text = paste("f", nb2, sep = "")))
 
-  name <- if(methods::is(ph, "frailty")){ph@name}else{paste("shared ", ph@name, sep = "")}
+  name <- if (methods::is(ph, "frailty")) ph@name else paste("shared ", ph@name, sep = "")
 
   methods::new("shared",
-               name = name,
-               pars = ph@pars,
-               bhaz1 = list(name = bhaz1, pars = bhaz_pars1, hazard = hz1,
-                           cum_hazard = c_hz1, cum_hazard_inv = c_hz_inv1),
-               bhaz2 = list(name = bhaz2, pars = bhaz_pars2, hazard = hz2,
-                           cum_hazard = c_hz2, cum_hazard_inv = c_hz_inv2),
-               coefs = list(B = B),
-               fit = ph@fit
+    name = name,
+    pars = ph@pars,
+    bhaz1 = list(
+      name = bhaz1, pars = bhaz_pars1, hazard = hz1,
+      cum_hazard = c_hz1, cum_hazard_inv = c_hz_inv1
+    ),
+    bhaz2 = list(
+      name = bhaz2, pars = bhaz_pars2, hazard = hz2,
+      cum_hazard = c_hz2, cum_hazard_inv = c_hz_inv2
+    ),
+    coefs = list(B = B),
+    fit = ph@fit
   )
 }
 
@@ -124,7 +128,7 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
 
 #' Show method for shared phase type frailty models
 #'
-#' @param object an object of class \linkS4class{shared}.
+#' @param object An object of class \linkS4class{shared}.
 #' @importFrom methods show
 #' @export
 #'
@@ -146,10 +150,10 @@ setMethod("show", "shared", function(object) {
 
 #' Simulation method for shared phase type frailty models
 #'
-#' @param x an object of class \linkS4class{shared}.
-#' @param n an integer of length of realization.
+#' @param x An object of class \linkS4class{shared}.
+#' @param n An integer of length of realization.
 #'
-#' @return A realization of independent and identically distributed shared phase-type frailty random vectors
+#' @return A realization of independent and identically distributed shared phase-type frailty random vectors.
 #' @export
 #'
 #' @examples
@@ -164,14 +168,14 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
   rph <- rphasetype(n, x@pars$alpha, x@pars$S)
   U1 <- c_hz_inv1(theta1, -log(stats::runif(n)) / rph)
   U2 <- c_hz_inv2(theta2, -log(stats::runif(n)) / rph)
-  return(matrix(c(U1,U2), ncol = 2))
+  return(matrix(c(U1, U2), ncol = 2))
 })
 
 #' Density method for shared phase type frailty models
 #'
-#' @param x an object of class \linkS4class{shared}.
-#' @param y a matrix of locations.
-#' @param X a matrix of covariates.
+#' @param x An object of class \linkS4class{shared}.
+#' @param y A matrix of locations.
+#' @param X A matrix of covariates.
 #'
 #' @return A vector containing the corresponding joint density evaluations.
 #' @export
@@ -196,11 +200,11 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
   }
 
   if (any(dim(X) == 0)) {
-    den <- 2 * fn1_der(theta1, y[,1]) * fn2_der(theta2, y[,2]) * ph_laplace_der_nocons(fn1(theta1, y[,1]) + fn2(theta2, y[,2]), 3, x@pars$alpha, x@pars$S)
+    den <- 2 * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 3, x@pars$alpha, x@pars$S)
     return(den)
   } else {
     if (length(B0) == 0) {
-      den <- 2 * fn1_der(theta1, y[,1]) * fn2_der(theta2, y[,2]) * ph_laplace_der_nocons(fn1(theta1, y[,1]) + fn2(theta2, y[,2]), 3, x@pars$alpha, x@pars$S)
+      den <- 2 * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 3, x@pars$alpha, x@pars$S)
       warning("empty regression parameter, returns joint density without covariate information")
       return(den)
     } else {
@@ -209,8 +213,8 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
       } else if (dim(y)[1] != dim(X)[1]) {
         stop("dimension of observations different from covariates")
       } else {
-        ex <- exp(X%*%B0)
-        den <- 2 * ex * fn1_der(theta1, y[,1]) * fn2_der(theta2, y[,2]) * ph_laplace_der_nocons((fn1(theta1, y[,1]) + fn2(theta2, y[,2])) * ex, 3, x@pars$alpha, x@pars$S)
+        ex <- exp(X %*% B0)
+        den <- 2 * ex * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons((fn1(theta1, y[, 1]) + fn2(theta2, y[, 2])) * ex, 3, x@pars$alpha, x@pars$S)
         return(den)
       }
     }
@@ -220,9 +224,9 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
 
 #' Survival method for shared phase type frailty models
 #'
-#' @param x an object of class \linkS4class{shared}.
-#' @param q a matrix of locations.
-#' @param X a matrix of covariates.
+#' @param x An object of class \linkS4class{shared}.
+#' @param q A matrix of locations.
+#' @param X A matrix of covariates.
 #'
 #' @return A vector containing the corresponding joint survival evaluations.
 #' @export
@@ -245,11 +249,11 @@ setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
   }
 
   if (any(dim(X) == 0)) {
-    sur <- ph_laplace(fn1(theta1, q[,1]) + fn2(theta2, q[,2]), x@pars$alpha, x@pars$S)
+    sur <- ph_laplace(fn1(theta1, q[, 1]) + fn2(theta2, q[, 2]), x@pars$alpha, x@pars$S)
     return(sur)
   } else {
     if (length(B0) == 0) {
-      sur <- ph_laplace(fn1(theta1, q[,1]) + fn2(theta2, q[,2]), x@pars$alpha, x@pars$S)
+      sur <- ph_laplace(fn1(theta1, q[, 1]) + fn2(theta2, q[, 2]), x@pars$alpha, x@pars$S)
       warning("empty regression parameter, returns joint survival without covariate information")
       return(sur)
     } else {
@@ -258,8 +262,8 @@ setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
       } else if (dim(q)[1] != dim(X)[1]) {
         stop("dimension of observations different from covariates")
       } else {
-        ex <- exp(X%*%B0)
-        sur <- ph_laplace((fn1(theta1, q[,1]) + fn2(theta2, q[,2])) * ex, x@pars$alpha, x@pars$S)
+        ex <- exp(X %*% B0)
+        sur <- ph_laplace((fn1(theta1, q[, 1]) + fn2(theta2, q[, 2])) * ex, x@pars$alpha, x@pars$S)
         return(sur)
       }
     }
@@ -269,19 +273,19 @@ setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
 
 #' Fit method for shared phase type frailty models
 #'
-#' @param x an object of class \linkS4class{shared}.
-#' @param y matrix or data.
-#' @param rcen matrix of indicators of right-censored observations
-#' @param X a matrix of covariates.
-#' @param initialpoint initial value for discretization of density
-#' @param truncationpoint ultimate value for discretization of density
-#' @param maxprobability max probability allowed for an interval in the discretization
-#' @param maxdelta max size of interval allowed for the discretization
-#' @param stepsEM number of EM steps to be performed.
-#' @param stepsPH number of EM steps for the phase-type component at each iteration of the global EM.
-#' @param maxit maximum number of iterations when optimizing g function.
-#' @param reltol relative tolerance when optimizing g function.
-#' @param every number of iterations between likelihood display updates.
+#' @param x An object of class \linkS4class{shared}.
+#' @param y Matrix or data.
+#' @param rcen <atrix of indicators of right-censored observations
+#' @param X A matrix of covariates.
+#' @param initialpoint Initial value for discretization of density.
+#' @param truncationpoint Ultimate value for discretization of density.
+#' @param maxprobability <ax probability allowed for an interval in the discretization.
+#' @param maxdelta Max size of interval allowed for the discretization.
+#' @param stepsEM Number of EM steps to be performed.
+#' @param stepsPH Number of EM steps for the phase-type component at each iteration of the global EM.
+#' @param maxit Maximum number of iterations when optimizing g function.
+#' @param reltol Relative tolerance when optimizing g function.
+#' @param every Number of iterations between likelihood display updates.
 #'
 #' @return An object of class \linkS4class{shared}.
 #'
@@ -307,27 +311,33 @@ setMethod(
            maxit = 100,
            reltol = 1e-8,
            every = 100) {
-    if(!all(y > 0)) stop("data should be positive")
+    if (!all(y > 0)) {
+      stop("data should be positive")
+    }
 
     rcen <- as.matrix(rcen)
 
     if (dim(rcen)[1] > 0) {
-      if(!all( (sum(rcen == 0) + sum(rcen == 1)) != (dim(y)[1] * dim(y)[2]))) stop("right censoring indicator should contain only zeroes and ones")
-      if(dim(y) != dim(rcen)) stop("data and right censoring indicator should have the same dimensions")
+      if (!all((sum(rcen == 0) + sum(rcen == 1)) != (dim(y)[1] * dim(y)[2]))) {
+        stop("right censoring indicator should contain only zeroes and ones")
+      }
+      if (dim(y) != dim(rcen)) {
+        stop("data and right censoring indicator should have the same dimensions")
+      }
 
       rowcheck <- rowSums(rcen)
-      yaux <- y[(rowcheck == 1),]
-      rcenaux <- rcen[(rowcheck == 1),]
-      rcens10 <- yaux[(rcenaux[,1] == 1),]
-      rcens01 <- yaux[(rcenaux[,1] == 0),]
-      rcens11 <- y[(rowcheck == 2),]
-      y <- y[(rowcheck == 0),]
+      yaux <- y[(rowcheck == 1), ]
+      rcenaux <- rcen[(rowcheck == 1), ]
+      rcens10 <- yaux[(rcenaux[, 1] == 1), ]
+      rcens01 <- yaux[(rcenaux[, 1] == 0), ]
+      rcens11 <- y[(rowcheck == 2), ]
+      y <- y[(rowcheck == 0), ]
     } else {
       rcens01 <- matrix(numeric(0), ncol = 2)
       rcens10 <- matrix(numeric(0), ncol = 2)
       rcens11 <- matrix(numeric(0), ncol = 2)
     }
-  # 1 indicates censoring  and 0 noncensoring
+    # 1 indicates censoring  and 0 noncensoring
 
     par_haz1 <- x@bhaz1$pars
     chaz1 <- x@bhaz1$cum_hazard
@@ -340,53 +350,52 @@ setMethod(
     X <- as.matrix(X)
 
     if (any(dim(X) == 0)) {
+      LL <- function(alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
+        sum(log(ph_laplace_der_nocons(chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]), 3, alphafn, Sfn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]), 2, alphafn, Sfn) * haz1(theta1, cens01[, 1]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]), 2, alphafn, Sfn) * haz2(theta2, cens10[, 2]))) + sum(log(ph_laplace(chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]), alphafn, Sfn)))
+      }
 
-       LL <- function(alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
-         sum(log(ph_laplace_der_nocons(chaz1(theta1, obs[,1]) + chaz2(theta2, obs[,2]), 3, alphafn, Sfn) * haz1(theta1, obs[,1]) * haz2(theta2, obs[,2]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens01[,1]) + chaz2(theta2, cens01[,2]), 2, alphafn, Sfn) * haz1(theta1, cens01[,1]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens10[,1]) + chaz2(theta2, cens10[,2]), 2, alphafn, Sfn) * haz2(theta2, cens10[,2]))) +  sum(log(ph_laplace(chaz1(theta1, cens11[,1]) + chaz2(theta2, cens11[,2]), alphafn, Sfn)))
-       }
+      conditional_density <- function(z, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
+        (sum(0.5 * z^(2) * exp(-z * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]), 3, alphafn, Sfn))
+        + sum(z * exp(-z * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]), 2, alphafn, Sfn))
+          + sum(z * exp(-z * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]), 2, alphafn, Sfn))
+          + sum(exp(-z * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]), alphafn, Sfn))) / (dim(obs)[1] + dim(cens01)[1] + dim(cens10)[1] + dim(cens11)[1])
+      }
 
-       conditional_density <- function(z, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
-         ( sum( 0.5 * z^{2} * exp(- z * (chaz1(theta1, obs[,1]) + chaz2(theta2, obs[,2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, obs[,1]) + chaz2(theta2, obs[,2]), 3, alphafn, Sfn))
-         + sum( z * exp(- z * (chaz1(theta1, cens01[,1]) + chaz2(theta2, cens01[,2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens01[,1]) + chaz2(theta2, cens01[,2]), 2, alphafn, Sfn))
-         + sum( z * exp(- z * (chaz1(theta1, cens10[,1]) + chaz2(theta2, cens10[,2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens10[,1]) + chaz2(theta2, cens10[,2]), 2, alphafn, Sfn))
-           + sum(exp(- z * (chaz1(theta1, cens11[,1]) + chaz2(theta2, cens11[,2]))) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz1(theta1, cens11[,1]) + chaz2(theta2, cens11[,2]), alphafn, Sfn))) / (dim(obs)[1] + dim(cens01)[1] + dim(cens10)[1] + dim(cens11)[1])
-       }
-
-       Ezgiveny <- function(parmax, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
-         theta1max <- parmax[1:length(theta1)];
-         theta2max <- utils::tail(parmax, length(theta2))
-         return( -sum(log(haz1(theta1max, obs[,1])) + log(haz2(theta2max, obs[,2]))  - (chaz1(theta1max, obs[,1]) + chaz2(theta2max, obs[,2])) * 3 * ph_laplace_der_nocons(chaz1(theta1, obs[,1]) + chaz2(theta2, obs[,2]), 4, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, obs[,1]) + chaz2(theta2, obs[,2]), 3, alphafn, Sfn))
-         -sum(log(haz1(theta1max, cens01[,1]))  - (chaz1(theta1max, cens01[,1]) + chaz2(theta2max, cens01[,2])) * 2 * ph_laplace_der_nocons(chaz1(theta1, cens01[,1]) + chaz2(theta2, cens01[,2]), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens01[,1]) + chaz2(theta2, cens01[,2]), 2, alphafn, Sfn))
-         -sum(log(haz2(theta2max, cens10[,2]))  - (chaz1(theta1max, cens10[,1]) + chaz2(theta2max, cens10[,2])) * 2 * ph_laplace_der_nocons(chaz1(theta1, cens10[,1]) + chaz2(theta2, cens10[,2]), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens10[,1]) + chaz2(theta2, cens10[,2]), 2, alphafn, Sfn))
-         + sum((chaz1(theta1max, cens11[,1]) + chaz2(theta2max, cens11[,2])) * ph_laplace_der_nocons(chaz1(theta1, cens11[,1]) + chaz2(theta2, cens11[,2]), 2, alphafn, Sfn) / ph_laplace(chaz1(theta1, cens11[,1]) + chaz2(theta2, cens11[,2]), alphafn, Sfn)) )
-       }
+      Ezgiveny <- function(parmax, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
+        theta1max <- parmax[1:length(theta1)]
+        theta2max <- utils::tail(parmax, length(theta2))
+        return(-sum(log(haz1(theta1max, obs[, 1])) + log(haz2(theta2max, obs[, 2])) - (chaz1(theta1max, obs[, 1]) + chaz2(theta2max, obs[, 2])) * 3 * ph_laplace_der_nocons(chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]), 4, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]), 3, alphafn, Sfn))
+        - sum(log(haz1(theta1max, cens01[, 1])) - (chaz1(theta1max, cens01[, 1]) + chaz2(theta2max, cens01[, 2])) * 2 * ph_laplace_der_nocons(chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]), 2, alphafn, Sfn))
+          - sum(log(haz2(theta2max, cens10[, 2])) - (chaz1(theta1max, cens10[, 1]) + chaz2(theta2max, cens10[, 2])) * 2 * ph_laplace_der_nocons(chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]), 2, alphafn, Sfn))
+          + sum((chaz1(theta1max, cens11[, 1]) + chaz2(theta2max, cens11[, 2])) * ph_laplace_der_nocons(chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]), 2, alphafn, Sfn) / ph_laplace(chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]), alphafn, Sfn)))
+      }
 
       ph_par <- x@pars
       alpha_fit <- clone_vector(ph_par$alpha)
       S_fit <- clone_matrix(ph_par$S)
 
       for (k in 1:stepsEM) {
-
         par_haz_fit <- suppressWarnings(
-          stats::optim(par = c(par_haz1, par_haz2),
-                       fn = Ezgiveny,
-                       theta1 = par_haz1,
-                       theta2 = par_haz2,
-                       alphafn = alpha_fit,
-                       Sfn = S_fit,
-                       obs = y,
-                       cens01 = rcens01,
-                       cens10 = rcens10,
-                       cens11 = rcens11,
-                       hessian = FALSE,
-                       control = list(
-                         maxit = maxit,
-                         reltol = reltol
-                       )
+          stats::optim(
+            par = c(par_haz1, par_haz2),
+            fn = Ezgiveny,
+            theta1 = par_haz1,
+            theta2 = par_haz2,
+            alphafn = alpha_fit,
+            Sfn = S_fit,
+            obs = y,
+            cens01 = rcens01,
+            cens10 = rcens10,
+            cens11 = rcens11,
+            hessian = FALSE,
+            control = list(
+              maxit = maxit,
+              reltol = reltol
+            )
           )$par
         )
 
-        #Discretization of density
+        # Discretization of density
         deltat <- 0
         t <- initialpoint
 
@@ -398,17 +407,16 @@ setMethod(
         while (t < truncationpoint) {
           if (conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) < maxprobability / maxdelta) {
             deltat <- maxdelta
-          }
-          else {
+          } else {
             deltat <- maxprobability / conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11)
           }
-          proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) )
+          proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11))
           while (proba_aux > maxprobability) {
             deltat <- deltat * 0.9
             proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11))
           }
           if (proba_aux > 0) {
-            value[j] <- (t * conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11)  + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11)) / (conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11))
+            value[j] <- (t * conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11)) / (conditional_density(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11))
             prob[j] <- proba_aux
             j <- j + 1
           }
@@ -425,8 +433,8 @@ setMethod(
 
         if (k %% every == 0) {
           cat("\r", "iteration:", k,
-              ", logLik:", LL(alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11),
-              sep = " "
+            ", logLik:", LL(alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11),
+            sep = " "
           )
         }
       }
@@ -450,9 +458,9 @@ setMethod(
 
 #' Coef method for shared frailty class
 #'
-#' @param object an object of class \linkS4class{shared}.
+#' @param object An object of class \linkS4class{shared}.
 #'
-#' @return parameters of shared phase type frailty model.
+#' @return Parameters of shared phase type frailty model.
 #' @export
 #'
 #' @examples
