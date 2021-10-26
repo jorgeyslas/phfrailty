@@ -5,7 +5,7 @@
 \alias{phasetype-class}
 \title{Phase Type distributions}
 \value{
-Class object
+Class object.
 }
 \description{
 Class of objects for phase type distributions
@@ -13,10 +13,10 @@ Class of objects for phase type distributions
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{name of the phase type distribution.}
+\item{\code{name}}{Name of the phase type distribution.}
 
-\item{\code{pars}}{a list comprising of the parameters.}
+\item{\code{pars}}{A list comprising of the parameters.}
 
-\item{\code{fit}}{a list containing estimation information.}
+\item{\code{fit}}{A list containing estimation information.}
 }}
 

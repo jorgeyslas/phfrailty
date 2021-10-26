@@ -7,9 +7,9 @@
 \S4method{quan}{phasetype}(x, p)
 }
 \arguments{
-\item{x}{an object of class \linkS4class{phasetype}.}
+\item{x}{An object of class \linkS4class{phasetype}.}
 
-\item{p}{a vector of probabilities.}
+\item{p}{A vector of probabilities.}
 }
 \value{
 A list containing the probabilities and corresponding quantile evaluations.

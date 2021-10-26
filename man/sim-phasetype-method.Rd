@@ -7,9 +7,9 @@
 \S4method{sim}{phasetype}(x, n = 1000)
 }
 \arguments{
-\item{x}{an object of class \linkS4class{phasetype}.}
+\item{x}{An object of class \linkS4class{phasetype}.}
 
-\item{n}{an integer of length of realization.}
+\item{n}{An integer of length of realization.}
 }
 \value{
 A realization of independent and identically distributed phase-type variables.

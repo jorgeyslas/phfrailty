@@ -7,7 +7,7 @@
 \S4method{coef}{phasetype}(object)
 }
 \arguments{
-\item{object}{an object of class \linkS4class{phasetype}.}
+\item{object}{An object of class \linkS4class{phasetype}.}
 }
 \value{
 Parameters of phasetype model.

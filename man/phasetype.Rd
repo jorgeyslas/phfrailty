@@ -7,13 +7,13 @@
 phasetype(alpha = NULL, S = NULL, structure = NULL, dimension = 3)
 }
 \arguments{
-\item{alpha}{a probability vector.}
+\item{alpha}{A probability vector.}
 
-\item{S}{a sub-intensity matrix.}
+\item{S}{A sub-intensity matrix.}
 
-\item{structure}{a valid phase-type structure ("general", "coxian", "hyperexponential", "gcoxian", "gerlang").}
+\item{structure}{A valid phase-type structure ("general", "coxian", "hyperexponential", "gcoxian", "gerlang").}
 
-\item{dimension}{the dimension of the phase-type structure (if structure is provided).}
+\item{dimension}{The dimension of the phase-type structure (if structure is provided).}
 }
 \value{
 An object of class \linkS4class{phasetype}.

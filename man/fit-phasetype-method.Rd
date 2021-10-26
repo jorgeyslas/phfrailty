@@ -21,31 +21,31 @@
 )
 }
 \arguments{
-\item{x}{an object of class \linkS4class{phasetype}.}
+\item{x}{An object of class \linkS4class{phasetype}.}
 
-\item{y}{vector or data.}
+\item{y}{Vector or data.}
 
-\item{rcen}{vector of right-censored observations}
+\item{rcen}{Vector of right-censored observations.}
 
-\item{X}{a matrix of covariates.}
+\item{X}{A matrix of covariates.}
 
-\item{stepsEM}{number of EM steps to be performed.}
+\item{stepsEM}{Number of EM steps to be performed.}
 
-\item{stepsPH}{number of EM steps for the phase-type component at each iteration of the global EM.}
+\item{stepsPH}{Number of EM steps for the phase-type component at each iteration of the global EM.}
 
-\item{initialpoint}{initial value for discretization of density}
+\item{initialpoint}{Initial value for discretization of density.}
 
-\item{truncationpoint}{ultimate value for discretization of density}
+\item{truncationpoint}{Ultimate value for discretization of density.}
 
-\item{maxprobability}{max probability allowed for an interval in the discretization}
+\item{maxprobability}{Max probability allowed for an interval in the discretization.}
 
-\item{maxdelta}{max size of interval allowed for the discretization}
+\item{maxdelta}{Max size of interval allowed for the discretization.}
 
-\item{maxit}{maximum number of iterations when optimizing g function.}
+\item{maxit}{Maximum number of iterations when optimizing g function.}
 
-\item{reltol}{relative tolerance when optimizing g function.}
+\item{reltol}{Relative tolerance when optimizing g function.}
 
-\item{every}{number of iterations between likelihood display updates.}
+\item{every}{Number of iterations between likelihood display updates.}
 }
 \value{
 An object of class \linkS4class{phasetype}.

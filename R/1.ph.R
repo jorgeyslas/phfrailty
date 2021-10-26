@@ -2,11 +2,11 @@
 #'
 #' Class of objects for phase type distributions
 #'
-#' @slot name name of the phase type distribution.
-#' @slot pars a list comprising of the parameters.
-#' @slot fit a list containing estimation information.
+#' @slot name Name of the phase type distribution.
+#' @slot pars A list comprising of the parameters.
+#' @slot fit A list containing estimation information.
 #'
-#' @return Class object
+#' @return Class object.
 #' @export
 #'
 setClass("phasetype",
@@ -24,10 +24,10 @@ setClass("phasetype",
 
 #' Constructor function for phase type distributions
 #'
-#' @param alpha a probability vector.
-#' @param S a sub-intensity matrix.
-#' @param structure a valid phase-type structure ("general", "coxian", "hyperexponential", "gcoxian", "gerlang").
-#' @param dimension the dimension of the phase-type structure (if structure is provided).
+#' @param alpha A probability vector.
+#' @param S A sub-intensity matrix.
+#' @param structure A valid phase-type structure ("general", "coxian", "hyperexponential", "gcoxian", "gerlang").
+#' @param dimension The dimension of the phase-type structure (if structure is provided).
 #'
 #' @return An object of class \linkS4class{phasetype}.
 #' @export
@@ -61,8 +61,8 @@ phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
 
 #' Moment method for phase-type distributions
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param k a positive integer (moment order).
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param k A positive integer (moment order).
 #'
 #' @return The raw moment of the \linkS4class{phasetype} (or undelying \linkS4class{phasetype}) object.
 #' @export
@@ -71,21 +71,30 @@ phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
 #' set.seed(123)
 #' obj <- phasetype(structure = "general", dimension = 3)
 #' moment(obj, 2)
-setMethod("moment", signature(x = "phasetype"),
-          function (x, k = 1){
-            if(k <= 0) return("k should be positive")
-            if((k%%1) != 0) return("k should be an integer")
-            if(methods::is(x, "frailty")) warning("moment of undelying phase-type structure is provided for frailty objects")
-            m <- solve(-x@pars$S)
-            prod <- diag(nrow(m))
-            for(i in 1:k){prod <- prod %*% m}
-            return(factorial(k)*sum(x@pars$alpha %*% prod))
-          }
+setMethod(
+  "moment", signature(x = "phasetype"),
+  function(x, k = 1) {
+    if (k <= 0) {
+      return("k should be positive")
+    }
+    if ((k %% 1) != 0) {
+      return("k should be an integer")
+    }
+    if (methods::is(x, "frailty")) {
+      warning("moment of undelying phase-type structure is provided for frailty objects")
+    }
+    m <- solve(-x@pars$S)
+    prod <- diag(nrow(m))
+    for (i in 1:k) {
+      prod <- prod %*% m
+    }
+    return(factorial(k) * sum(x@pars$alpha %*% prod))
+  }
 )
 
 #' Show method for phase type distributions
 #'
-#' @param object an object of class \linkS4class{phasetype}.
+#' @param object An object of class \linkS4class{phasetype}.
 #' @importFrom methods show
 #' @export
 #'
@@ -98,8 +107,8 @@ setMethod("show", "phasetype", function(object) {
 
 #' Simulation method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param n an integer of length of realization.
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param n An integer of length of realization.
 #'
 #' @return A realization of independent and identically distributed phase-type variables.
 #' @export
@@ -114,8 +123,8 @@ setMethod("sim", c(x = "phasetype"), function(x, n = 1000) {
 
 #' Density method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param y a vector of locations.
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param y A vector of locations.
 #'
 #' @return A list containing the locations and corresponding density evaluations.
 #' @export
@@ -133,9 +142,9 @@ setMethod("dens", c(x = "phasetype"), function(x, y) {
 
 #' Distribution method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param q a vector of locations.
-#' @param lower.tail logical parameter specifying whether lower tail (cdf) or upper tail is computed.
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param q A vector of locations.
+#' @param lower.tail Logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
 #' @return A list containing the locations and corresponding CDF evaluations.
 #' @export
@@ -153,8 +162,8 @@ setMethod("cdf", c(x = "phasetype"), function(x, q, lower.tail = TRUE) {
 
 #' Hazard rate method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param y a vector of locations.
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param y A vector of locations.
 #'
 #' @return A list containing the locations and corresponding hazard rate evaluations.
 #' @export
@@ -170,8 +179,8 @@ setMethod("haz", c(x = "phasetype"), function(x, y) {
 
 #' Quantile method for phase type distributions
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param p a vector of probabilities.
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param p A vector of probabilities.
 #'
 #' @return A list containing the probabilities and corresponding quantile evaluations.
 #' @export
@@ -190,19 +199,19 @@ setMethod("quan", c(x = "phasetype"), function(x, p) {
 
 #' Fit method for phase-type frailty models
 #'
-#' @param x an object of class \linkS4class{phasetype}.
-#' @param y vector or data.
-#' @param rcen vector of right-censored observations
-#' @param X a matrix of covariates.
-#' @param initialpoint initial value for discretization of density
-#' @param truncationpoint ultimate value for discretization of density
-#' @param maxprobability max probability allowed for an interval in the discretization
-#' @param maxdelta max size of interval allowed for the discretization
-#' @param stepsEM number of EM steps to be performed.
-#' @param stepsPH number of EM steps for the phase-type component at each iteration of the global EM.
-#' @param maxit maximum number of iterations when optimizing g function.
-#' @param reltol relative tolerance when optimizing g function.
-#' @param every number of iterations between likelihood display updates.
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param y Vector or data.
+#' @param rcen Vector of right-censored observations.
+#' @param X A matrix of covariates.
+#' @param initialpoint Initial value for discretization of density.
+#' @param truncationpoint Ultimate value for discretization of density.
+#' @param maxprobability Max probability allowed for an interval in the discretization.
+#' @param maxdelta Max size of interval allowed for the discretization.
+#' @param stepsEM Number of EM steps to be performed.
+#' @param stepsPH Number of EM steps for the phase-type component at each iteration of the global EM.
+#' @param maxit Maximum number of iterations when optimizing g function.
+#' @param reltol Relative tolerance when optimizing g function.
+#' @param every Number of iterations between likelihood display updates.
 #'
 #' @return An object of class \linkS4class{phasetype}.
 #'
@@ -227,7 +236,9 @@ setMethod(
            maxit = 100,
            reltol = 1e-8,
            every = 100) {
-    if(!all(c(y, rcen) > 0)) stop("data should be positive")
+    if (!all(c(y, rcen) > 0)) {
+      stop("data should be positive")
+    }
 
     par_haz <- x@bhaz$pars
     chaz <- x@bhaz$cum_hazard
@@ -240,11 +251,11 @@ setMethod(
       }
 
       conditional_density <- function(z, alphafn, Sfn, theta, obs, cens) {
-        (sum(z * exp(- z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(exp(- z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (length(obs) + length(cens))
+        (sum(z * exp(-z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(exp(-z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (length(obs) + length(cens))
       }
 
       Ezgiveny <- function(thetamax, alphafn, Sfn, theta, obs, cens) {
-        -sum(log(haz(thetamax, obs))  - chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn) )
+        -sum(log(haz(thetamax, obs)) - chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))
       }
 
       ph_par <- x@pars
@@ -254,24 +265,24 @@ setMethod(
       par_haz_fit <- par_haz
 
       for (k in 1:stepsEM) {
-
         par_haz_fit <- suppressWarnings(
-          stats::optim(par = par_haz,
-                fn = Ezgiveny,
-                theta = par_haz,
-                alphafn = alpha_fit,
-                Sfn = S_fit,
-                obs = y,
-                cens = rcen,
-                hessian = FALSE,
-                control = list(
-                  maxit = maxit,
-                  reltol = reltol
-                  )
-                )$par
-          )
+          stats::optim(
+            par = par_haz,
+            fn = Ezgiveny,
+            theta = par_haz,
+            alphafn = alpha_fit,
+            Sfn = S_fit,
+            obs = y,
+            cens = rcen,
+            hessian = FALSE,
+            control = list(
+              maxit = maxit,
+              reltol = reltol
+            )
+          )$par
+        )
 
-        #Discretization of density
+        # Discretization of density
         deltat <- 0
         t <- initialpoint
 
@@ -283,17 +294,16 @@ setMethod(
         while (t < truncationpoint) {
           if (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) < maxprobability / maxdelta) {
             deltat <- maxdelta
-          }
-          else {
+          } else {
             deltat <- maxprobability / conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen)
           }
-          proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen) )
+          proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
           while (proba_aux > maxprobability) {
             deltat <- deltat * 0.9
             proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
           }
           if (proba_aux > 0) {
-            value[j] <- (t * conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen)  + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen)) / (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
+            value[j] <- (t * conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen)) / (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
             prob[j] <- proba_aux
             j <- j + 1
           }
@@ -309,8 +319,8 @@ setMethod(
 
         if (k %% every == 0) {
           cat("\r", "iteration:", k,
-              ", logLik:", LL(alpha_fit, S_fit, par_haz, y, rcen),
-              sep = " "
+            ", logLik:", LL(alpha_fit, S_fit, par_haz, y, rcen),
+            sep = " "
           )
         }
       }
@@ -329,7 +339,7 @@ setMethod(
       n1 <- length(y)
       n2 <- length(rcen)
 
-      if ( n1 + n2 != dim(X)[1]) {
+      if (n1 + n2 != dim(X)[1]) {
         stop("Number of observations different from number of covariates")
       }
 
@@ -338,23 +348,23 @@ setMethod(
       }
 
       conditional_density_cov <- function(z, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens) {
-        (sum(z * exp(- z * chaz(theta, obs) * scaleobs) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(exp(- z * chaz(theta, cens) * scalecens) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))) / (length(obs) + length(cens))
+        (sum(z * exp(-z * chaz(theta, obs) * scaleobs) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(exp(-z * chaz(theta, cens) * scalecens) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))) / (length(obs) + length(cens))
       }
 
       Ezgiveny_cov <- function(parmax, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens, covinf) {
-        thetamax <- parmax[1:length(theta)];
+        thetamax <- parmax[1:length(theta)]
         Bmax <- parmax[(length(theta) + 1):length(parmax)]
-        exmax <- exp(covinf%*%Bmax)
+        exmax <- exp(covinf %*% Bmax)
         scaleobsmax <- exmax[1:length(obs)]
         scalecensmax <- utils::tail(exmax, length(cens))
-        -sum(log(haz(thetamax, obs) * scaleobsmax)  - scaleobsmax * chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(scalecensmax * chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens) * scalecens, 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn) )
+        -sum(log(haz(thetamax, obs) * scaleobsmax) - scaleobsmax * chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(scalecensmax * chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens) * scalecens, 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))
       }
 
       ph_par <- x@pars
       alpha_fit <- clone_vector(ph_par$alpha)
       S_fit <- clone_matrix(ph_par$S)
 
-      if(length(B0) == 0) {
+      if (length(B0) == 0) {
         B_fit <- rep(0, h)
       } else if (length(B0) != h) {
         B_fit <- rep(0, h)
@@ -364,31 +374,32 @@ setMethod(
       }
 
 
-      ex <- exp(X%*%B_fit)
+      ex <- exp(X %*% B_fit)
       scale1 <- ex[1:length(y)]
       scale2 <- utils::tail(ex, length(rcen))
 
       for (k in 1:stepsEM) {
         par_fit <- suppressWarnings(
-          stats::optim(par = c(par_haz, B_fit),
-                       fn = Ezgiveny_cov,
-                       theta = par_haz,
-                       alphafn = alpha_fit,
-                       Sfn = S_fit,
-                       obs = y,
-                       cens = rcen,
-                       scaleobs = scale1,
-                       scalecens = scale2,
-                       covinf = X,
-                       hessian = FALSE,
-                       control = list(
-                         maxit = maxit,
-                         reltol = reltol
-                       )
+          stats::optim(
+            par = c(par_haz, B_fit),
+            fn = Ezgiveny_cov,
+            theta = par_haz,
+            alphafn = alpha_fit,
+            Sfn = S_fit,
+            obs = y,
+            cens = rcen,
+            scaleobs = scale1,
+            scalecens = scale2,
+            covinf = X,
+            hessian = FALSE,
+            control = list(
+              maxit = maxit,
+              reltol = reltol
+            )
           )$par
         )
 
-        #Discretization of density
+        # Discretization of density
         deltat <- 0
         t <- initialpoint
 
@@ -400,17 +411,16 @@ setMethod(
         while (t < truncationpoint) {
           if (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) < maxprobability / maxdelta) {
             deltat <- maxdelta
-          }
-          else {
+          } else {
             deltat <- maxprobability / conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2)
           }
-          proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) )
+          proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
           while (proba_aux > maxprobability) {
             deltat <- deltat * 0.9
             proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
           }
           if (proba_aux > 0) {
-            value[j] <- (t * conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2)  + 4 * (t + deltat / 2) * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + (t + deltat) * conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2)) / (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
+            value[j] <- (t * conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * (t + deltat / 2) * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + (t + deltat) * conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2)) / (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
             prob[j] <- proba_aux
             j <- j + 1
           }
@@ -425,14 +435,14 @@ setMethod(
         par_haz <- par_fit[1:length(par_haz)]
         B_fit <- par_fit[(length(par_haz) + 1):length(par_fit)]
 
-        ex <- exp(X%*%B_fit)
+        ex <- exp(X %*% B_fit)
         scale1 <- ex[1:length(y)]
         scale2 <- utils::tail(ex, length(rcen))
 
         if (k %% every == 0) {
           cat("\r", "iteration:", k,
-              ", logLik:", LL_cov(alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2),
-              sep = " "
+            ", logLik:", LL_cov(alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2),
+            sep = " "
           )
         }
       }
@@ -452,7 +462,7 @@ setMethod(
 
 #' Coef method for phasetype class
 #'
-#' @param object an object of class \linkS4class{phasetype}.
+#' @param object An object of class \linkS4class{phasetype}.
 #'
 #' @return Parameters of phasetype model.
 #' @export
@@ -463,4 +473,3 @@ setMethod(
 setMethod("coef", c(object = "phasetype"), function(object) {
   object@pars
 })
-

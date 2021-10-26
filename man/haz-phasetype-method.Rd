@@ -7,9 +7,9 @@
 \S4method{haz}{phasetype}(x, y)
 }
 \arguments{
-\item{x}{an object of class \linkS4class{phasetype}.}
+\item{x}{An object of class \linkS4class{phasetype}.}
 
-\item{y}{a vector of locations.}
+\item{y}{A vector of locations.}
 }
 \value{
 A list containing the locations and corresponding hazard rate evaluations.

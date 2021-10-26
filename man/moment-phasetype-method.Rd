@@ -7,9 +7,9 @@
 \S4method{moment}{phasetype}(x, k = 1)
 }
 \arguments{
-\item{x}{an object of class \linkS4class{phasetype}.}
+\item{x}{An object of class \linkS4class{phasetype}.}
 
-\item{k}{a positive integer (moment order).}
+\item{k}{A positive integer (moment order).}
 }
 \value{
 The raw moment of the \linkS4class{phasetype} (or undelying \linkS4class{phasetype}) object.
