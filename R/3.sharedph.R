@@ -351,7 +351,7 @@ setMethod(
 
     if (any(dim(X) == 0)) {
       LL <- function(alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
-        sum(log(ph_laplace_der_nocons(chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]), 3, alphafn, Sfn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]), 2, alphafn, Sfn) * haz1(theta1, cens01[, 1]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]), 2, alphafn, Sfn) * haz2(theta2, cens10[, 2]))) + sum(log(ph_laplace(chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]), alphafn, Sfn)))
+        sum(log(2 * ph_laplace_der_nocons(chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]), 3, alphafn, Sfn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]), 2, alphafn, Sfn) * haz1(theta1, cens01[, 1]))) + sum(log(ph_laplace_der_nocons(chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]), 2, alphafn, Sfn) * haz2(theta2, cens10[, 2]))) + sum(log(ph_laplace(chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]), alphafn, Sfn)))
       }
 
       conditional_density <- function(z, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11) {
@@ -448,6 +448,163 @@ setMethod(
       x <- shared(x, bhaz1 = x@bhaz1$name, bhaz_pars1 = par_haz1, bhaz2 = x@bhaz2$name, bhaz_pars2 = par_haz2)
       return(x)
     } else {
+
+      B0 <- x@coefs$B
+      h <- dim(X)[2]
+      n <- length(y[, 1]) + length(rcens01[, 1]) + length(rcens10[, 1]) + length(rcens11[, 1])
+
+      if (n != dim(X)[1]) {
+        stop("Number of observations different from number of covariates")
+      }
+
+
+      LL_cov <- function(alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11, scal, scal01, scal10, scal11) {
+        (sum(log(2 * scal^2 * ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 3, alphafn, Sfn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2])))
+         + sum(log(scal01 * ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn) * haz1(theta1, cens01[, 1])))
+         + sum(log(scal10 * ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn) * haz2(theta2, cens10[, 2])))
+         + sum(log(ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn))))
+      }
+
+      conditional_density_cov <- function(z, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11, scal, scal01, scal10, scal11) {
+        (sum(0.5 * z^2 * exp(-z * scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 3, alphafn, Sfn))
+         + sum(z * exp(-z * scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn))
+         + sum(z * exp(-z * scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn))
+         + sum(exp(-z * scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn))) / (dim(obs)[1] + dim(cens01)[1] + dim(cens10)[1] + dim(cens11)[1])
+      }
+
+      Ezgiveny_cov <- function(parmax, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11, scal, scal01, scal10, scal11, cinf00, cinf01, cinf10, cinf11) {
+        theta1max <- parmax[1:length(theta1)]
+        theta2max <- parmax[(length(theta1) + 1):(length(theta1) + length(theta2))]
+        Bmax <- parmax[(length(theta1) + length(theta2) + 1):length(parmax)]
+        scale00max <- exp(cinf00 %*% Bmax)
+        scale01max <- if (length(cinf01) == 0) numeric(0) else exp(cinf01 %*% Bmax)
+        scale10max <- if (length(cinf10) == 0) numeric(0) else exp(cinf10 %*% Bmax)
+        scale11max <- if (length(cinf11) == 0) numeric(0) else exp(cinf11 %*% Bmax)
+        return(-sum(log(scale00max * haz1(theta1max, obs[, 1])) + log(scale00max * haz2(theta2max, obs[, 2])) - scale00max * (chaz1(theta1max, obs[, 1]) + chaz2(theta2max, obs[, 2])) * 3 * ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 4, alphafn, Sfn) / ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 3, alphafn, Sfn))
+               - sum(log(scale01max * haz1(theta1max, cens01[, 1])) - scale01max * (chaz1(theta1max, cens01[, 1]) + chaz2(theta2max, cens01[, 2])) * 2 * ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 3, alphafn, Sfn) / ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn))
+               - sum(log(scale10max * haz2(theta2max, cens10[, 2])) - scale10max * (chaz1(theta1max, cens10[, 1]) + chaz2(theta2max, cens10[, 2])) * 2 * ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 3, alphafn, Sfn) / ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn))
+               + sum(scale11max * (chaz1(theta1max, cens11[, 1]) + chaz2(theta2max, cens11[, 2])) * ph_laplace_der_nocons(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), 2, alphafn, Sfn) / ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn)))
+      }
+
+      ph_par <- x@pars
+      alpha_fit <- clone_vector(ph_par$alpha)
+      S_fit <- clone_matrix(ph_par$S)
+
+      if (length(B0) == 0) {
+        B_fit <- rep(0, h)
+      } else if (length(B0) != h) {
+        B_fit <- rep(0, h)
+        warning("Dimension of covariates different from regression parameter. Vector of zeroes used as initial value")
+      } else {
+        B_fit <- B0
+      }
+
+
+      if (dim(rcen)[1] > 0) {
+        rowcheck <- rowSums(rcen)
+        Xaux <- X[(rowcheck == 1), ]
+        rcenaux <- rcen[(rowcheck == 1), ]
+        Xrcens10 <- Xaux[(rcenaux[, 1] == 1), ]
+        Xrcens01 <- Xaux[(rcenaux[, 1] == 0), ]
+        Xrcens11 <- X[(rowcheck == 2), ]
+        X <- X[(rowcheck == 0), ]
+      } else {
+        Xrcens01 <- matrix(numeric(0), ncol = 2)
+        Xrcens10 <- matrix(numeric(0), ncol = 2)
+        Xrcens11 <- matrix(numeric(0), ncol = 2)
+      }
+
+      scale00 <- exp(X %*% B_fit)
+      scale01 <- if (length(Xrcens01) == 0) numeric(0) else exp(Xrcens01 %*% B_fit)
+      scale10 <- if (length(Xrcens10) == 0) numeric(0) else exp(Xrcens10 %*% B_fit)
+      scale11 <- if (length(Xrcens11) == 0) numeric(0) else exp(Xrcens11 %*% B_fit)
+
+      for (k in 1:stepsEM) {
+        par_haz_fit <- suppressWarnings(
+          stats::optim(
+            par = c(par_haz1, par_haz2, B_fit),
+            fn = Ezgiveny_cov,
+            theta1 = par_haz1,
+            theta2 = par_haz2,
+            alphafn = alpha_fit,
+            Sfn = S_fit,
+            obs = y,
+            cens01 = rcens01,
+            cens10 = rcens10,
+            cens11 = rcens11,
+            scal = scale00,
+            scal01 = scale01,
+            scal10 = scale10,
+            scal11 = scale11,
+            cinf00 = X,
+            cinf01 = Xrcens01,
+            cinf10 = Xrcens10,
+            cinf11 = Xrcens11,
+            hessian = FALSE,
+            control = list(
+              maxit = maxit,
+              reltol = reltol
+            )
+          )$par
+        )
+
+        # Discretization of density
+        deltat <- 0
+        t <- initialpoint
+
+        prob <- numeric(0)
+        value <- numeric(0)
+
+        j <- 1
+
+        while (t < truncationpoint) {
+          if (conditional_density_cov(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) < maxprobability / maxdelta) {
+            deltat <- maxdelta
+          } else {
+            deltat <- maxprobability / conditional_density_cov(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11)
+          }
+          proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11))
+          while (proba_aux > maxprobability) {
+            deltat <- deltat * 0.9
+            proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11))
+          }
+          if (proba_aux > 0) {
+            value[j] <- (t * conditional_density_cov(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + 4 * (t + deltat / 2) * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + (t + deltat) * conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11)) / (conditional_density_cov(t, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11))
+            prob[j] <- proba_aux
+            j <- j + 1
+          }
+          t <- t + deltat
+        }
+
+        # PH fitting
+        for (l in 1:stepsPH) {
+          EMstep(alpha_fit, S_fit, value, prob)
+        }
+
+        par_haz1 <- par_haz_fit[1:length(par_haz1)]
+        par_haz2 <- par_haz_fit[(length(par_haz1) + 1):(length(par_haz1) + length(par_haz2))]
+        B_fit <- par_haz_fit[(length(par_haz1) + length(par_haz2) + 1):length(par_haz_fit)]
+
+        scale00 <- exp(X %*% B_fit)
+        scale01 <- if (length(Xrcens01) == 0) numeric(0) else exp(Xrcens01 %*% B_fit)
+        scale10 <- if (length(Xrcens10) == 0) numeric(0) else exp(Xrcens10 %*% B_fit)
+        scale11 <- if (length(Xrcens11) == 0) numeric(0) else exp(Xrcens11 %*% B_fit)
+
+        if (k %% every == 0) {
+          cat("\r", "iteration:", k,
+              ", logLik:", LL_cov(alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11),
+              sep = " "
+          )
+        }
+      }
+      cat("\n", sep = "")
+      x@pars$alpha <- alpha_fit
+      x@pars$S <- S_fit
+      x@fit <- list(
+        logLik = LL_cov(alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11),
+        nobs = sum(prob)
+      )
+      x <- shared(x, bhaz1 = x@bhaz1$name, bhaz_pars1 = par_haz1, bhaz2 = x@bhaz2$name, bhaz_pars2 = par_haz2, B = B_fit)
       return(x)
     }
   }
