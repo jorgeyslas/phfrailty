@@ -171,6 +171,28 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
   return(matrix(c(U1, U2), ncol = 2))
 })
 
+
+
+#' Simulation method for shared phase type frailty models
+#'
+#' @param x An object of class \linkS4class{shared}.
+#' @param y A matrix of locations.
+#'
+#' @return A vector containing the evaluations of the cross-ratio function for a shared phase-type frailty model.
+#' @export
+#'
+#' @examples
+#' ph_obj <- phasetype(structure = "coxian")
+#' shared_obj <- shared(ph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' cross(shared_obj, matrix(c(1, 2), ncol = 2))
+setMethod("cross", c(x = "shared"), function(x, y) {
+  theta1 <- x@bhaz1$pars
+  fn1 <- x@bhaz1$cum_hazard
+  theta2 <- x@bhaz2$pars
+  fn2 <- x@bhaz2$cum_hazard
+  return(2 * ph_laplace(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), x@pars$alpha, x@pars$S) * ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 3, x@pars$alpha, x@pars$S) / (ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 2, x@pars$alpha, x@pars$S))^2)
+})
+
 #' Density method for shared phase type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.

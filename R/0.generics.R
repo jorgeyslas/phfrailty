@@ -85,6 +85,20 @@ setGeneric("surv", function(x, ...) {
 })
 
 
+#' New generic for the cross ratio function of matrix distributions
+#'
+#' Methods are available for objects of class \linkS4class{phasetype}.
+#'
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
+#'
+#' @return Cross ratio function from the matrix distribution.
+#'
+#'
+setGeneric("cross", function(x, ...) {
+  standardGeneric("cross")
+})
+
 #' New generic for the quantile of matrix distributions
 #'
 #' Methods are available for objects of class \linkS4class{phasetype}.

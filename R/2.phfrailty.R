@@ -231,6 +231,23 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
   }
 })
 
+#' Survival method for univariate phase type frailty models
+#'
+#' @param x An object of class \linkS4class{frailty}.
+#' @param q A vector of locations.
+#' @param X A matrix of covariates.
+#'
+#' @return A vector containing the corresponding survival function evaluations.
+#' @export
+#'
+#' @examples
+#' obj <- frailty(phasetype(structure = "general"), bhaz = "weibull", bhaz_pars = 2)
+#' surv(obj, c(1, 2, 3))
+setMethod("surv", c(x = "frailty"), function(x, q, X = numeric(0)) {
+  cdf(x, q, X, lower.tail = FALSE)
+})
+
+
 #' Hazard rate method for univariate phase type frailty models
 #'
 #' @param x An object of class \linkS4class{frailty}.
