@@ -385,7 +385,7 @@ setMethod(
       }
 
       if (length(rcenind) > 0) {
-        X <- rbin(X[(rcenind == 0), ], X[(rcenind == 1), ])
+        X <- base::rbin(X[(rcenind == 0), ], X[(rcenind == 1), ])
       }
 
       ex <- exp(X %*% B_fit)
