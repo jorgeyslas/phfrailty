@@ -22,6 +22,6 @@ An object of class \linkS4class{phasetype}.
 Constructor function for phase type distributions
 }
 \examples{
-phasetype(structure = "gcoxian", dim = 5)
+phasetype(structure = "gcoxian", dimension = 5)
 phasetype(alpha = c(.5, .5), S = matrix(c(-1, .5, .5, -1), 2, 2))
 }

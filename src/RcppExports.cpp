@@ -355,6 +355,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// random_structure_bivph
+List random_structure_bivph(int p1, int p2, double scale_factor);
+RcppExport SEXP _phfrailty_random_structure_bivph(SEXP p1SEXP, SEXP p2SEXP, SEXP scale_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type p1(p1SEXP);
+    Rcpp::traits::input_parameter< int >::type p2(p2SEXP);
+    Rcpp::traits::input_parameter< double >::type scale_factor(scale_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(random_structure_bivph(p1, p2, scale_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 6},
@@ -383,6 +396,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_clone_vector", (DL_FUNC) &_phfrailty_clone_vector, 1},
     {"_phfrailty_clone_matrix", (DL_FUNC) &_phfrailty_clone_matrix, 1},
     {"_phfrailty_random_structure", (DL_FUNC) &_phfrailty_random_structure, 3},
+    {"_phfrailty_random_structure_bivph", (DL_FUNC) &_phfrailty_random_structure_bivph, 3},
     {NULL, NULL, 0}
 };
 

@@ -359,3 +359,17 @@ random_structure <- function(p, structure = "general", scale_factor = 1) {
     .Call(`_phfrailty_random_structure`, p, structure, scale_factor)
 }
 
+#' Random structure of a bivariate phase-type
+#'
+#' Generates random parameters \code{alpha}, \code{S11}, \code{S12}, and \code{S22}
+#' of a bivariate phase-type distribution of dimension \code{p  = p1 + p2}.
+#' @param p1 Dimension of the first block.
+#' @param p2 Dimension of the second block.
+#' @param scale_factor A factor that multiplies the sub-intensity matrix.
+#' @return Random parameters  \code{alpha}, \code{S11}, \code{S12}, and \code{S22}
+#'  of a bivariate phase-type.
+#'
+random_structure_bivph <- function(p1, p2, scale_factor = 1) {
+    .Call(`_phfrailty_random_structure_bivph`, p1, p2, scale_factor)
+}
+

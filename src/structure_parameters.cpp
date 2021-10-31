@@ -118,3 +118,66 @@ List random_structure(int p, String structure = "general", double scale_factor =
 
   return L;
 }
+
+
+//' Random structure of a bivariate phase-type
+//'
+//' Generates random parameters \code{alpha}, \code{S11}, \code{S12}, and \code{S22}
+//' of a bivariate phase-type distribution of dimension \code{p  = p1 + p2}.
+//' @param p1 Dimension of the first block.
+//' @param p2 Dimension of the second block.
+//' @param scale_factor A factor that multiplies the sub-intensity matrix.
+//' @return Random parameters  \code{alpha}, \code{S11}, \code{S12}, and \code{S22}
+//'  of a bivariate phase-type.
+//'
+// [[Rcpp::export]]
+List random_structure_bivph(int p1, int p2, double scale_factor = 1) {
+
+  NumericVector alpha(p1);
+  NumericMatrix S11(p1, p1);
+  NumericMatrix S12(p1, p2);
+  NumericMatrix S22(p2, p2);
+
+  double sum{0.0};
+
+  for (int i{0}; i < p1; ++i) {
+    alpha[i] = runif(1)[0];
+    sum += alpha[i];
+  }
+  alpha = alpha / sum;
+
+  for (int i{0}; i < p1; ++i) {
+    for (int j{0}; j < p1; ++j) {
+      if (i != j) {
+        S11(i,j) = runif(1)[0];
+        S11(i,i) -= S11(i,j);
+      }
+    }
+    for (int j{0}; j < p2; ++j) {
+      S12(i,j) = runif(1)[0];
+      S11(i,i) -= S12(i,j);
+    }
+  }
+
+  for (int i{0}; i < p2; ++i) {
+    for (int j{0}; j < p2; ++j) {
+      if (i != j) {
+        S22(i,j) = runif(1)[0];
+        S22(i,i) -= S22(i,j);
+      }
+    }
+  }
+
+  for (int i{0}; i < p2; ++i) {
+    S22(i,i) -= runif(1)[0];
+  }
+
+  S11 = S11 * scale_factor;
+  S12 = S12 * scale_factor;
+  S22 = S22 * scale_factor;
+
+  List L = List::create(Named("alpha") = alpha, _["S11"] = S11, _["S12"] = S12, _["S22"] = S22);
+
+  return L;
+}
+

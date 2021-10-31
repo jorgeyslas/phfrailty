@@ -33,7 +33,7 @@ setClass("phasetype",
 #' @export
 #'
 #' @examples
-#' phasetype(structure = "gcoxian", dim = 5)
+#' phasetype(structure = "gcoxian", dimension = 5)
 #' phasetype(alpha = c(.5, .5), S = matrix(c(-1, .5, .5, -1), 2, 2))
 phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
   if (any(is.null(alpha)) & any(is.null(S)) & is.null(structure)) {
