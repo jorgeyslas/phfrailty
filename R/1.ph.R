@@ -236,8 +236,19 @@ setMethod(
            maxit = 100,
            reltol = 1e-8,
            every = 100) {
-    if (!all(c(y, rcen) > 0)) {
+    if (!all(c(y) > 0)) {
       stop("data should be positive")
+    }
+    rcenind <- rcen
+    if (length(rcenind) > 0) {
+      if (!all((sum(rcenind == 0) + sum(rcenind == 1)) == (length(y)))) {
+        stop("right censoring indicator should contain only zeroes and ones")
+      }
+      if (length(y) != length(rcenind)) {
+        stop("data and right censoring indicator should have the same dimensions")
+      }
+      rcen <- y[(rcenind == 1)]
+      y <- y[(rcenind == 0)]
     }
 
     par_haz <- x@bhaz$pars
@@ -373,6 +384,9 @@ setMethod(
         B_fit <- B0
       }
 
+      if (length(rcenind) > 0) {
+        X <- rbin(X[(rcenind == 0), ], X[(rcenind == 1), ])
+      }
 
       ex <- exp(X %*% B_fit)
       scale1 <- ex[1:length(y)]

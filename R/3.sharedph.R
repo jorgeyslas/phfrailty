@@ -318,7 +318,7 @@ setMethod(
     rcen <- as.matrix(rcen)
 
     if (dim(rcen)[1] > 0) {
-      if (!all((sum(rcen == 0) + sum(rcen == 1)) != (dim(y)[1] * dim(y)[2]))) {
+      if (!all((sum(rcen == 0) + sum(rcen == 1)) == (dim(y)[1] * dim(y)[2]))) {
         stop("right censoring indicator should contain only zeroes and ones")
       }
       if (dim(y) != dim(rcen)) {
