@@ -8,6 +8,7 @@
   x,
   y,
   rcen = numeric(0),
+  weight = numeric(0),
   X = numeric(0),
   stepsEM = 1000,
   stepsPH = 50,
@@ -26,6 +27,8 @@
 \item{y}{Vector or data.}
 
 \item{rcen}{Vector of right-censored observations.}
+
+\item{weight}{Vector of weights for observations.}
 
 \item{X}{A matrix of covariates.}
 

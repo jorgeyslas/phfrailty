@@ -202,6 +202,7 @@ setMethod("quan", c(x = "phasetype"), function(x, p) {
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param y Vector or data.
 #' @param rcen Vector of right-censored observations.
+#' @param weight Vector of weights for observations.
 #' @param X A matrix of covariates.
 #' @param initialpoint Initial value for discretization of density.
 #' @param truncationpoint Ultimate value for discretization of density.
@@ -226,6 +227,7 @@ setMethod(
   function(x,
            y,
            rcen = numeric(0),
+           weight = numeric(0),
            X = numeric(0),
            stepsEM = 1000,
            stepsPH = 50,
@@ -239,6 +241,12 @@ setMethod(
     if (!all(c(y) > 0)) {
       stop("data should be positive")
     }
+    rcenweight <- numeric(0)
+    if (length(weight) == 0) {
+      weight <- rep(1, length(y))
+    } else  if (!all(c(weight) >= 0)) {
+      stop("weights should be non-negative")
+    }
     rcenind <- rcen
     if (length(rcenind) > 0) {
       if (!all((sum(rcenind == 0) + sum(rcenind == 1)) == (length(y)))) {
@@ -249,6 +257,8 @@ setMethod(
       }
       rcen <- y[(rcenind == 1)]
       y <- y[(rcenind == 0)]
+      rcenweight <- weight[(rcenind == 1)]
+      weight <- weight[(rcenind == 0)]
     }
 
     par_haz <- x@bhaz$pars
@@ -257,16 +267,16 @@ setMethod(
     X <- as.matrix(X)
 
     if (any(dim(X) == 0)) {
-      LL <- function(alphafn, Sfn, theta, obs, cens) {
-        sum(log(ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn) * haz(theta, obs))) + sum(log(ph_laplace(chaz(theta, cens), alphafn, Sfn)))
+      LL <- function(alphafn, Sfn, theta, obs, cens, weightobs, weightcens) {
+        sum(weightobs * log(ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn) * haz(theta, obs))) + sum(weightcens * log(ph_laplace(chaz(theta, cens), alphafn, Sfn)))
       }
 
-      conditional_density <- function(z, alphafn, Sfn, theta, obs, cens) {
-        (sum(z * exp(-z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(exp(-z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (length(obs) + length(cens))
+      conditional_density <- function(z, alphafn, Sfn, theta, obs, cens, weightobs, weightcens) {
+        (sum(z * weightobs * exp(-z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(weightcens * exp(-z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (sum(weight) + sum(rcenweight))
       }
 
-      Ezgiveny <- function(thetamax, alphafn, Sfn, theta, obs, cens) {
-        -sum(log(haz(thetamax, obs)) - chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))
+      Ezgiveny <- function(thetamax, alphafn, Sfn, theta, obs, cens, weightobs, weightcens) {
+        -sum(weightobs * (log(haz(thetamax, obs)) - chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs), 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn))) + sum(weightcens * chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens), 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))
       }
 
       ph_par <- x@pars
@@ -285,6 +295,8 @@ setMethod(
             Sfn = S_fit,
             obs = y,
             cens = rcen,
+            weightobs = weight,
+            weightcens = rcenweight,
             hessian = FALSE,
             control = list(
               maxit = maxit,
@@ -303,18 +315,18 @@ setMethod(
         j <- 1
 
         while (t < truncationpoint) {
-          if (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) < maxprobability / maxdelta) {
+          if (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) < maxprobability / maxdelta) {
             deltat <- maxdelta
           } else {
-            deltat <- maxprobability / conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen)
+            deltat <- maxprobability / conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight)
           }
-          proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
+          proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight))
           while (proba_aux > maxprobability) {
             deltat <- deltat * 0.9
-            proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
+            proba_aux <- deltat / 6 * (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight))
           }
           if (proba_aux > 0) {
-            value[j] <- (t * conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen)) / (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen))
+            value[j] <- (t * conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + 4 * (t + deltat / 2) * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + (t + deltat) * conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight)) / (conditional_density(t, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + 4 * conditional_density(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight) + conditional_density(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight))
             prob[j] <- proba_aux
             j <- j + 1
           }
@@ -330,7 +342,7 @@ setMethod(
 
         if (k %% every == 0) {
           cat("\r", "iteration:", k,
-            ", logLik:", LL(alpha_fit, S_fit, par_haz, y, rcen),
+            ", logLik:", LL(alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight),
             sep = " "
           )
         }
@@ -339,7 +351,7 @@ setMethod(
       x@pars$alpha <- alpha_fit
       x@pars$S <- S_fit
       x@fit <- list(
-        logLik = LL(alpha_fit, S_fit, par_haz, y, rcen),
+        logLik = LL(alpha_fit, S_fit, par_haz, y, rcen, weight, rcenweight),
         nobs = sum(prob)
       )
       x <- frailty(x, bhaz = x@bhaz$name, bhaz_pars = par_haz)
@@ -354,21 +366,21 @@ setMethod(
         stop("Number of observations different from number of covariates")
       }
 
-      LL_cov <- function(alphafn, Sfn, theta, obs, cens, scaleobs, scalecens) {
-        sum(log(ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn) * haz(theta, obs) * scaleobs)) + sum(log(ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn)))
+      LL_cov <- function(alphafn, Sfn, theta, obs, cens, scaleobs, scalecens, weightobs, weightcens) {
+        sum(weightobs * log(ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn) * haz(theta, obs) * scaleobs)) + sum(weightcens * log(ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn)))
       }
 
-      conditional_density_cov <- function(z, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens) {
-        (sum(z * exp(-z * chaz(theta, obs) * scaleobs) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(exp(-z * chaz(theta, cens) * scalecens) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))) / (length(obs) + length(cens))
+      conditional_density_cov <- function(z, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens, weightobs, weightcens) {
+        (sum(z * weightobs * exp(-z * chaz(theta, obs) * scaleobs) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(weightcens * exp(-z * chaz(theta, cens) * scalecens) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))) / (sum(weightobs) + sum(weightcens))
       }
 
-      Ezgiveny_cov <- function(parmax, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens, covinf) {
+      Ezgiveny_cov <- function(parmax, alphafn, Sfn, theta, obs, cens, scaleobs, scalecens, covinf, weightobs, weightcens) {
         thetamax <- parmax[1:length(theta)]
         Bmax <- parmax[(length(theta) + 1):length(parmax)]
         exmax <- exp(covinf %*% Bmax)
         scaleobsmax <- exmax[1:length(obs)]
         scalecensmax <- utils::tail(exmax, length(cens))
-        -sum(log(haz(thetamax, obs) * scaleobsmax) - scaleobsmax * chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn)) + sum(scalecensmax * chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens) * scalecens, 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))
+        -sum(weightobs * (log(haz(thetamax, obs) * scaleobsmax) - scaleobsmax * chaz(thetamax, obs) * 2 * ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 3, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs) * scaleobs, 2, alphafn, Sfn))) + sum(weightcens * scalecensmax * chaz(thetamax, cens) * ph_laplace_der_nocons(chaz(theta, cens) * scalecens, 2, alphafn, Sfn) / ph_laplace(chaz(theta, cens) * scalecens, alphafn, Sfn))
       }
 
       ph_par <- x@pars
@@ -405,6 +417,8 @@ setMethod(
             scaleobs = scale1,
             scalecens = scale2,
             covinf = X,
+            weightobs = weight,
+            weightcens = rcenweight,
             hessian = FALSE,
             control = list(
               maxit = maxit,
@@ -423,18 +437,18 @@ setMethod(
         j <- 1
 
         while (t < truncationpoint) {
-          if (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) < maxprobability / maxdelta) {
+          if (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) < maxprobability / maxdelta) {
             deltat <- maxdelta
           } else {
-            deltat <- maxprobability / conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2)
+            deltat <- maxprobability / conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight)
           }
-          proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
+          proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight))
           while (proba_aux > maxprobability) {
             deltat <- deltat * 0.9
-            proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
+            proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight))
           }
           if (proba_aux > 0) {
-            value[j] <- (t * conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * (t + deltat / 2) * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + (t + deltat) * conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2)) / (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2))
+            value[j] <- (t * conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + 4 * (t + deltat / 2) * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + (t + deltat) * conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight)) / (conditional_density_cov(t, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight) + conditional_density_cov(t + deltat, alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight))
             prob[j] <- proba_aux
             j <- j + 1
           }
@@ -455,7 +469,7 @@ setMethod(
 
         if (k %% every == 0) {
           cat("\r", "iteration:", k,
-            ", logLik:", LL_cov(alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2),
+            ", logLik:", LL_cov(alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight),
             sep = " "
           )
         }
@@ -464,7 +478,7 @@ setMethod(
       x@pars$alpha <- alpha_fit
       x@pars$S <- S_fit
       x@fit <- list(
-        logLik = LL_cov(alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2),
+        logLik = LL_cov(alpha_fit, S_fit, par_haz, y, rcen, scale1, scale2, weight, rcenweight),
         nobs = sum(prob)
       )
       x <- frailty(x, bhaz = x@bhaz$name, bhaz_pars = par_haz, B = B_fit)
