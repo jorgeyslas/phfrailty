@@ -224,10 +224,12 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
 
   if (any(dim(X) == 0)) {
     den <- 2 * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 3, x@pars$alpha, x@pars$S)
+    names(den) <- NULL
     return(den)
   } else {
     if (length(B0) == 0) {
       den <- 2 * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 3, x@pars$alpha, x@pars$S)
+      names(den) <- NULL
       warning("empty regression parameter, returns joint density without covariate information")
       return(den)
     } else {
@@ -237,7 +239,8 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
         stop("dimension of observations different from covariates")
       } else {
         ex <- exp(X %*% B0)
-        den <- 2 * ex * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons((fn1(theta1, y[, 1]) + fn2(theta2, y[, 2])) * ex, 3, x@pars$alpha, x@pars$S)
+        den <- 2 * ex^2 * fn1_der(theta1, y[, 1]) * fn2_der(theta2, y[, 2]) * ph_laplace_der_nocons((fn1(theta1, y[, 1]) + fn2(theta2, y[, 2])) * ex, 3, x@pars$alpha, x@pars$S)
+        names(den) <- NULL
         return(den)
       }
     }
@@ -634,8 +637,6 @@ setMethod(
 )
 
 
-
-
 #' Coef method for shared frailty class
 #'
 #' @param object An object of class \linkS4class{shared}.
@@ -654,3 +655,25 @@ setMethod("coef", c(object = "shared"), function(object) {
   L$B <- object@coefs$B
   L
 })
+
+
+#' Marginal method for shared frailty class
+#'
+#' @param x An object of class \linkS4class{shared}.
+#' @param mar Indicator of which marginal.
+#' @return An object of the of class \linkS4class{frailty}.
+#' @export
+#'
+#' @examples
+#' ph_obj <- phasetype(structure = "coxian")
+#' shared_obj <- shared(ph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' marginal(shared_obj, 1)
+setMethod("marginal", c(x = "shared"), function(x, mar = 1) {
+  if (mar == 1) {
+    xn <- frailty(x, bhaz = x@bhaz1$name, bhaz_pars = x@bhaz1$pars, B = x@coefs$B)
+  } else {
+    xn <- frailty(x, bhaz = x@bhaz2$name, bhaz_pars = x@bhaz2$pars, B = x@coefs$B)
+  }
+  return(xn)
+})
+

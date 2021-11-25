@@ -18,5 +18,5 @@ An object of the fitted model class.
 }
 \description{
 Methods are available for objects of classes \linkS4class{phasetype} and
-\linkS4class{bphasetype}.
+\linkS4class{bivphasetype}.
 }
