@@ -17,5 +17,6 @@ fit(x, y, ...)
 An object of the fitted model class.
 }
 \description{
-Methods are available for objects of class \linkS4class{phasetype}.
+Methods are available for objects of classes \linkS4class{phasetype} and
+\linkS4class{bphasetype}.
 }

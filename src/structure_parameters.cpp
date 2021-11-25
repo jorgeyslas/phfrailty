@@ -181,3 +181,33 @@ List random_structure_bivph(int p1, int p2, double scale_factor = 1) {
   return L;
 }
 
+
+//' Merges the matrices S11, S12 and S22 into a sub-intensity matrix
+//'
+//' @param S11 A sub-intensity matrix.
+//' @param S12 A matrix.
+//' @param S22 A sub-intensity matrix.
+//' @return A sub-intensity matrix.
+//'
+// [[Rcpp::export]]
+NumericMatrix merge_matrices(NumericMatrix S11, NumericMatrix S12, NumericMatrix S22) {
+  long p1{S11.nrow()};
+  long p2{S22.nrow()};
+  NumericMatrix S(p1 +p2, p1 + p2);
+
+  for (int i{0}; i < p1; ++i) {
+    for (int j{0}; j < p1; ++j) {
+      S(i,j) = S11(i,j);
+    }
+    for (int j{0}; j < p2; ++j) {
+      S(i,j + p1) = S12(i,j);
+    }
+  }
+  for (int i{0}; i < p2; ++i) {
+    for (int j{0}; j < p2; ++j) {
+      S(i + p1,j + p1) = S22(i,j);
+    }
+  }
+
+  return S;
+}

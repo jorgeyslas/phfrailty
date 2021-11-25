@@ -320,6 +320,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rmph
+Rcpp::NumericMatrix rmph(int n, arma::vec alpha, arma::mat S, arma::mat R);
+RcppExport SEXP _phfrailty_rmph(SEXP nSEXP, SEXP alphaSEXP, SEXP SSEXP, SEXP RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    rcpp_result_gen = Rcpp::wrap(rmph(n, alpha, S, R));
+    return rcpp_result_gen;
+END_RCPP
+}
 // clone_vector
 NumericVector clone_vector(NumericVector v);
 RcppExport SEXP _phfrailty_clone_vector(SEXP vSEXP) {
@@ -368,6 +382,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// merge_matrices
+NumericMatrix merge_matrices(NumericMatrix S11, NumericMatrix S12, NumericMatrix S22);
+RcppExport SEXP _phfrailty_merge_matrices(SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(merge_matrices(S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 6},
@@ -393,10 +420,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_initial_state", (DL_FUNC) &_phfrailty_initial_state, 2},
     {"_phfrailty_new_state", (DL_FUNC) &_phfrailty_new_state, 3},
     {"_phfrailty_rphasetype", (DL_FUNC) &_phfrailty_rphasetype, 3},
+    {"_phfrailty_rmph", (DL_FUNC) &_phfrailty_rmph, 4},
     {"_phfrailty_clone_vector", (DL_FUNC) &_phfrailty_clone_vector, 1},
     {"_phfrailty_clone_matrix", (DL_FUNC) &_phfrailty_clone_matrix, 1},
     {"_phfrailty_random_structure", (DL_FUNC) &_phfrailty_random_structure, 3},
     {"_phfrailty_random_structure_bivph", (DL_FUNC) &_phfrailty_random_structure_bivph, 3},
+    {"_phfrailty_merge_matrices", (DL_FUNC) &_phfrailty_merge_matrices, 3},
     {NULL, NULL, 0}
 };
 

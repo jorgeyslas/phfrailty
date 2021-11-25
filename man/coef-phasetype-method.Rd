@@ -10,7 +10,7 @@
 \item{object}{An object of class \linkS4class{phasetype}.}
 }
 \value{
-Parameters of phasetype model.
+Parameters of phase type model.
 }
 \description{
 Coef method for phasetype class

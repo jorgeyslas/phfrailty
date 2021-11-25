@@ -1,6 +1,7 @@
 #' New generic for simulating matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}.
+#' Methods are available for objects of classes \linkS4class{phasetype} and
+#' \linkS4class{bphasetype}.
 #'
 #' @param x An object of the model class.
 #' @param ... Further parameters to be passed on.
@@ -29,7 +30,8 @@ setGeneric("moment", function(x, ...) {
 
 #' New generic for the density of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}.
+#' Methods are available for objects of classes \linkS4class{phasetype} and
+#' \linkS4class{bphasetype}.
 #'
 #' @param x An object of the model class.
 #' @param ... Further parameters to be passed on.
@@ -72,7 +74,8 @@ setGeneric("cdf", function(x, ...) {
 
 #' New generic for the survival function of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}.
+#' Methods are available for objects of classes \linkS4class{phasetype} and
+#' \linkS4class{bphasetype}.
 #'
 #' @param x An object of the model class.
 #' @param ... Further parameters to be passed on.
@@ -115,7 +118,8 @@ setGeneric("quan", function(x, ...) {
 
 #' New generic for estimation of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}.
+#' Methods are available for objects of classes \linkS4class{phasetype} and
+#' \linkS4class{bphasetype}.
 #'
 #' @param x An object of the model class.
 #' @param y A vector of data.

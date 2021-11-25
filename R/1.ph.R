@@ -492,7 +492,7 @@ setMethod(
 #'
 #' @param object An object of class \linkS4class{phasetype}.
 #'
-#' @return Parameters of phasetype model.
+#' @return Parameters of phase type model.
 #' @export
 #'
 #' @examples

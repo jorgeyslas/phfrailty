@@ -327,6 +327,27 @@ rphasetype <- function(n, alpha, S) {
     .Call(`_phfrailty_rphasetype`, n, alpha, S)
 }
 
+#' Simulate a MPH* random vector
+#'
+#' Generates a sample of size \code{n} from a MPH* distribution with parameters
+#'  \code{alpha}, \code{S} and \code{R}.
+#'
+#' @param n Sample size.
+#' @param alpha Initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @param R Reward matrix.
+#' @return The simulated sample.
+#' @export
+#' @examples
+#' alpha <- c(0.5, 0.3, 0.2)
+#' S <- matrix(c(c(-1, 0, 0), c(1, -2, 0), c(0, 1, -5)), nrow = 3, ncol = 3)
+#' R <- matrix(c(c(1, 0, 0.8), c(0, 1, 0.2)), nrow = 3, ncol = 2)
+#' n <- 10
+#' rmph(n, alpha, S, R)
+rmph <- function(n, alpha, S, R) {
+    .Call(`_phfrailty_rmph`, n, alpha, S, R)
+}
+
 #' Clone a vector
 #'
 #' @param v A vector.
@@ -371,5 +392,16 @@ random_structure <- function(p, structure = "general", scale_factor = 1) {
 #'
 random_structure_bivph <- function(p1, p2, scale_factor = 1) {
     .Call(`_phfrailty_random_structure_bivph`, p1, p2, scale_factor)
+}
+
+#' Merges the matrices S11, S12 and S22 into a sub-intensity matrix
+#'
+#' @param S11 A sub-intensity matrix.
+#' @param S12 A matrix.
+#' @param S22 A sub-intensity matrix.
+#' @return A sub-intensity matrix.
+#'
+merge_matrices <- function(S11, S12, S22) {
+    .Call(`_phfrailty_merge_matrices`, S11, S12, S22)
 }
 
