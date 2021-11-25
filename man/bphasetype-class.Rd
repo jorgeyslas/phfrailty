@@ -8,7 +8,7 @@
 Class object.
 }
 \description{
-Class of objects for bivariate phase type distributions
+Class of objects for bivariate phase type distributions.
 }
 \section{Slots}{
 

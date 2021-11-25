@@ -14,7 +14,7 @@
 \item{X}{A matrix of covariates.}
 }
 \value{
-A vector containing the corresponding joint density evaluations.
+A vector containing the joint density evaluations at the given locations.
 }
 \description{
 Density method for shared phase type frailty models

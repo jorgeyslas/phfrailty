@@ -12,7 +12,7 @@
 \item{y}{A matrix of locations.}
 }
 \value{
-A list containing the locations and corresponding joint density evaluations.
+A vector containing the joint density evaluations at the given locations.
 }
 \description{
 Density method for bivariate phase type distributions

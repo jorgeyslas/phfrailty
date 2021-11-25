@@ -14,7 +14,7 @@
 \item{X}{A matrix of covariates.}
 }
 \value{
-A vector containing the corresponding survival function evaluations.
+A vector containing the survival function evaluations at the given locations.
 }
 \description{
 Survival method for univariate phase type frailty models

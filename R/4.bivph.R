@@ -1,6 +1,6 @@
 #' Bivariate phase type distributions
 #'
-#' Class of objects for bivariate phase type distributions
+#' Class of objects for bivariate phase type distributions.
 #'
 #' @slot name Name of the phase type distribution.
 #' @slot pars A list comprising of the parameters.
@@ -28,7 +28,7 @@ setClass("bphasetype",
 #' @param S11 A sub-intensity matrix.
 #' @param S12 A matrix.
 #' @param S22 A sub-intensity matrix.
-#' @param dimensions The dimensions of the bivariate phase-type structure (if structure is provided).
+#' @param dimensions The dimensions of the bivariate phase-type (if no parameters are provided).
 #'
 #' @return An object of class \linkS4class{bphasetype}.
 #' @export
@@ -85,7 +85,7 @@ setMethod("show", "bphasetype", function(object) {
 #' @param x An object of class \linkS4class{bphasetype}.
 #' @param y A matrix of locations.
 #'
-#' @return A list containing the locations and corresponding joint density evaluations.
+#' @return A vector containing the joint density evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -101,7 +101,7 @@ setMethod("dens", c(x = "bphasetype"), function(x, y) {
 #' @param x An object of class \linkS4class{bphasetype}.
 #' @param y A matrix of locations.
 #'
-#' @return A list containing the locations and corresponding joint survival evaluations.
+#' @return A vector containing the joint survival evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -117,7 +117,8 @@ setMethod("surv", c(x = "bphasetype"), function(x, y) {
 #' @param x An object of class \linkS4class{bphasetype}.
 #' @param n An integer of length of realization.
 #'
-#' @return A realization of independent and identically distributed phase-type variables.
+#' @return A realization of independent and identically distributed bivariate
+#'  phase-type vector.
 #' @export
 #'
 #' @examples

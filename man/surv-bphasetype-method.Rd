@@ -12,7 +12,7 @@
 \item{y}{A matrix of locations.}
 }
 \value{
-A list containing the locations and corresponding joint survival evaluations.
+A vector containing the joint survival evaluations at the given locations.
 }
 \description{
 Survival method for bivariate phase type distributions

@@ -173,12 +173,13 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
 
 
 
-#' Simulation method for shared phase type frailty models
+#' Cross method for shared phase type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param y A matrix of locations.
 #'
-#' @return A vector containing the evaluations of the cross-ratio function for a shared phase-type frailty model.
+#' @return A vector containing the evaluations of the cross-ratio function for a
+#'  shared phase-type frailty model at the given locations.
 #' @export
 #'
 #' @examples
@@ -199,7 +200,7 @@ setMethod("cross", c(x = "shared"), function(x, y) {
 #' @param y A matrix of locations.
 #' @param X A matrix of covariates.
 #'
-#' @return A vector containing the corresponding joint density evaluations.
+#' @return A vector containing the joint density evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -250,7 +251,7 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
 #' @param q A matrix of locations.
 #' @param X A matrix of covariates.
 #'
-#' @return A vector containing the corresponding joint survival evaluations.
+#' @return A vector containing the joint survival evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -639,7 +640,7 @@ setMethod(
 #'
 #' @param object An object of class \linkS4class{shared}.
 #'
-#' @return Parameters of shared phase type frailty model.
+#' @return Parameters of the shared phase type frailty model.
 #' @export
 #'
 #' @examples

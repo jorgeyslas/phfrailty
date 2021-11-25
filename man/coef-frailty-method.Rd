@@ -10,7 +10,7 @@
 \item{object}{An object of class \linkS4class{frailty}.}
 }
 \value{
-Parameters of univariate phase type frailty model.
+Parameters of the univariate phase type frailty model.
 }
 \description{
 Coef method for univariate frailty class

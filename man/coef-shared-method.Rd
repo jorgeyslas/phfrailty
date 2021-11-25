@@ -10,7 +10,7 @@
 \item{object}{An object of class \linkS4class{shared}.}
 }
 \value{
-Parameters of shared phase type frailty model.
+Parameters of the shared phase type frailty model.
 }
 \description{
 Coef method for shared frailty class

@@ -12,7 +12,7 @@
 \item{p}{A vector of probabilities.}
 }
 \value{
-A list containing the probabilities and corresponding quantile evaluations.
+A vector containing the quantile evaluations at the given probabilities.
 }
 \description{
 Quantile method for phase type distributions

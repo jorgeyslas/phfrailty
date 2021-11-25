@@ -14,7 +14,7 @@
 \item{lower.tail}{Logical parameter specifying whether lower tail (cdf) or upper tail is computed.}
 }
 \value{
-A list containing the locations and corresponding CDF evaluations.
+A vector containing the CDF evaluations at the given locations.
 }
 \description{
 Distribution method for phase type distributions

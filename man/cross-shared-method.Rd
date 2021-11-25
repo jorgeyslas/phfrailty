@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{cross,shared-method}
 \alias{cross,shared-method}
-\title{Simulation method for shared phase type frailty models}
+\title{Cross method for shared phase type frailty models}
 \usage{
 \S4method{cross}{shared}(x, y)
 }
@@ -12,10 +12,11 @@
 \item{y}{A matrix of locations.}
 }
 \value{
-A vector containing the evaluations of the cross-ratio function for a shared phase-type frailty model.
+A vector containing the evaluations of the cross-ratio function for a
+shared phase-type frailty model at the given locations.
 }
 \description{
-Simulation method for shared phase type frailty models
+Cross method for shared phase type frailty models
 }
 \examples{
 ph_obj <- phasetype(structure = "coxian")

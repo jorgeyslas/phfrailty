@@ -21,7 +21,7 @@ bphasetype(
 
 \item{S22}{A sub-intensity matrix.}
 
-\item{dimensions}{The dimensions of the bivariate phase-type structure (if structure is provided).}
+\item{dimensions}{The dimensions of the bivariate phase-type (if no parameters are provided).}
 }
 \value{
 An object of class \linkS4class{bphasetype}.

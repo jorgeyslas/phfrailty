@@ -12,7 +12,8 @@
 \item{n}{An integer of length of realization.}
 }
 \value{
-A realization of independent and identically distributed phase-type variables.
+A realization of independent and identically distributed bivariate
+phase-type vector.
 }
 \description{
 Simulation method for bivariate phase type distributions

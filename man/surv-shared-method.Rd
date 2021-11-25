@@ -14,7 +14,7 @@
 \item{X}{A matrix of covariates.}
 }
 \value{
-A vector containing the corresponding joint survival evaluations.
+A vector containing the joint survival evaluations at the given locations.
 }
 \description{
 Survival method for shared phase type frailty models

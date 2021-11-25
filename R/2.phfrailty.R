@@ -135,7 +135,7 @@ setMethod("sim", c(x = "frailty"), function(x, n = 1000) {
 #' @param y A vector of locations.
 #' @param X A matrix of covariates.
 #'
-#' @return A vector containing the corresponding density evaluations.
+#' @return A vector containing the density evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -181,7 +181,7 @@ setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
 #' @param X A matrix of covariates.
 #' @param lower.tail Logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
-#' @return A vector containing the corresponding CDF evaluations.
+#' @return A vector containing the CDF evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -237,7 +237,7 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
 #' @param q A vector of locations.
 #' @param X A matrix of covariates.
 #'
-#' @return A vector containing the corresponding survival function evaluations.
+#' @return A vector containing the survival function evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -270,7 +270,7 @@ setMethod("haz", c(x = "frailty"), function(x, y, X = numeric(0)) {
 #'
 #' @param object An object of class \linkS4class{frailty}.
 #'
-#' @return Parameters of univariate phase type frailty model.
+#' @return Parameters of the univariate phase type frailty model.
 #' @export
 #'
 #' @examples
