@@ -251,7 +251,7 @@ Rcpp::NumericVector bivph_laplace(Rcpp::NumericMatrix r, arma::vec alpha, arma::
   arma::mat aux_mat(1,1);
 
   for (int k = 0; k < N; ++k) {
-    aux_mat = alpha.t() * inv(identity_matrix1 * r[k] +  S11 * (-1.0)) * S12 * inv(identity_matrix2 * r[k] +  S22 * (-1.0)) * exit_vect;
+    aux_mat = alpha.t() * inv(identity_matrix1 * r(k,0) +  S11 * (-1.0)) * S12 * inv(identity_matrix2 * r(k,1) +  S22 * (-1.0)) * exit_vect;
     laplace[k] = aux_mat(0,0);
   }
   return laplace;
@@ -295,7 +295,7 @@ Rcpp::NumericVector bivph_laplace_der_nocons(Rcpp::NumericMatrix r, int n, int m
   arma::mat aux_mat(1,1);
 
   for (int k = 0; k < N; ++k) {
-    aux_mat = alpha.t() * matrix_power(n, inv(identity_matrix1 * r[k] +  S11 * (-1.0))) * S12 * matrix_power(m, inv(identity_matrix2 * r[k] +  S22 * (-1.0))) * exit_vect;
+    aux_mat = alpha.t() * matrix_power(n, inv(identity_matrix1 * r(k,0) +  S11 * (-1.0))) * S12 * matrix_power(m, inv(identity_matrix2 * r(k,1) +  S22 * (-1.0))) * exit_vect;
     laplace_der[k] = aux_mat(0,0);
   }
   return laplace_der;

@@ -228,3 +228,94 @@ setMethod("dens", c(x = "correlated"), function(x, y, X = numeric(0)) {
     }
   }
 })
+
+
+#' Survival method for correlated phase type frailty models
+#'
+#' @param x An object of class \linkS4class{correlated}.
+#' @param q A matrix of locations.
+#' @param X A matrix of covariates.
+#'
+#' @return A vector containing the joint survival evaluations at the given locations.
+#' @export
+#'
+#' @examples
+#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' surv(cobj, matrix(c(1, 2), ncol = 2))
+setMethod("surv", c(x = "correlated"), function(x, q, X = numeric(0)) {
+  theta1 <- x@bhaz1$pars
+  fn1 <- x@bhaz1$cum_hazard
+  theta2 <- x@bhaz2$pars
+  fn2 <- x@bhaz2$cum_hazard
+  B0 <- x@coefs$B
+  q <- as.matrix(q)
+  X <- as.matrix(X)
+
+  if (dim(q)[2] != 2) {
+    stop("the matrix of locations must have two columns")
+  }
+
+  if (any(dim(X) == 0)) {
+    sur <- bivph_laplace(matrix(c(fn1(theta1, q[, 1]), fn2(theta2, q[, 2])), ncol = 2), x@pars$alpha, x@pars$S11, x@pars$S12, x@pars$S22)
+    return(sur)
+  } else {
+    if (length(B0) == 0) {
+      sur <- bivph_laplace(matrix(c(fn1(theta1, q[, 1]), fn2(theta2, q[, 2])), ncol = 2), x@pars$alpha, x@pars$S11, x@pars$S12, x@pars$S22)
+      warning("empty regression parameter, returns joint survival without covariate information")
+      return(sur)
+    } else {
+      if (length(B0) != dim(X)[2]) {
+        stop("dimension of covariates different from regression parameter")
+      } else if (dim(q)[1] != dim(X)[1]) {
+        stop("dimension of observations different from covariates")
+      } else {
+        ex <- exp(X %*% B0)
+        sur <- bivph_laplace(matrix(c(fn1(theta1, q[, 1]) * ex, fn2(theta2, q[, 2])) * ex, ncol = 2), x@pars$alpha, x@pars$S11, x@pars$S12, x@pars$S22)
+        return(sur)
+      }
+    }
+  }
+})
+
+
+#' Coef method for correlated frailty class
+#'
+#' @param object An object of class \linkS4class{correlated}.
+#'
+#' @return Parameters of the correlated phase type frailty model.
+#' @export
+#'
+#' @examples
+#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' coef(cobj)
+setMethod("coef", c(object = "correlated"), function(object) {
+  L <- object@pars
+  L$bhazpars1 <- object@bhaz1$pars
+  L$bhazpars2 <- object@bhaz2$pars
+  L$B <- object@coefs$B
+  L
+})
+
+
+#' Marginal method for correlated frailty class
+#'
+#' @param x An object of class \linkS4class{correlated}.
+#' @param mar Indicator of which marginal.
+#' @return An object of the of class \linkS4class{frailty}.
+#' @export
+#'
+#' @examples
+#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' marginal(cobj, 1)
+setMethod("marginal", c(x = "correlated"), function(x, mar = 1) {
+  if (mar == 1) {
+    xn <- frailty(marginal(bivphasetype(x@pars$alpha, x@pars$S11, x@pars$S12, x@pars$S22), 1), bhaz = x@bhaz1$name, bhaz_pars = x@bhaz1$pars, B = x@coefs$B)
+  } else {
+    xn <- frailty(marginal(bivphasetype(x@pars$alpha, x@pars$S11, x@pars$S12, x@pars$S22), 2), bhaz = x@bhaz2$name, bhaz_pars = x@bhaz2$pars, B = x@coefs$B)
+  }
+  return(xn)
+})
+
