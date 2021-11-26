@@ -352,7 +352,7 @@ setMethod(
   function(x,
            y,
            X = numeric(0),
-           stepsEM = 1000,
+           stepsEM = 100,
            stepsPH = 50,
            initialpoint1 = 0.0001,
            truncationpoint1 = 8,
@@ -381,7 +381,7 @@ setMethod(
       LL <- function(alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
         sum(log(bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2])))
 
-        }
+      }
 
       conditional_density <- function(z, alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
         sum( z[, 1] * z[, 2] * exp(-z[, 1] * chaz1(theta1, obs[, 1]) - z[, 2] * chaz2(theta2, obs[, 2])) * bivph_density(z, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)) / length(obs[, 1])
@@ -440,7 +440,7 @@ setMethod(
        if (k %% every == 0) {
           cat("\r", "iteration:", k,
               ", logLik:", LL(alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y),
-              sep = " "
+              sep = " ", sum(prob * delta1 * delta2)
           )
         }
       }
@@ -451,8 +451,7 @@ setMethod(
       x@pars$S22 <- S22_fit
       x@fit <- list(
         logLik = LL(alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y),
-        nobs = 0
-        #nobs = sum(prob * delta1 * delta2)
+        nobs = sum(prob * delta1 * delta2)
       )
       x <- correlated(x, bhaz1 = x@bhaz1$name, bhaz_pars1 = par_haz1, bhaz2 = x@bhaz2$name, bhaz_pars2 = par_haz2)
       return(x)

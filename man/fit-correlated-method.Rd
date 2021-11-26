@@ -8,7 +8,7 @@
   x,
   y,
   X = numeric(0),
-  stepsEM = 1000,
+  stepsEM = 100,
   stepsPH = 50,
   initialpoint1 = 1e-04,
   truncationpoint1 = 8,

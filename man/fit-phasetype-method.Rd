@@ -10,7 +10,7 @@
   rcen = numeric(0),
   weight = numeric(0),
   X = numeric(0),
-  stepsEM = 1000,
+  stepsEM = 100,
   stepsPH = 50,
   initialpoint = 1e-04,
   truncationpoint = 10,

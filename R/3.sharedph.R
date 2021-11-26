@@ -328,7 +328,7 @@ setMethod(
            y,
            rcen = numeric(0),
            X = numeric(0),
-           stepsEM = 1000,
+           stepsEM = 100,
            stepsPH = 50,
            initialpoint = 0.0001,
            truncationpoint = 10,
