@@ -25,7 +25,7 @@
 
 \item{y}{Matrix or data.}
 
-\item{rcen}{<atrix of indicators of right-censored observations}
+\item{rcen}{Matrix of indicators of right-censored observations}
 
 \item{X}{A matrix of covariates.}
 
@@ -37,7 +37,7 @@
 
 \item{truncationpoint}{Ultimate value for discretization of density.}
 
-\item{maxprobability}{<ax probability allowed for an interval in the discretization.}
+\item{maxprobability}{Max probability allowed for an interval in the discretization.}
 
 \item{maxdelta}{Max size of interval allowed for the discretization.}
 

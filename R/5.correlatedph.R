@@ -319,3 +319,145 @@ setMethod("marginal", c(x = "correlated"), function(x, mar = 1) {
   return(xn)
 })
 
+
+
+#' Fit method for correlated phase type frailty models
+#'
+#' @param x An object of class \linkS4class{correlated}.
+#' @param y Matrix or data.
+#' @param X A matrix of covariates.
+#' @param initialpoint1 Initial value for discretization of first marginal density.
+#' @param truncationpoint1 Ultimate value for discretization of first marginal density.
+#' @param delta1 Size of interval for discretization of first marginal.
+#' @param initialpoint2 Initial value for discretization of second marginal density.
+#' @param truncationpoint2 Ultimate value for discretization of second marginal density.
+#' @param delta2 Size of interval for discretization of second marginal.
+#' @param stepsEM Number of EM steps to be performed.
+#' @param stepsPH Number of EM steps for the phase-type component at each iteration of the global EM.
+#' @param maxit Maximum number of iterations when optimizing g function.
+#' @param reltol Relative tolerance when optimizing g function.
+#' @param every Number of iterations between likelihood display updates.
+#'
+#' @return An object of class \linkS4class{correlated}.
+#'
+#' @export
+#'
+#' @examples
+#' bivph_obj <- bivphasetype(dimensions = c(3, 3))
+#' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
+#' data <- sim(cobj, n = 100)
+#' fit(cobj, data, stepsEM = 5, stepsPH = 5, every = 1)
+setMethod(
+  "fit", c(x = "correlated", y = "ANY"),
+  function(x,
+           y,
+           X = numeric(0),
+           stepsEM = 1000,
+           stepsPH = 50,
+           initialpoint1 = 0.0001,
+           truncationpoint1 = 8,
+           delta1 = 0.1,
+           initialpoint2 = 0.0001,
+           truncationpoint2 = 8,
+           delta2 = 0.1,
+           maxit = 100,
+           reltol = 1e-8,
+           every = 100) {
+    if (!all(y > 0)) {
+      stop("data should be positive")
+    }
+
+    par_haz1 <- x@bhaz1$pars
+    chaz1 <- x@bhaz1$cum_hazard
+    haz1 <- x@bhaz1$hazard
+
+    par_haz2 <- x@bhaz2$pars
+    chaz2 <- x@bhaz2$cum_hazard
+    haz2 <- x@bhaz2$hazard
+
+    X <- as.matrix(X)
+
+    if (any(dim(X) == 0)) {
+      LL <- function(alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
+        sum(log(bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2])))
+
+        }
+
+      conditional_density <- function(z, alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
+        sum( z[, 1] * z[, 2] * exp(-z[, 1] * chaz1(theta1, obs[, 1]) - z[, 2] * chaz2(theta2, obs[, 2])) * bivph_density(z, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)) / length(obs[, 1])
+      }
+
+      Ezgiveny <- function(parmax, alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
+        theta1max <- parmax[1:length(theta1)]
+        theta2max <- utils::tail(parmax, length(theta2))
+        return(-sum(log(haz1(theta1max, obs[, 1])) + log(haz2(theta2max, obs[, 2]))
+                    - chaz1(theta1max, obs[, 1]) * 2 * bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 3, 2, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)
+                    - chaz2(theta2max, obs[, 2]) * 2 * bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 3, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)))
+      }
+
+      bivph_par <- x@pars
+      alpha_fit <- clone_vector(bivph_par$alpha)
+      S11_fit <- clone_matrix(bivph_par$S11)
+      S12_fit <- clone_matrix(bivph_par$S12)
+      S22_fit <- clone_matrix(bivph_par$S22)
+
+      for (k in 1:stepsEM) {
+        par_haz_fit <- suppressWarnings(
+          stats::optim(
+            par = c(par_haz1, par_haz2),
+            fn = Ezgiveny,
+            theta1 = par_haz1,
+            theta2 = par_haz2,
+            alphafn = alpha_fit,
+            S11fn = S11_fit,
+            S12fn = S12_fit,
+            S22fn = S22_fit,
+            obs = y,
+            hessian = FALSE,
+            control = list(
+              maxit = maxit,
+              reltol = reltol
+            )
+          )$par
+        )
+
+        # Discretization of density
+        prob <- numeric(0)
+        value <- base::expand.grid(z1 = seq(initialpoint1, truncationpoint1, by = delta1), z2 = seq(initialpoint2, truncationpoint2, by = delta2))
+        for (l in 1:length(value[, 1])) {
+          prob[l] <- conditional_density(matrix(c(value[l, 1], value[l, 2]), ncol = 2), alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y)
+        }
+
+
+        # PH fitting
+        for (l in 1:stepsPH) {
+          EMstep_bivph(alpha_fit, S11_fit, S12_fit, S22_fit, matrix(c(value[, 1], value[, 2]), ncol = 2), prob)
+        }
+
+        par_haz1 <- par_haz_fit[1:length(par_haz1)]
+        par_haz2 <- utils::tail(par_haz_fit, length(par_haz2))
+
+       if (k %% every == 0) {
+          cat("\r", "iteration:", k,
+              ", logLik:", LL(alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y),
+              sep = " "
+          )
+        }
+      }
+      cat("\n", sep = "")
+      x@pars$alpha <- alpha_fit
+      x@pars$S11 <- S11_fit
+      x@pars$S12 <- S12_fit
+      x@pars$S22 <- S22_fit
+      x@fit <- list(
+        logLik = LL(alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y),
+        nobs = 0
+        #nobs = sum(prob * delta1 * delta2)
+      )
+      x <- correlated(x, bhaz1 = x@bhaz1$name, bhaz_pars1 = par_haz1, bhaz2 = x@bhaz2$name, bhaz_pars2 = par_haz2)
+      return(x)
+    } else {
+      stop("method not implemented yet")
+    }
+  }
+)

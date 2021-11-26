@@ -301,11 +301,11 @@ setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param y Matrix or data.
-#' @param rcen <atrix of indicators of right-censored observations
+#' @param rcen Matrix of indicators of right-censored observations
 #' @param X A matrix of covariates.
 #' @param initialpoint Initial value for discretization of density.
 #' @param truncationpoint Ultimate value for discretization of density.
-#' @param maxprobability <ax probability allowed for an interval in the discretization.
+#' @param maxprobability Max probability allowed for an interval in the discretization.
 #' @param maxdelta Max size of interval allowed for the discretization.
 #' @param stepsEM Number of EM steps to be performed.
 #' @param stepsPH Number of EM steps for the phase-type component at each iteration of the global EM.
