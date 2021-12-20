@@ -3,17 +3,17 @@
 \docType{class}
 \name{bivphasetype-class}
 \alias{bivphasetype-class}
-\title{Bivariate phase type distributions}
+\title{Bivariate phase-type distributions}
 \value{
 Class object.
 }
 \description{
-Class of objects for bivariate phase type distributions.
+Class of objects for bivariate phase-type distributions.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{Name of the phase type distribution.}
+\item{\code{name}}{Name of the phase-type distribution.}
 
 \item{\code{pars}}{A list comprising of the parameters.}
 

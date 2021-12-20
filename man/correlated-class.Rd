@@ -3,17 +3,17 @@
 \docType{class}
 \name{correlated-class}
 \alias{correlated-class}
-\title{Correlated phase type frailty model}
+\title{Correlated phase-type frailty model}
 \value{
 Class object.
 }
 \description{
-Class of objects for correlated phase type frailty models.
+Class of objects for correlated phase-type frailty models.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{Name of the bivariate phase type distribution.}
+\item{\code{name}}{Name of the bivariate phase-type distribution.}
 
 \item{\code{bhaz1}}{A list comprising of the parameters.}
 

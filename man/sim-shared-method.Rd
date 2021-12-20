@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{sim,shared-method}
 \alias{sim,shared-method}
-\title{Simulation method for shared phase type frailty models}
+\title{Simulation method for shared phase-type frailty models}
 \usage{
 \S4method{sim}{shared}(x, n = 1000)
 }
@@ -15,7 +15,7 @@
 A realization of independent and identically distributed shared phase-type frailty random vectors.
 }
 \description{
-Simulation method for shared phase type frailty models
+Simulation method for shared phase-type frailty models
 }
 \examples{
 ph_obj <- phasetype(structure = "coxian")

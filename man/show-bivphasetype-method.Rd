@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{show,bivphasetype-method}
 \alias{show,bivphasetype-method}
-\title{Show method for bivariate phase type distributions}
+\title{Show method for bivariate phase-type distributions}
 \usage{
 \S4method{show}{bivphasetype}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{An object of class \linkS4class{bivphasetype}.}
 }
 \description{
-Show method for bivariate phase type distributions
+Show method for bivariate phase-type distributions
 }

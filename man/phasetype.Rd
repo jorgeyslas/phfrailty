@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{phasetype}
 \alias{phasetype}
-\title{Constructor function for phase type distributions}
+\title{Constructor function for phase-type distributions}
 \usage{
 phasetype(alpha = NULL, S = NULL, structure = NULL, dimension = 3)
 }
@@ -19,7 +19,7 @@ phasetype(alpha = NULL, S = NULL, structure = NULL, dimension = 3)
 An object of class \linkS4class{phasetype}.
 }
 \description{
-Constructor function for phase type distributions
+Constructor function for phase-type distributions
 }
 \examples{
 phasetype(structure = "gcoxian", dimension = 5)

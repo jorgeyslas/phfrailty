@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{surv,bivphasetype-method}
 \alias{surv,bivphasetype-method}
-\title{Survival method for bivariate phase type distributions}
+\title{Survival method for bivariate phase-type distributions}
 \usage{
 \S4method{surv}{bivphasetype}(x, y)
 }
@@ -15,7 +15,7 @@
 A vector containing the joint survival evaluations at the given locations.
 }
 \description{
-Survival method for bivariate phase type distributions
+Survival method for bivariate phase-type distributions
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))

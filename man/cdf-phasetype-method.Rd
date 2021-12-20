@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{cdf,phasetype-method}
 \alias{cdf,phasetype-method}
-\title{Distribution method for phase type distributions}
+\title{Distribution method for phase-type distributions}
 \usage{
 \S4method{cdf}{phasetype}(x, q, lower.tail = TRUE)
 }
@@ -14,10 +14,10 @@
 \item{lower.tail}{Logical parameter specifying whether lower tail (cdf) or upper tail is computed.}
 }
 \value{
-A vector containing the CDF evaluations at the given locations.
+A vector containing the CDF (or tail) evaluations at the given locations.
 }
 \description{
-Distribution method for phase type distributions
+Distribution method for phase-type distributions
 }
 \examples{
 obj <- phasetype(structure = "general")

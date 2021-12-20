@@ -8,7 +8,7 @@ without the multiplying constant}
 ph_laplace_der_nocons(r, n, alpha, S)
 }
 \arguments{
-\item{r}{Real value.}
+\item{r}{Vector of real values.}
 
 \item{n}{An integer.}
 

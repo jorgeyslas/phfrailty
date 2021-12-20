@@ -12,7 +12,7 @@
 \item{k}{A positive integer (moment order).}
 }
 \value{
-The raw moment of the \linkS4class{phasetype} (or undelying \linkS4class{phasetype}) object.
+The raw moment of the \linkS4class{phasetype} (or underlying \linkS4class{phasetype}) object.
 }
 \description{
 Moment method for phase-type distributions

@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{dens,shared-method}
 \alias{dens,shared-method}
-\title{Density method for shared phase type frailty models}
+\title{Density method for shared phase-type frailty models}
 \usage{
 \S4method{dens}{shared}(x, y, X = numeric(0))
 }
@@ -17,7 +17,7 @@
 A vector containing the joint density evaluations at the given locations.
 }
 \description{
-Density method for shared phase type frailty models
+Density method for shared phase-type frailty models
 }
 \examples{
 ph_obj <- phasetype(structure = "coxian")

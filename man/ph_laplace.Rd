@@ -7,7 +7,7 @@
 ph_laplace(r, alpha, S)
 }
 \arguments{
-\item{r}{Real value.}
+\item{r}{Vector of real values.}
 
 \item{alpha}{Vector of initial probabilities.}
 
@@ -18,7 +18,7 @@ Laplace transform at \code{r}.
 }
 \description{
 Computes the Laplace transform at \code{r} of a phase-type distribution with
-parameters \code{alpha} and \code{S}
+parameters \code{alpha} and \code{S}.
 }
 \examples{
 alpha <- c(0.5, 0.3, 0.2)

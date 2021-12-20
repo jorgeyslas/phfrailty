@@ -1,8 +1,8 @@
-#' Bivariate phase type distributions
+#' Bivariate phase-type distributions
 #'
-#' Class of objects for bivariate phase type distributions.
+#' Class of objects for bivariate phase-type distributions.
 #'
-#' @slot name Name of the phase type distribution.
+#' @slot name Name of the phase-type distribution.
 #' @slot pars A list comprising of the parameters.
 #' @slot fit A list containing estimation information.
 #'
@@ -22,7 +22,7 @@ setClass("bivphasetype",
   )
 )
 
-#' Constructor function for bivariate phase type distributions
+#' Constructor function for bivariate phase-type distributions
 #'
 #' @param alpha A probability vector.
 #' @param S11 A sub-intensity matrix.
@@ -67,7 +67,7 @@ bivphasetype <- function(alpha = NULL, S11 = NULL, S12 = NULL, S22 = NULL, dimen
   )
 }
 
-#' Show method for bivariate phase type distributions
+#' Show method for bivariate phase-type distributions
 #'
 #' @param object An object of class \linkS4class{bivphasetype}.
 #' @importFrom methods show
@@ -80,7 +80,7 @@ setMethod("show", "bivphasetype", function(object) {
   methods::show(object@pars)
 })
 
-#' Density method for bivariate phase type distributions
+#' Density method for bivariate phase-type distributions
 #'
 #' @param x An object of class \linkS4class{bivphasetype}.
 #' @param y A matrix of locations.
@@ -96,7 +96,7 @@ setMethod("dens", c(x = "bivphasetype"), function(x, y) {
   return(dens)
 })
 
-#' Survival method for bivariate phase type distributions
+#' Survival method for bivariate phase-type distributions
 #'
 #' @param x An object of class \linkS4class{bivphasetype}.
 #' @param y A matrix of locations.
@@ -112,7 +112,7 @@ setMethod("surv", c(x = "bivphasetype"), function(x, y) {
   return(sur)
 })
 
-#' Simulation method for bivariate phase type distributions
+#' Simulation method for bivariate phase-type distributions
 #'
 #' @param x An object of class \linkS4class{bivphasetype}.
 #' @param n An integer of length of realization.
@@ -134,11 +134,11 @@ setMethod("sim", c(x = "bivphasetype"), function(x, n = 1000) {
   return(U)
 })
 
-#' Coef method for bivariate phasetype class
+#' Coef method for bivphasetype class
 #'
 #' @param object An object of class \linkS4class{bivphasetype}.
 #'
-#' @return Parameters of bivariate phase type model.
+#' @return Parameters of bivariate phase-type model.
 #' @export
 #'
 #' @examples
@@ -148,7 +148,7 @@ setMethod("coef", c(object = "bivphasetype"), function(object) {
   object@pars
 })
 
-#' Marginal method for bivariate phasetype class
+#' Marginal method for bivphasetype class
 #'
 #' @param x An object of class \linkS4class{bivphasetype}.
 #' @param mar Indicator of which marginal.

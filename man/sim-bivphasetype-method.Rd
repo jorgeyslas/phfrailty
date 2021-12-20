@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{sim,bivphasetype-method}
 \alias{sim,bivphasetype-method}
-\title{Simulation method for bivariate phase type distributions}
+\title{Simulation method for bivariate phase-type distributions}
 \usage{
 \S4method{sim}{bivphasetype}(x, n = 1000)
 }
@@ -16,7 +16,7 @@ A realization of independent and identically distributed bivariate
 phase-type vector.
 }
 \description{
-Simulation method for bivariate phase type distributions
+Simulation method for bivariate phase-type distributions
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))

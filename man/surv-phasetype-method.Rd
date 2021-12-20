@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.ph.R
 \name{surv,phasetype-method}
 \alias{surv,phasetype-method}
-\title{Survival method for phase type distributions}
+\title{Survival method for phase-type distributions}
 \usage{
 \S4method{surv}{phasetype}(x, q)
 }
@@ -15,7 +15,7 @@
 A vector containing the survival function evaluations at the given locations.
 }
 \description{
-Survival method for phase type distributions
+Survival method for phase-type distributions
 }
 \examples{
 obj <- phasetype(structure = "general")

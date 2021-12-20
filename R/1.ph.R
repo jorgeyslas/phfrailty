@@ -1,6 +1,6 @@
-#' Phase Type distributions
+#' Phase-type distributions
 #'
-#' Class of objects for phase type distributions.
+#' Class of objects for phase-type distributions.
 #'
 #' @slot name Name of the phase type distribution.
 #' @slot pars A list comprising of the parameters.
@@ -22,7 +22,7 @@ setClass("phasetype",
   )
 )
 
-#' Constructor function for phase type distributions
+#' Constructor function for phase-type distributions
 #'
 #' @param alpha A probability vector.
 #' @param S A sub-intensity matrix.
@@ -64,7 +64,7 @@ phasetype <- function(alpha = NULL, S = NULL, structure = NULL, dimension = 3) {
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param k A positive integer (moment order).
 #'
-#' @return The raw moment of the \linkS4class{phasetype} (or undelying \linkS4class{phasetype}) object.
+#' @return The raw moment of the \linkS4class{phasetype} (or underlying \linkS4class{phasetype}) object.
 #' @export
 #'
 #' @examples
@@ -105,7 +105,7 @@ setMethod("show", "phasetype", function(object) {
   methods::show(object@pars)
 })
 
-#' Simulation method for phase type distributions
+#' Simulation method for phase-type distributions
 #'
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param n An integer of length of realization.
@@ -121,7 +121,7 @@ setMethod("sim", c(x = "phasetype"), function(x, n = 1000) {
   return(U)
 })
 
-#' Density method for phase type distributions
+#' Density method for phase-type distributions
 #'
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param y A vector of locations.
@@ -140,13 +140,13 @@ setMethod("dens", c(x = "phasetype"), function(x, y) {
   return(dens)
 })
 
-#' Distribution method for phase type distributions
+#' Distribution method for phase-type distributions
 #'
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param q A vector of locations.
 #' @param lower.tail Logical parameter specifying whether lower tail (cdf) or upper tail is computed.
 #'
-#' @return A vector containing the CDF evaluations at the given locations.
+#' @return A vector containing the CDF (or tail) evaluations at the given locations.
 #' @export
 #'
 #' @examples
@@ -160,7 +160,7 @@ setMethod("cdf", c(x = "phasetype"), function(x, q, lower.tail = TRUE) {
   return(cdf)
 })
 
-#' Survival method for phase type distributions
+#' Survival method for phase-type distributions
 #'
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param q A vector of locations.
@@ -175,7 +175,7 @@ setMethod("surv", c(x = "phasetype"), function(x, q) {
   cdf(x, q, lower.tail = FALSE)
 })
 
-#' Hazard rate method for phase type distributions
+#' Hazard rate method for phase-type distributions
 #'
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param y A vector of locations.
@@ -192,7 +192,7 @@ setMethod("haz", c(x = "phasetype"), function(x, y) {
   return(d / s)
 })
 
-#' Quantile method for phase type distributions
+#' Quantile method for phase-type distributions
 #'
 #' @param x An object of class \linkS4class{phasetype}.
 #' @param p A vector of probabilities.
@@ -259,7 +259,7 @@ setMethod(
     rcenweight <- numeric(0)
     if (length(weight) == 0) {
       weight <- rep(1, length(y))
-    } else  if (!all(c(weight) >= 0)) {
+    } else if (!all(c(weight) >= 0)) {
       stop("weights should be non-negative")
     }
     rcenind <- rcen

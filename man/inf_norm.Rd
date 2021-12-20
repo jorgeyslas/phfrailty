@@ -14,5 +14,5 @@ The inf norm of A.
 }
 \description{
 Computes the inf norm of a matrix A, defined as
-L-oo A =  max ( 1 <= I <= M ) sum ( 1 <= J <= N ) abs ( A(I,J) ).
+L_inf A =  max (1 <= I <= M) sum (1 <= J <= N) abs (A(I,J)).
 }

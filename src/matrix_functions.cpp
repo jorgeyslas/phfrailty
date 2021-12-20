@@ -4,7 +4,8 @@
 //' L_inf norm of a matrix
 //'
 //' Computes the inf norm of a matrix A, defined as
-//' L-oo A =  max ( 1 <= I <= M ) sum ( 1 <= J <= N ) abs ( A(I,J) ).
+//'  L_inf A =  max (1 <= I <= M) sum (1 <= J <= N) abs (A(I,J)).
+//'
 //' @param A A matrix.
 //' @return The inf norm of A.
 //'
@@ -22,10 +23,10 @@ double inf_norm(arma::mat A) {
 }
 
 
-
-//' Matrix exponential algorithm
+//' Matrix exponential
 //'
-//' MATLAB's built-in algorithm - Pade approximation.
+//' MATLAB's built-in algorithm for matrix exponential - Pade approximation.
+//'
 //' @param A A matrix.
 //' @return exp(A).
 //'
@@ -33,15 +34,11 @@ double inf_norm(arma::mat A) {
 arma::mat matrix_exponential(arma::mat A) {
   const int q{6};
 
-  arma::mat matrixAuxiliar(A.n_rows,A.n_cols);
   arma::mat mexp(A.n_rows,A.n_cols);
 
   double a_norm{inf_norm(A)};
-
   int ee{static_cast<int>(log2(a_norm)) + 1};
-
   int s{std::max(0, ee + 1)};
-
   double t{1.0 / pow(2.0, s)};
 
   arma::mat a2 = A * t;
@@ -50,23 +47,18 @@ arma::mat matrix_exponential(arma::mat A) {
   double c{0.5};
 
   mexp.eye(size(A));
-
   mexp = mexp + (a2 * c);
 
   arma::mat d;
   d.eye(size(A));
-
   d = (d + a2 * (-c));
 
   int p{1};
 
   for (int k{2}; k <= q; ++k) {
     c = c * static_cast<double>(q - k + 1) / static_cast<double>(k * (2 * q - k + 1));
-
     x = (a2 * x);
-
     mexp = (x * c) + mexp;
-
     if (p) {
       d = (x * c) + d;
     }
@@ -75,15 +67,12 @@ arma::mat matrix_exponential(arma::mat A) {
     }
     p = !p;
   }
-
   mexp = inv(d) * mexp;
-
   for (int k{1}; k <= s; ++k) {
     mexp = mexp * mexp;
   }
   return mexp;
 }
-
 
 
 //' Computes A^n
@@ -110,7 +99,7 @@ arma::mat matrix_power(int n, arma::mat A) {
 }
 
 
-//' Computes elements S^n until the value size
+//' Computes elements S^n until the value size_vec
 //'
 //' @param the_vector A vector to save results.
 //' @param S Sub-intensity matrix.
@@ -124,7 +113,7 @@ void vector_of_matrices(std::vector<arma::mat> & the_vector, const arma::mat & S
   the_vector.push_back(Id);
 
   for (int k{1}; k <= size_vec; ++k) {
-    the_vector.push_back( S * the_vector[k - 1]);
+    the_vector.push_back(S * the_vector[k - 1]);
   }
 }
 
@@ -137,7 +126,7 @@ void vector_of_matrices(std::vector<arma::mat> & the_vector, const arma::mat & S
 //' @return The matrix (A1, B1 ; 0, A2).
 //'
 // [[Rcpp::export]]
-arma::mat matrix_VanLoan(const arma::mat & A1, const arma::mat & A2, const arma::mat & B1) {
+arma::mat matrix_vanloan(const arma::mat & A1, const arma::mat & A2, const arma::mat & B1) {
   unsigned p1{A1.n_cols};
   unsigned p2{A2.n_cols};
   unsigned p{p1 + p2};

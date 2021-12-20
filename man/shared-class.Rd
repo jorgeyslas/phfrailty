@@ -3,17 +3,17 @@
 \docType{class}
 \name{shared-class}
 \alias{shared-class}
-\title{Shared phase type frailty model}
+\title{Shared phase-type frailty model}
 \value{
 Class object.
 }
 \description{
-Class of objects for shared phase type frailty models.
+Class of objects for shared phase-type frailty models.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{Name of the phase type distribution.}
+\item{\code{name}}{Name of the phase-type distribution.}
 
 \item{\code{bhaz1}}{A list comprising of the parameters.}
 

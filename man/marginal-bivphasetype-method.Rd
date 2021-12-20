@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{marginal,bivphasetype-method}
 \alias{marginal,bivphasetype-method}
-\title{Marginal method for bivariate phasetype class}
+\title{Marginal method for bivphasetype class}
 \usage{
 \S4method{marginal}{bivphasetype}(x, mar = 1)
 }
@@ -15,7 +15,7 @@
 An object of the of class \linkS4class{phasetype}.
 }
 \description{
-Marginal method for bivariate phasetype class
+Marginal method for bivphasetype class
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))

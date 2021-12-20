@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{fit,shared-method}
 \alias{fit,shared-method}
-\title{Fit method for shared phase type frailty models}
+\title{Fit method for shared phase-type frailty models}
 \usage{
 \S4method{fit}{shared}(
   x,
@@ -51,7 +51,7 @@
 An object of class \linkS4class{shared}.
 }
 \description{
-Fit method for shared phase type frailty models
+Fit method for shared phase-type frailty models
 }
 \examples{
 ph_obj <- phasetype(structure = "coxian")

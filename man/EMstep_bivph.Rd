@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{EMstep_bivph}
 \alias{EMstep_bivph}
-\title{EM for bivariate PH using Pade for matrix exponential}
+\title{EM for bivariate phase-type distributions using Pade for matrix exponential}
 \usage{
 EMstep_bivph(alpha, S11, S12, S22, obs, weight)
 }
@@ -23,5 +23,5 @@ EMstep_bivph(alpha, S11, S12, S22, obs, weight)
 Fitted alpha, S11, S12 and S22 after one iteration.
 }
 \description{
-EM for bivariate PH using Pade for matrix exponential
+EM for bivariate phase-type distributions using Pade for matrix exponential
 }

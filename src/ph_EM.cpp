@@ -4,7 +4,7 @@
 
 // Univariate case
 
-//' EM using Pade for matrix exponential
+//' EM for phase-type distributions using Pade for matrix exponential
 //'
 //' @param alpha Initial probabilities.
 //' @param S Sub-intensity.
@@ -16,8 +16,9 @@
 void EMstep(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, const Rcpp::NumericVector & weight) {
   unsigned p{S.n_rows};
 
-  arma::mat e; e.ones(S.n_cols, 1);
-  arma::mat t = (S * (-1)) * e;
+  arma::mat e;
+  e.ones(S.n_cols, 1);
+  arma::mat exit_vect = (S * (-1)) * e;
 
   arma::mat Bmean = arma::zeros(p,1);
   arma::mat Zmean = arma::zeros(p,1);
@@ -30,19 +31,19 @@ void EMstep(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, c
 
   arma::mat aux_mat(1,1);
 
-  arma::mat J(2 * p,2 * p);
-  arma::mat t_prod_alpha(p,p);
-  t_prod_alpha = t * alpha.t();
+  arma::mat g(2 * p,2 * p);
+  arma::mat s_prod_alpha(p,p);
+  s_prod_alpha = exit_vect * alpha.t();
 
-  J = matrix_VanLoan(S, S, t_prod_alpha);
+  g = matrix_vanloan(S, S, s_prod_alpha);
 
-  double JNorm{inf_norm(J)};
+  double g_norm{inf_norm(g)};
 
   std::vector<arma::mat> the_vector;
-  vector_of_matrices(the_vector, J, 6);
+  vector_of_matrices(the_vector, g, 6);
 
   arma::mat X(2 * p,2 * p);
-  arma::mat D(2 * p,2 * p);
+  arma::mat d(2 * p,2 * p);
 
   const int q{6};
   int s{};
@@ -58,49 +59,49 @@ void EMstep(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, c
 
     // Matrix exponential
     int pind{1};
-    int ee{static_cast<int>(log2(JNorm  * obs[k])) + 1};
+    int ee{static_cast<int>(log2(g_norm  * obs[k])) + 1};
     s = std::max(0, ee + 1);
     xmod = obs[k] / pow(2.0, s);
     c = 0.5;
     X = the_vector[1] * (c * xmod);
 
-    J = the_vector[0] + X;
-    D = the_vector[0] - X;
+    g = the_vector[0] + X;
+    d = the_vector[0] - X;
 
     for (int l{2}; l <= q; ++l) {
       c = c * static_cast<double>(q - l + 1) / static_cast<double>(l * (2 * q - l + 1));
       X = the_vector[l] * (c * pow(xmod,l));
-      J = J + X;
+      g = g + X;
       if (pind) {
-        D =  D + X;
+        d =  d + X;
       }
       else {
-        D = D - X;
+        d = d - X;
       }
       pind = !pind;
     }
-    J = inv(D) * J;
+    g = inv(d) * g;
     for (int l = 1; l <= s; ++l) {
-      J = J * J;
+      g = g * g;
     }
 
     // Separate matrix
     for (int i{0}; i < p; ++i) {
       for (int j{0}; j < p; ++j) {
-        aux_exp(i,j) = J(i,j);
-        cmatrix(i,j) = J(i,j + p);
+        aux_exp(i,j) = g(i,j);
+        cmatrix(i,j) = g(i,j + p);
       }
     }
 
     avector = alpha.t() * aux_exp;
-    bvector = aux_exp * t;
+    bvector = aux_exp * exit_vect;
     aux_mat = alpha.t() * bvector;
     density = aux_mat(0,0);
 
     //E-step
     for (int i{0}; i < p; ++i) {
       Bmean(i,0) += alpha[i] * bvector(i,0) * weight[k] / density;
-      Nmean(i,p) += avector(0,i) * t(i,0) * weight[k] / density;
+      Nmean(i,p) += avector(0,i) * exit_vect(i,0) * weight[k] / density;
       Zmean(i,0) += cmatrix(i,i) * weight[k] / density;
       for (int j{0}; j < p; ++j) {
         Nmean(i,j) += S(i,j) * cmatrix(j,i) * weight[k] / density;
@@ -114,11 +115,11 @@ void EMstep(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, c
     if (alpha[i] < 0) {
       alpha[i] = 0;
     }
-    t(i,0) = Nmean(i,p) / Zmean(i,0);
-    if (t(i,0) < 0) {
-      t(i,0) = 0;
+    exit_vect(i,0) = Nmean(i,p) / Zmean(i,0);
+    if (exit_vect(i,0) < 0) {
+      exit_vect(i,0) = 0;
     }
-    S(i,i) = -t(i,0);
+    S(i,i) = -exit_vect(i,0);
     for (int j{0}; j < p; ++j) {
       if (i != j) {
         S(i,j) = Nmean(i,j) / Zmean(i,0);
@@ -132,8 +133,7 @@ void EMstep(arma::vec & alpha, arma::mat & S, const Rcpp::NumericVector & obs, c
 }
 
 
-
-//' EM for bivariate PH using Pade for matrix exponential
+//' EM for bivariate phase-type distributions using Pade for matrix exponential
 //'
 //' @param alpha Initial probabilities.
 //' @param S11 Sub-intensity.
@@ -164,10 +164,11 @@ void EMstep_bivph(arma::vec & alpha, arma::mat & S11, arma::mat & S12, arma::mat
   arma::mat cmatrix2(p2,p2);
   arma::mat aux_exp2(p2,p2);
 
-  arma::mat J1(2 * p1,2 * p1);
-  arma::mat J2(2 * p2,2 * p2);
+  arma::mat g1(2 * p1,2 * p1);
+  arma::mat g2(2 * p2,2 * p2);
 
-  arma::mat e; e.ones(p2, 1);
+  arma::mat e;
+  e.ones(p2, 1);
   arma::mat exit_vec = (S22 * (-1)) * e;
 
   arma::mat aux_matrix1(p1,1);
@@ -179,34 +180,32 @@ void EMstep_bivph(arma::vec & alpha, arma::mat & S11, arma::mat & S12, arma::mat
   double sum_weights{0.0};
   //E step
   for (int k{0}; k < obs.nrow(); ++k) {
-
     sum_weights += weight[k];
 
     aux_exp2 = matrix_exponential(S22 * obs(k,1));
     bmatrix1 = S12 * aux_exp2 * exit_vec * alpha.t();
 
-    J1 = matrix_exponential(matrix_VanLoan(S11, S11, bmatrix1) * obs(k,0));
+    g1 = matrix_exponential(matrix_vanloan(S11, S11, bmatrix1) * obs(k,0));
 
     for (int i{0}; i < p1; ++i) {
       for (int j{0}; j < p1; ++j) {
-        aux_exp1(i,j) = J1(i,j);
-        cmatrix1(i,j) = J1(i,j + p1);
+        aux_exp1(i,j) = g1(i,j);
+        cmatrix1(i,j) = g1(i,j + p1);
       }
     }
 
     bmatrix2 = exit_vec * alpha.t() * aux_exp1 * S12;
 
-    J2 = matrix_exponential(matrix_VanLoan(S22, S22, bmatrix2) * obs(k,1));
+    g2 = matrix_exponential(matrix_vanloan(S22, S22, bmatrix2) * obs(k,1));
 
     for (int i{0}; i < p2; ++i) {
       for (int j{0}; j < p2; ++j) {
-        cmatrix2(i,j) = J2(i,j + p2);
+        cmatrix2(i,j) = g2(i,j + p2);
       }
     }
 
     aux_mat = alpha.t() * aux_exp1 * S12 * aux_exp2 * exit_vec;
     density = aux_mat(0,0);
-
 
     //E-step
     aux_matrix1 = aux_exp1 * S12 * aux_exp2 * exit_vec;

@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{dens,bivphasetype-method}
 \alias{dens,bivphasetype-method}
-\title{Density method for bivariate phase type distributions}
+\title{Density method for bivariate phase-type distributions}
 \usage{
 \S4method{dens}{bivphasetype}(x, y)
 }
@@ -15,7 +15,7 @@
 A vector containing the joint density evaluations at the given locations.
 }
 \description{
-Density method for bivariate phase type distributions
+Density method for bivariate phase-type distributions
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))

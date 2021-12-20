@@ -92,16 +92,16 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// matrix_VanLoan
-arma::mat matrix_VanLoan(const arma::mat& A1, const arma::mat& A2, const arma::mat& B1);
-RcppExport SEXP _phfrailty_matrix_VanLoan(SEXP A1SEXP, SEXP A2SEXP, SEXP B1SEXP) {
+// matrix_vanloan
+arma::mat matrix_vanloan(const arma::mat& A1, const arma::mat& A2, const arma::mat& B1);
+RcppExport SEXP _phfrailty_matrix_vanloan(SEXP A1SEXP, SEXP A2SEXP, SEXP B1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type A1(A1SEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type A2(A2SEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type B1(B1SEXP);
-    rcpp_result_gen = Rcpp::wrap(matrix_VanLoan(A1, A2, B1));
+    rcpp_result_gen = Rcpp::wrap(matrix_vanloan(A1, A2, B1));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -403,7 +403,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_matrix_exponential", (DL_FUNC) &_phfrailty_matrix_exponential, 1},
     {"_phfrailty_matrix_power", (DL_FUNC) &_phfrailty_matrix_power, 2},
     {"_phfrailty_vector_of_matrices", (DL_FUNC) &_phfrailty_vector_of_matrices, 3},
-    {"_phfrailty_matrix_VanLoan", (DL_FUNC) &_phfrailty_matrix_VanLoan, 3},
+    {"_phfrailty_matrix_vanloan", (DL_FUNC) &_phfrailty_matrix_vanloan, 3},
     {"_phfrailty_EMstep", (DL_FUNC) &_phfrailty_EMstep, 4},
     {"_phfrailty_EMstep_bivph", (DL_FUNC) &_phfrailty_EMstep_bivph, 6},
     {"_phfrailty_ph_density", (DL_FUNC) &_phfrailty_ph_density, 3},

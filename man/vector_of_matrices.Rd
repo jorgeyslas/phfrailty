@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{vector_of_matrices}
 \alias{vector_of_matrices}
-\title{Computes elements S^n until the value size}
+\title{Computes elements S^n until the value size_vec}
 \usage{
 vector_of_matrices(the_vector, S, size_vec)
 }
@@ -17,5 +17,5 @@ vector_of_matrices(the_vector, S, size_vec)
 Modified vector with the elements S^n.
 }
 \description{
-Computes elements S^n until the value size
+Computes elements S^n until the value size_vec
 }

@@ -1,8 +1,8 @@
-#' Shared phase type frailty model
+#' Shared phase-type frailty model
 #'
-#' Class of objects for shared phase type frailty models.
+#' Class of objects for shared phase-type frailty models.
 #'
-#' @slot name Name of the phase type distribution.
+#' @slot name Name of the phase-type distribution.
 #' @slot bhaz1 A list comprising of the parameters.
 #' @slot bhaz2 A list comprising of the parameters.
 #' @slot coefs Regression parameters.
@@ -21,7 +21,7 @@ setClass("shared",
 
 
 
-#' Constructor function for shared phase type frailty models
+#' Constructor function for shared phase-type frailty models
 #'
 #' @param ph An object of class \linkS4class{phasetype}.
 #' @param alpha A probability vector.
@@ -126,7 +126,7 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
 
 
 
-#' Show method for shared phase type frailty models
+#' Show method for shared phase-type frailty models
 #'
 #' @param object An object of class \linkS4class{shared}.
 #' @importFrom methods show
@@ -148,7 +148,7 @@ setMethod("show", "shared", function(object) {
 })
 
 
-#' Simulation method for shared phase type frailty models
+#' Simulation method for shared phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param n An integer of length of realization.
@@ -173,7 +173,7 @@ setMethod("sim", c(x = "shared"), function(x, n = 1000) {
 
 
 
-#' Cross method for shared phase type frailty models
+#' Cross method for shared phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param y A matrix of locations.
@@ -194,7 +194,7 @@ setMethod("cross", c(x = "shared"), function(x, y) {
   return(2 * ph_laplace(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), x@pars$alpha, x@pars$S) * ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 3, x@pars$alpha, x@pars$S) / (ph_laplace_der_nocons(fn1(theta1, y[, 1]) + fn2(theta2, y[, 2]), 2, x@pars$alpha, x@pars$S))^2)
 })
 
-#' Density method for shared phase type frailty models
+#' Density method for shared phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param y A matrix of locations.
@@ -248,7 +248,7 @@ setMethod("dens", c(x = "shared"), function(x, y, X = numeric(0)) {
 })
 
 
-#' Survival method for shared phase type frailty models
+#' Survival method for shared phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param q A matrix of locations.
@@ -297,7 +297,7 @@ setMethod("surv", c(x = "shared"), function(x, q, X = numeric(0)) {
 })
 
 
-#' Fit method for shared phase type frailty models
+#' Fit method for shared phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{shared}.
 #' @param y Matrix or data.
@@ -363,7 +363,7 @@ setMethod(
       rcens10 <- matrix(numeric(0), ncol = 2)
       rcens11 <- matrix(numeric(0), ncol = 2)
     }
-    # 1 indicates censoring  and 0 noncensoring
+    # 1 indicates censoring  and 0 non-censoring
 
     par_haz1 <- x@bhaz1$pars
     chaz1 <- x@bhaz1$cum_hazard
@@ -474,7 +474,6 @@ setMethod(
       x <- shared(x, bhaz1 = x@bhaz1$name, bhaz_pars1 = par_haz1, bhaz2 = x@bhaz2$name, bhaz_pars2 = par_haz2)
       return(x)
     } else {
-
       B0 <- x@coefs$B
       h <- dim(X)[2]
       n <- length(y[, 1]) + length(rcens01[, 1]) + length(rcens10[, 1]) + length(rcens11[, 1])
@@ -486,16 +485,16 @@ setMethod(
 
       LL_cov <- function(alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11, scal, scal01, scal10, scal11) {
         (sum(log(2 * scal^2 * ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 3, alphafn, Sfn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2])))
-         + sum(log(scal01 * ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn) * haz1(theta1, cens01[, 1])))
-         + sum(log(scal10 * ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn) * haz2(theta2, cens10[, 2])))
-         + sum(log(ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn))))
+        + sum(log(scal01 * ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn) * haz1(theta1, cens01[, 1])))
+          + sum(log(scal10 * ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn) * haz2(theta2, cens10[, 2])))
+          + sum(log(ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn))))
       }
 
       conditional_density_cov <- function(z, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11, scal, scal01, scal10, scal11) {
         (sum(0.5 * z^2 * exp(-z * scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 3, alphafn, Sfn))
-         + sum(z * exp(-z * scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn))
-         + sum(z * exp(-z * scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn))
-         + sum(exp(-z * scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn))) / (dim(obs)[1] + dim(cens01)[1] + dim(cens10)[1] + dim(cens11)[1])
+        + sum(z * exp(-z * scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn))
+          + sum(z * exp(-z * scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn))
+          + sum(exp(-z * scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2]))) * ph_density(z, alphafn, Sfn) / ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn))) / (dim(obs)[1] + dim(cens01)[1] + dim(cens10)[1] + dim(cens11)[1])
       }
 
       Ezgiveny_cov <- function(parmax, alphafn, Sfn, theta1, theta2, obs, cens01, cens10, cens11, scal, scal01, scal10, scal11, cinf00, cinf01, cinf10, cinf11) {
@@ -507,9 +506,9 @@ setMethod(
         scale10max <- if (length(cinf10) == 0) numeric(0) else exp(cinf10 %*% Bmax)
         scale11max <- if (length(cinf11) == 0) numeric(0) else exp(cinf11 %*% Bmax)
         return(-sum(log(scale00max * haz1(theta1max, obs[, 1])) + log(scale00max * haz2(theta2max, obs[, 2])) - scale00max * (chaz1(theta1max, obs[, 1]) + chaz2(theta2max, obs[, 2])) * 3 * ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 4, alphafn, Sfn) / ph_laplace_der_nocons(scal * (chaz1(theta1, obs[, 1]) + chaz2(theta2, obs[, 2])), 3, alphafn, Sfn))
-               - sum(log(scale01max * haz1(theta1max, cens01[, 1])) - scale01max * (chaz1(theta1max, cens01[, 1]) + chaz2(theta2max, cens01[, 2])) * 2 * ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 3, alphafn, Sfn) / ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn))
-               - sum(log(scale10max * haz2(theta2max, cens10[, 2])) - scale10max * (chaz1(theta1max, cens10[, 1]) + chaz2(theta2max, cens10[, 2])) * 2 * ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 3, alphafn, Sfn) / ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn))
-               + sum(scale11max * (chaz1(theta1max, cens11[, 1]) + chaz2(theta2max, cens11[, 2])) * ph_laplace_der_nocons(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), 2, alphafn, Sfn) / ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn)))
+        - sum(log(scale01max * haz1(theta1max, cens01[, 1])) - scale01max * (chaz1(theta1max, cens01[, 1]) + chaz2(theta2max, cens01[, 2])) * 2 * ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 3, alphafn, Sfn) / ph_laplace_der_nocons(scal01 * (chaz1(theta1, cens01[, 1]) + chaz2(theta2, cens01[, 2])), 2, alphafn, Sfn))
+          - sum(log(scale10max * haz2(theta2max, cens10[, 2])) - scale10max * (chaz1(theta1max, cens10[, 1]) + chaz2(theta2max, cens10[, 2])) * 2 * ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 3, alphafn, Sfn) / ph_laplace_der_nocons(scal10 * (chaz1(theta1, cens10[, 1]) + chaz2(theta2, cens10[, 2])), 2, alphafn, Sfn))
+          + sum(scale11max * (chaz1(theta1max, cens11[, 1]) + chaz2(theta2max, cens11[, 2])) * ph_laplace_der_nocons(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), 2, alphafn, Sfn) / ph_laplace(scal11 * (chaz1(theta1, cens11[, 1]) + chaz2(theta2, cens11[, 2])), alphafn, Sfn)))
       }
 
       ph_par <- x@pars
@@ -618,8 +617,8 @@ setMethod(
 
         if (k %% every == 0) {
           cat("\r", "iteration:", k,
-              ", logLik:", LL_cov(alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11),
-              sep = " "
+            ", logLik:", LL_cov(alpha_fit, S_fit, par_haz1, par_haz2, y, rcens01, rcens10, rcens11, scale00, scale01, scale10, scale11),
+            sep = " "
           )
         }
       }
@@ -641,7 +640,7 @@ setMethod(
 #'
 #' @param object An object of class \linkS4class{shared}.
 #'
-#' @return Parameters of the shared phase type frailty model.
+#' @return Parameters of the shared phase-type frailty model.
 #' @export
 #'
 #' @examples
@@ -676,4 +675,3 @@ setMethod("marginal", c(x = "shared"), function(x, mar = 1) {
   }
   return(xn)
 })
-

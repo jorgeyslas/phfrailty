@@ -18,7 +18,7 @@ An object of the of class \linkS4class{frailty}.
 Marginal method for correlated frailty class
 }
 \examples{
-bivph_obj <- bivphasetype(dimensions = c(3,3))
+bivph_obj <- bivphasetype(dimensions = c(3, 3))
 cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 marginal(cobj, 1)
 }

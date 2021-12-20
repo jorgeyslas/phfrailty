@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{discretizate_bivdensity}
 \alias{discretizate_bivdensity}
-\title{Discretization of an bivariate density}
+\title{Discretization of a bivariate density}
 \usage{
 discretizate_bivdensity(
   density,
@@ -17,27 +17,27 @@ discretizate_bivdensity(
 )
 }
 \arguments{
-\item{density}{the density function}
+\item{density}{The density function.}
 
-\item{parameters}{parameters of the density function}
+\item{parameters}{Parameters of the density function.}
 
-\item{ini_point1}{max value for the discretization - first component}
+\item{ini_point1}{Max value for the discretization - first component.}
 
-\item{truncation_point1}{max value for the discretization - first component}
+\item{truncation_point1}{Max value for the discretization - first component.}
 
-\item{max_deltat1}{maximum size of interval - first component}
+\item{max_deltat1}{Maximum size of interval - first component.}
 
-\item{ini_point2}{max value for the discretization - second component}
+\item{ini_point2}{Max value for the discretization - second component.}
 
-\item{truncation_point2}{max value for the discretization - second component}
+\item{truncation_point2}{Max value for the discretization - second component.}
 
-\item{max_deltat2}{maximum size of interval - second component}
+\item{max_deltat2}{Maximum size of interval - second component.}
 
-\item{max_probability}{maximum probability of a discrete point}
+\item{max_probability}{Maximum probability of a discrete point.}
 }
 \value{
-List with values and weights
+List with values and weights.
 }
 \description{
-Discretizates an bivariate density function using Simposon rule
+Discretizates a bivariate density function using Simpson's rule.
 }

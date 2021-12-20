@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{surv,shared-method}
 \alias{surv,shared-method}
-\title{Survival method for shared phase type frailty models}
+\title{Survival method for shared phase-type frailty models}
 \usage{
 \S4method{surv}{shared}(x, q, X = numeric(0))
 }
@@ -17,7 +17,7 @@
 A vector containing the joint survival evaluations at the given locations.
 }
 \description{
-Survival method for shared phase type frailty models
+Survival method for shared phase-type frailty models
 }
 \examples{
 ph_obj <- phasetype(structure = "coxian")

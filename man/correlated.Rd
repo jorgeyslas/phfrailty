@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.correlatedph.R
 \name{correlated}
 \alias{correlated}
-\title{Constructor function for shared phase type frailty models}
+\title{Constructor function for correlated phase-type frailty models}
 \usage{
 correlated(
   bivph = NULL,
@@ -45,7 +45,7 @@ correlated(
 An object of class \linkS4class{correlated}.
 }
 \description{
-Constructor function for shared phase type frailty models
+Constructor function for correlated phase-type frailty models
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))

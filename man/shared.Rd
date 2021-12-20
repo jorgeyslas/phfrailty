@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{shared}
 \alias{shared}
-\title{Constructor function for shared phase type frailty models}
+\title{Constructor function for shared phase-type frailty models}
 \usage{
 shared(
   ph = NULL,
@@ -42,7 +42,7 @@ shared(
 An object of class \linkS4class{shared}.
 }
 \description{
-Constructor function for shared phase type frailty models
+Constructor function for shared phase-type frailty models
 }
 \examples{
 obj <- phasetype(structure = "coxian")

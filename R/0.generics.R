@@ -20,7 +20,7 @@ setGeneric("sim", function(x, ...) {
 #' @param x An object of the model class.
 #' @param ... Further parameters to be passed on.
 #'
-#' @return A realization from the matrix distribution.
+#' @return Moments from the matrix distribution.
 #'
 #'
 setGeneric("moment", function(x, ...) {

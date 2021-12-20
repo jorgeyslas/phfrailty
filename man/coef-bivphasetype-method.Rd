@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{coef,bivphasetype-method}
 \alias{coef,bivphasetype-method}
-\title{Coef method for bivariate phasetype class}
+\title{Coef method for bivphasetype class}
 \usage{
 \S4method{coef}{bivphasetype}(object)
 }
@@ -10,10 +10,10 @@
 \item{object}{An object of class \linkS4class{bivphasetype}.}
 }
 \value{
-Parameters of bivariate phase type model.
+Parameters of bivariate phase-type model.
 }
 \description{
-Coef method for bivariate phasetype class
+Coef method for bivphasetype class
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))

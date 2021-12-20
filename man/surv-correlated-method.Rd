@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.correlatedph.R
 \name{surv,correlated-method}
 \alias{surv,correlated-method}
-\title{Survival method for correlated phase type frailty models}
+\title{Survival method for correlated phase-type frailty models}
 \usage{
 \S4method{surv}{correlated}(x, q, X = numeric(0))
 }
@@ -17,10 +17,10 @@
 A vector containing the joint survival evaluations at the given locations.
 }
 \description{
-Survival method for correlated phase type frailty models
+Survival method for correlated phase-type frailty models
 }
 \examples{
-bivph_obj <- bivphasetype(dimensions = c(3,3))
+bivph_obj <- bivphasetype(dimensions = c(3, 3))
 cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 surv(cobj, matrix(c(1, 2), ncol = 2))
 }

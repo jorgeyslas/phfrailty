@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{EMstep}
 \alias{EMstep}
-\title{EM using Pade for matrix exponential}
+\title{EM for phase-type distributions using Pade for matrix exponential}
 \usage{
 EMstep(alpha, S, obs, weight)
 }
@@ -19,5 +19,5 @@ EMstep(alpha, S, obs, weight)
 Fitted alpha and S after one iteration.
 }
 \description{
-EM using Pade for matrix exponential
+EM for phase-type distributions using Pade for matrix exponential
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.bivph.R
 \name{bivphasetype}
 \alias{bivphasetype}
-\title{Constructor function for bivariate phase type distributions}
+\title{Constructor function for bivariate phase-type distributions}
 \usage{
 bivphasetype(
   alpha = NULL,
@@ -27,7 +27,7 @@ bivphasetype(
 An object of class \linkS4class{bivphasetype}.
 }
 \description{
-Constructor function for bivariate phase type distributions
+Constructor function for bivariate phase-type distributions
 }
 \examples{
 bivphasetype(dimensions = c(3, 3))

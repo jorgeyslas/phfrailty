@@ -1,16 +1,17 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Discretization of an univariate density
+//' Discretization of a univariate density
 //'
-//' Discretizates an univariate density function using Simposon rule
-//' @param density the density function
-//' @param parameters parameters of the density function
-//' @param ini_point initial value for the discretization
-//' @param truncation_point max value for the discretization
-//' @param max_probability maximum probability of a discrete point
-//' @param max_deltat maximum size of interval
-//' @return List with values and weights
+//' Discretizates a univariate density function using Simpson's rule.
+//'
+//' @param density The density function.
+//' @param parameters Parameters of the density function.
+//' @param ini_point Initial value for the discretization.
+//' @param truncation_point Max value for the discretization.
+//' @param max_probability Maximum probability of a discrete point.
+//' @param max_deltat Maximum size of interval.
+//' @return List with values and weights.
 // [[Rcpp::export]]
 List discretizate_density(Function density, NumericVector parameters, double ini_point, double truncation_point, double max_deltat, double max_probability) {
   double deltat{};
@@ -19,7 +20,6 @@ List discretizate_density(Function density, NumericVector parameters, double ini
   std::vector<double> prob;
   std::vector<double> values;
   double prob_aux{};
-
 
   NumericVector den_aux{};
   NumericVector den_aux2{};
@@ -58,21 +58,20 @@ List discretizate_density(Function density, NumericVector parameters, double ini
 }
 
 
-
-
-//' Discretization of an bivariate density
+//' Discretization of a bivariate density
 //'
-//' Discretizates an bivariate density function using Simposon rule
-//' @param density the density function
-//' @param parameters parameters of the density function
-//' @param ini_point1 max value for the discretization - first component
-//' @param truncation_point1 max value for the discretization - first component
-//' @param max_deltat1 maximum size of interval - first component
-//' @param ini_point2 max value for the discretization - second component
-//' @param truncation_point2 max value for the discretization - second component
-//' @param max_deltat2 maximum size of interval - second component
-//' @param max_probability maximum probability of a discrete point
-//' @return List with values and weights
+//' Discretizates a bivariate density function using Simpson's rule.
+//'
+//' @param density The density function.
+//' @param parameters Parameters of the density function.
+//' @param ini_point1 Max value for the discretization - first component.
+//' @param truncation_point1 Max value for the discretization - first component.
+//' @param max_deltat1 Maximum size of interval - first component.
+//' @param ini_point2 Max value for the discretization - second component.
+//' @param truncation_point2 Max value for the discretization - second component.
+//' @param max_deltat2 Maximum size of interval - second component.
+//' @param max_probability Maximum probability of a discrete point.
+//' @return List with values and weights.
 // [[Rcpp::export]]
 List discretizate_bivdensity(Function density, NumericVector parameters, double ini_point1, double truncation_point1, double max_deltat1, double ini_point2, double truncation_point2, double max_deltat2, double max_probability) {
   double deltat1{};
@@ -112,7 +111,7 @@ List discretizate_bivdensity(Function density, NumericVector parameters, double 
       den_aux8 = density(t1 + deltat1, t2 + deltat2 / 2, parameters);
       den_aux9 = density(t1 + deltat1, t2 + deltat2, parameters);
 
-      prob_aux = deltat1 * deltat2 / 36 * ( den_aux[0] + 4 * den_aux2[0] + den_aux3[0] + 4 * den_aux4[0] + 16 * den_aux5[0] + 4 * den_aux6[0] + den_aux7[0] + 4 * den_aux8[0] + den_aux9[0]);
+      prob_aux = deltat1 * deltat2 / 36 * (den_aux[0] + 4 * den_aux2[0] + den_aux3[0] + 4 * den_aux4[0] + 16 * den_aux5[0] + 4 * den_aux6[0] + den_aux7[0] + 4 * den_aux8[0] + den_aux9[0]);
       while (prob_aux > max_probability) {
         deltat1 = deltat1 * 0.9;
         deltat2 = deltat2 * 0.9;
@@ -124,7 +123,7 @@ List discretizate_bivdensity(Function density, NumericVector parameters, double 
         den_aux7 = density(t1 + deltat1, t2, parameters);
         den_aux8 = density(t1 + deltat1, t2 + deltat2 / 2, parameters);
         den_aux9 = density(t1 + deltat1, t2 + deltat2, parameters);
-        prob_aux = deltat1 * deltat2 / 36 * ( den_aux[0] + 4 * den_aux2[0] + den_aux3[0] + 4 * den_aux4[0] + 16 * den_aux5[0] + 4 * den_aux6[0] + den_aux7[0] + 4 * den_aux8[0] + den_aux9[0]);
+        prob_aux = deltat1 * deltat2 / 36 * (den_aux[0] + 4 * den_aux2[0] + den_aux3[0] + 4 * den_aux4[0] + 16 * den_aux5[0] + 4 * den_aux6[0] + den_aux7[0] + 4 * den_aux8[0] + den_aux9[0]);
       }
       if (prob_aux > 0) {
         values1.push_back((t1 * den_aux[0] + 4 * (t1 + deltat1 / 2) * den_aux4[0] + (t1 + deltat1) * den_aux7[0]) / (den_aux[0] + 4 * den_aux4[0] + den_aux7[0]));

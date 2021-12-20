@@ -10,13 +10,13 @@
 \item{object}{An object of class \linkS4class{correlated}.}
 }
 \value{
-Parameters of the correlated phase type frailty model.
+Parameters of the correlated phase-type frailty model.
 }
 \description{
 Coef method for correlated frailty class
 }
 \examples{
-bivph_obj <- bivphasetype(dimensions = c(3,3))
+bivph_obj <- bivphasetype(dimensions = c(3, 3))
 cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 coef(cobj)
 }

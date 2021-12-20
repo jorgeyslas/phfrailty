@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.correlatedph.R
 \name{show,correlated-method}
 \alias{show,correlated-method}
-\title{Show method for correlated phase type frailty models}
+\title{Show method for correlated phase-type frailty models}
 \usage{
 \S4method{show}{correlated}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{An object of class \linkS4class{correlated}.}
 }
 \description{
-Show method for correlated phase type frailty models
+Show method for correlated phase-type frailty models
 }

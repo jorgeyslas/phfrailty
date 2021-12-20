@@ -1,8 +1,8 @@
-#' Correlated phase type frailty model
+#' Correlated phase-type frailty model
 #'
-#' Class of objects for correlated phase type frailty models.
+#' Class of objects for correlated phase-type frailty models.
 #'
-#' @slot name Name of the bivariate phase type distribution.
+#' @slot name Name of the bivariate phase-type distribution.
 #' @slot bhaz1 A list comprising of the parameters.
 #' @slot bhaz2 A list comprising of the parameters.
 #' @slot coefs Regression parameters.
@@ -20,7 +20,7 @@ setClass("correlated",
 )
 
 
-#' Constructor function for shared phase type frailty models
+#' Constructor function for correlated phase-type frailty models
 #'
 #' @param bivph An object of class \linkS4class{bivphasetype}.
 #' @param alpha A probability vector.
@@ -125,7 +125,7 @@ correlated <- function(bivph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NU
 }
 
 
-#' Show method for correlated phase type frailty models
+#' Show method for correlated phase-type frailty models
 #'
 #' @param object An object of class \linkS4class{correlated}.
 #' @importFrom methods show
@@ -147,7 +147,7 @@ setMethod("show", "correlated", function(object) {
 })
 
 
-#' Simulation method for correlated phase type frailty models
+#' Simulation method for correlated phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{correlated}.
 #' @param n An integer of length of realization.
@@ -176,7 +176,7 @@ setMethod("sim", c(x = "correlated"), function(x, n = 1000) {
 })
 
 
-#' Density method for correlated phase type frailty models
+#' Density method for correlated phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{correlated}.
 #' @param y A matrix of locations.
@@ -186,7 +186,7 @@ setMethod("sim", c(x = "correlated"), function(x, n = 1000) {
 #' @export
 #'
 #' @examples
-#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' bivph_obj <- bivphasetype(dimensions = c(3, 3))
 #' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 #' dens(cobj, matrix(c(1, 2), ncol = 2))
 setMethod("dens", c(x = "correlated"), function(x, y, X = numeric(0)) {
@@ -230,7 +230,7 @@ setMethod("dens", c(x = "correlated"), function(x, y, X = numeric(0)) {
 })
 
 
-#' Survival method for correlated phase type frailty models
+#' Survival method for correlated phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{correlated}.
 #' @param q A matrix of locations.
@@ -240,7 +240,7 @@ setMethod("dens", c(x = "correlated"), function(x, y, X = numeric(0)) {
 #' @export
 #'
 #' @examples
-#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' bivph_obj <- bivphasetype(dimensions = c(3, 3))
 #' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 #' surv(cobj, matrix(c(1, 2), ncol = 2))
 setMethod("surv", c(x = "correlated"), function(x, q, X = numeric(0)) {
@@ -283,11 +283,11 @@ setMethod("surv", c(x = "correlated"), function(x, q, X = numeric(0)) {
 #'
 #' @param object An object of class \linkS4class{correlated}.
 #'
-#' @return Parameters of the correlated phase type frailty model.
+#' @return Parameters of the correlated phase-type frailty model.
 #' @export
 #'
 #' @examples
-#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' bivph_obj <- bivphasetype(dimensions = c(3, 3))
 #' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 #' coef(cobj)
 setMethod("coef", c(object = "correlated"), function(object) {
@@ -307,7 +307,7 @@ setMethod("coef", c(object = "correlated"), function(object) {
 #' @export
 #'
 #' @examples
-#' bivph_obj <- bivphasetype(dimensions = c(3,3))
+#' bivph_obj <- bivphasetype(dimensions = c(3, 3))
 #' cobj <- correlated(bivph_obj, bhaz1 = "weibull", bhaz_pars1 = 3, bhaz2 = "weibull", bhaz_pars2 = 2)
 #' marginal(cobj, 1)
 setMethod("marginal", c(x = "correlated"), function(x, mar = 1) {
@@ -321,7 +321,7 @@ setMethod("marginal", c(x = "correlated"), function(x, mar = 1) {
 
 
 
-#' Fit method for correlated phase type frailty models
+#' Fit method for correlated phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{correlated}.
 #' @param y Matrix or data.
@@ -380,19 +380,18 @@ setMethod(
     if (any(dim(X) == 0)) {
       LL <- function(alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
         sum(log(bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn) * haz1(theta1, obs[, 1]) * haz2(theta2, obs[, 2])))
-
       }
 
       conditional_density <- function(z, alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
-        sum( z[, 1] * z[, 2] * exp(-z[, 1] * chaz1(theta1, obs[, 1]) - z[, 2] * chaz2(theta2, obs[, 2])) * bivph_density(z, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)) / length(obs[, 1])
+        sum(z[, 1] * z[, 2] * exp(-z[, 1] * chaz1(theta1, obs[, 1]) - z[, 2] * chaz2(theta2, obs[, 2])) * bivph_density(z, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)) / length(obs[, 1])
       }
 
       Ezgiveny <- function(parmax, alphafn, S11fn, S12fn, S22fn, theta1, theta2, obs) {
         theta1max <- parmax[1:length(theta1)]
         theta2max <- utils::tail(parmax, length(theta2))
         return(-sum(log(haz1(theta1max, obs[, 1])) + log(haz2(theta2max, obs[, 2]))
-                    - chaz1(theta1max, obs[, 1]) * 2 * bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 3, 2, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)
-                    - chaz2(theta2max, obs[, 2]) * 2 * bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 3, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)))
+          - chaz1(theta1max, obs[, 1]) * 2 * bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 3, 2, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)
+          - chaz2(theta2max, obs[, 2]) * 2 * bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 3, alphafn, S11fn, S12fn, S22fn) / bivph_laplace_der_nocons(matrix(c(chaz1(theta1, obs[, 1]), chaz2(theta2, obs[, 2])), ncol = 2), 2, 2, alphafn, S11fn, S12fn, S22fn)))
       }
 
       bivph_par <- x@pars
@@ -437,10 +436,10 @@ setMethod(
         par_haz1 <- par_haz_fit[1:length(par_haz1)]
         par_haz2 <- utils::tail(par_haz_fit, length(par_haz2))
 
-       if (k %% every == 0) {
+        if (k %% every == 0) {
           cat("\r", "iteration:", k,
-              ", logLik:", LL(alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y),
-              sep = " ", sum(prob * delta1 * delta2)
+            ", logLik:", LL(alpha_fit, S11_fit, S12_fit, S22_fit, par_haz1, par_haz2, y),
+            sep = " ", sum(prob * delta1 * delta2)
           )
         }
       }

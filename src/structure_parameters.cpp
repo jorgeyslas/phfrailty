@@ -12,6 +12,7 @@ NumericVector clone_vector(NumericVector v) {
   return new_v;
 }
 
+
 //' Clone a matrix
 //'
 //' @param m A matrix.
@@ -23,10 +24,12 @@ NumericMatrix clone_matrix(NumericMatrix m) {
   return new_m;
 }
 
+
 //' Random structure of a phase-type
 //'
 //' Generates random parameters \code{alpha} and \code{S} of a phase-type
 //' distribution of dimension \code{p} with chosen structure.
+//'
 //' @param p Dimension of the phase-type.
 //' @param structure Type of structure: "general", "hyperexponential", "gerlang",
 //'  "coxian" or "gcoxian".
@@ -39,36 +42,36 @@ List random_structure(int p, String structure = "general", double scale_factor =
   NumericMatrix S_legal(p, p);
 
   if (structure == "general") {
-    for (int i = 0; i < p; ++i) {
+    for (int i{0}; i < p; ++i) {
       alpha_legal[i] = 1;
-      for (int j = 0; j < p; ++j) {
+      for (int j{0}; j < p; ++j) {
         S_legal(i, j) = 1;
       }
     }
   }
   else if (structure == "hyperexponential") {
-    for (int i = 0; i < p; i++) {
+    for (int i{0}; i < p; i++) {
       alpha_legal[i] = 1;
       S_legal(i, i) = 1;
     }
   }
   else if (structure == "gerlang") {
     alpha_legal[0] = 1;
-    for (int i = 0; i < p - 1; ++i) {
+    for (int i{0}; i < p - 1; ++i) {
       S_legal(i, i + 1) = 1;
     }
     S_legal(p - 1, p - 1) = 1;
   }
   else if (structure == "coxian") {
     alpha_legal[0] = 1;
-    for (int i = 0; i < p - 1; ++i) {
+    for (int i{0}; i < p - 1; ++i) {
       S_legal(i, i) = 1;
       S_legal(i, i + 1) = 1;
     }
     S_legal(p - 1, p - 1) = 1;
   }
   else if (structure == "gcoxian") {
-    for (int i = 0; i < p - 1; ++i) {
+    for (int i{0}; i < p - 1; ++i) {
       alpha_legal[i] = 1;
       S_legal(i, i) = 1;
       S_legal(i, i + 1) = 1;
@@ -124,6 +127,7 @@ List random_structure(int p, String structure = "general", double scale_factor =
 //'
 //' Generates random parameters \code{alpha}, \code{S11}, \code{S12}, and \code{S22}
 //' of a bivariate phase-type distribution of dimension \code{p  = p1 + p2}.
+//'
 //' @param p1 Dimension of the first block.
 //' @param p2 Dimension of the second block.
 //' @param scale_factor A factor that multiplies the sub-intensity matrix.
@@ -132,7 +136,6 @@ List random_structure(int p, String structure = "general", double scale_factor =
 //'
 // [[Rcpp::export]]
 List random_structure_bivph(int p1, int p2, double scale_factor = 1) {
-
   NumericVector alpha(p1);
   NumericMatrix S11(p1, p1);
   NumericMatrix S12(p1, p2);
@@ -193,7 +196,7 @@ List random_structure_bivph(int p1, int p2, double scale_factor = 1) {
 NumericMatrix merge_matrices(NumericMatrix S11, NumericMatrix S12, NumericMatrix S22) {
   long p1{S11.nrow()};
   long p2{S22.nrow()};
-  NumericMatrix S(p1 +p2, p1 + p2);
+  NumericMatrix S(p1 + p2, p1 + p2);
 
   for (int i{0}; i < p1; ++i) {
     for (int j{0}; j < p1; ++j) {
@@ -208,6 +211,5 @@ NumericMatrix merge_matrices(NumericMatrix S11, NumericMatrix S12, NumericMatrix
       S(i + p1,j + p1) = S22(i,j);
     }
   }
-
   return S;
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.correlatedph.R
 \name{fit,correlated-method}
 \alias{fit,correlated-method}
-\title{Fit method for correlated phase type frailty models}
+\title{Fit method for correlated phase-type frailty models}
 \usage{
 \S4method{fit}{correlated}(
   x,
@@ -54,7 +54,7 @@
 An object of class \linkS4class{correlated}.
 }
 \description{
-Fit method for correlated phase type frailty models
+Fit method for correlated phase-type frailty models
 }
 \examples{
 bivph_obj <- bivphasetype(dimensions = c(3, 3))

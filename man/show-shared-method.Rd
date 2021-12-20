@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.sharedph.R
 \name{show,shared-method}
 \alias{show,shared-method}
-\title{Show method for shared phase type frailty models}
+\title{Show method for shared phase-type frailty models}
 \usage{
 \S4method{show}{shared}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{An object of class \linkS4class{shared}.}
 }
 \description{
-Show method for shared phase type frailty models
+Show method for shared phase-type frailty models
 }

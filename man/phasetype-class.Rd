@@ -3,12 +3,12 @@
 \docType{class}
 \name{phasetype-class}
 \alias{phasetype-class}
-\title{Phase Type distributions}
+\title{Phase-type distributions}
 \value{
 Class object.
 }
 \description{
-Class of objects for phase type distributions.
+Class of objects for phase-type distributions.
 }
 \section{Slots}{
 

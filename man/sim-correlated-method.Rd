@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.correlatedph.R
 \name{sim,correlated-method}
 \alias{sim,correlated-method}
-\title{Simulation method for correlated phase type frailty models}
+\title{Simulation method for correlated phase-type frailty models}
 \usage{
 \S4method{sim}{correlated}(x, n = 1000)
 }
@@ -15,7 +15,7 @@
 A realization of independent and identically distributed correlated phase-type frailty random vectors.
 }
 \description{
-Simulation method for correlated phase type frailty models
+Simulation method for correlated phase-type frailty models
 }
 \examples{
 bivph_obj <- bivphasetype(dimensions = c(3, 3))
