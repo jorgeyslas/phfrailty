@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{vector_of_powers}
 \alias{vector_of_powers}
-\title{Computes elements A^n until the given size}
+\title{Computes elements A^(n + 1) until the given size}
 \usage{
 vector_of_powers(A, vect_size)
 }
@@ -12,5 +12,5 @@ vector_of_powers(A, vect_size)
 \item{vect_size}{Size of vector.}
 }
 \description{
-Computes elements A^n until the given size
+Computes elements A^(n + 1) until the given size
 }

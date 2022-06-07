@@ -118,7 +118,7 @@ void vector_of_matrices(std::vector<arma::mat> & the_vector, const arma::mat & S
 }
 
 
-//' Computes elements A^n until the given size
+//' Computes elements A^(n + 1) until the given size
 //'
 //' @param A A matrix.
 //' @param vect_size Size of vector.
@@ -127,10 +127,7 @@ void vector_of_matrices(std::vector<arma::mat> & the_vector, const arma::mat & S
 std::vector<arma::mat> vector_of_powers(const arma::mat & A, int vect_size) {
   std::vector<arma::mat> vect;
 
-  arma::mat I;
-  I.eye(size(A));
-
-  vect.push_back(I);
+  vect.push_back(A);
 
   for (int k{1}; k <= vect_size; ++k) {
     vect.push_back(A * vect[k - 1]);

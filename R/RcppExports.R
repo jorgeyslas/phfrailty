@@ -77,7 +77,7 @@ vector_of_matrices <- function(the_vector, S, size_vec) {
     invisible(.Call(`_phfrailty_vector_of_matrices`, the_vector, S, size_vec))
 }
 
-#' Computes elements A^n until the given size
+#' Computes elements A^(n + 1) until the given size
 #'
 #' @param A A matrix.
 #' @param vect_size Size of vector.
