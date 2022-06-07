@@ -92,6 +92,18 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// vector_of_powers
+std::vector<arma::mat> vector_of_powers(const arma::mat& A, int vect_size);
+RcppExport SEXP _phfrailty_vector_of_powers(SEXP ASEXP, SEXP vect_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< int >::type vect_size(vect_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(vector_of_powers(A, vect_size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // matrix_vanloan
 arma::mat matrix_vanloan(const arma::mat& A1, const arma::mat& A2, const arma::mat& B1);
 RcppExport SEXP _phfrailty_matrix_vanloan(SEXP A1SEXP, SEXP A2SEXP, SEXP B1SEXP) {
@@ -102,6 +114,33 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type A2(A2SEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type B1(B1SEXP);
     rcpp_result_gen = Rcpp::wrap(matrix_vanloan(A1, A2, B1));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mp_density
+Rcpp::NumericVector mp_density(Rcpp::NumericVector x, arma::vec alpha, arma::mat S);
+RcppExport SEXP _phfrailty_mp_density(SEXP xSEXP, SEXP alphaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(mp_density(x, alpha, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mp_density_cov
+Rcpp::NumericVector mp_density_cov(Rcpp::NumericVector x, Rcpp::NumericVector ex, arma::vec alpha, arma::mat S);
+RcppExport SEXP _phfrailty_mp_density_cov(SEXP xSEXP, SEXP exSEXP, SEXP alphaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ex(exSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(mp_density_cov(x, ex, alpha, S));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -403,7 +442,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_matrix_exponential", (DL_FUNC) &_phfrailty_matrix_exponential, 1},
     {"_phfrailty_matrix_power", (DL_FUNC) &_phfrailty_matrix_power, 2},
     {"_phfrailty_vector_of_matrices", (DL_FUNC) &_phfrailty_vector_of_matrices, 3},
+    {"_phfrailty_vector_of_powers", (DL_FUNC) &_phfrailty_vector_of_powers, 2},
     {"_phfrailty_matrix_vanloan", (DL_FUNC) &_phfrailty_matrix_vanloan, 3},
+    {"_phfrailty_mp_density", (DL_FUNC) &_phfrailty_mp_density, 3},
+    {"_phfrailty_mp_density_cov", (DL_FUNC) &_phfrailty_mp_density_cov, 4},
     {"_phfrailty_EMstep", (DL_FUNC) &_phfrailty_EMstep, 4},
     {"_phfrailty_EMstep_bivph", (DL_FUNC) &_phfrailty_EMstep_bivph, 6},
     {"_phfrailty_ph_density", (DL_FUNC) &_phfrailty_ph_density, 3},

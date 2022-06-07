@@ -77,6 +77,15 @@ vector_of_matrices <- function(the_vector, S, size_vec) {
     invisible(.Call(`_phfrailty_vector_of_matrices`, the_vector, S, size_vec))
 }
 
+#' Computes elements A^n until the given size
+#'
+#' @param A A matrix.
+#' @param vect_size Size of vector.
+#'
+vector_of_powers <- function(A, vect_size) {
+    .Call(`_phfrailty_vector_of_powers`, A, vect_size)
+}
+
 #' Creates the matrix  (A1, B1 ; 0, A2)
 #'
 #' @param A1 A matrix.
@@ -86,6 +95,35 @@ vector_of_matrices <- function(the_vector, S, size_vec) {
 #'
 matrix_vanloan <- function(A1, A2, B1) {
     .Call(`_phfrailty_matrix_vanloan`, A1, A2, B1)
+}
+
+#' Phase-type mixed Poisson density
+#'
+#' Computes the density of a phase-type Mixed Poisson distribution with parameters
+#' \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param x Non-negative integer values.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+mp_density <- function(x, alpha, S) {
+    .Call(`_phfrailty_mp_density`, x, alpha, S)
+}
+
+#' Phase-type mixed Poisson density
+#'
+#' Computes the density of a phase-type Mixed Poisson distribution with parameters
+#' \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param x Non-negative integer values.
+#' @param ex Vector of covariates effect.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+mp_density_cov <- function(x, ex, alpha, S) {
+    .Call(`_phfrailty_mp_density_cov`, x, ex, alpha, S)
 }
 
 #' EM for phase-type distributions using Pade for matrix exponential

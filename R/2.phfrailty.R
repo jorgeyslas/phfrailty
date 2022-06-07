@@ -166,7 +166,7 @@ setMethod("dens", c(x = "frailty"), function(x, y, X = numeric(0)) {
         stop("dimension of observations different from covariates")
       } else {
         ex <- exp(X %*% B0)
-        dens[!y_inf] <- ph_laplace_der_nocons(fn(theta, y[!y_inf]) * ex, 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf]) * ex
+        dens[!y_inf] <- ph_laplace_der_nocons(fn(theta, y[!y_inf]) * ex[!y_inf], 2, x@pars$alpha, x@pars$S) * fn_der(theta, y[!y_inf]) * ex[!y_inf]
         dens[y_inf] <- 0
         return(dens)
       }
@@ -220,9 +220,9 @@ setMethod("cdf", c(x = "frailty"), function(x, q, X = numeric(0), lower.tail = T
       } else {
         ex <- exp(X %*% B0)
         if (lower.tail) {
-          cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]) * ex, x@pars$alpha, x@pars$S)
+          cdf[!q_inf] <- 1 - ph_laplace(fn(theta, q[!q_inf]) * ex[!q_inf], x@pars$alpha, x@pars$S)
         } else {
-          cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]) * ex, x@pars$alpha, x@pars$S)
+          cdf[!q_inf] <- ph_laplace(fn(theta, q[!q_inf]) * ex[!q_inf], x@pars$alpha, x@pars$S)
         }
         cdf[q_inf] <- as.numeric(1 * lower.tail)
         return(cdf)
