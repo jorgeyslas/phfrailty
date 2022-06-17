@@ -155,6 +155,7 @@ setMethod("cdf", c(x = "mp"), function(x, q, X = numeric(0), lower.tail = TRUE) 
 #'
 #' @param x An object of class \linkS4class{mp}.
 #' @param y Vector or data.
+#' @param exposure Vector of exposures for observations.
 #' @param weight Vector of weights for observations.
 #' @param X A matrix of covariates.
 #' @param initialpoint Initial value for discretization of density.
@@ -179,6 +180,7 @@ setMethod(
   "fit", c(x = "mp", y = "ANY"),
   function(x,
            y,
+           exposure = numeric(0),
            weight = numeric(0),
            X = numeric(0),
            stepsEM = 100,
@@ -208,7 +210,7 @@ setMethod(
       }
 
       conditional_density <- function(z, alphafn, Sfn, obs, weightobs) {
-        (sum(weightobs * z^obs * exp(-z) * ph_density(z, alphafn, Sfn) / (factorial(obs) * mp_density(obs, alphafn, Sfn)))) / (sum(weight))
+        (sum(weightobs * z^obs * exp(-z) * ph_density(z, alphafn, Sfn) / (factorial(obs) * mp_density(obs, alphafn, Sfn)))) / (sum(weightobs))
       }
 
       ph_par <- x@pars
@@ -266,7 +268,106 @@ setMethod(
       )
       return(x)
     } else {
+      B0 <- x@coefs$B
+      h <- dim(X)[2]
+      n <- length(y)
 
+      if (n != dim(X)[1]) {
+        stop("Number of observations different from number of covariates")
+      }
+
+      if (length(exposure) == 0) {
+        exposure <- rep(1, n)
+      } else if (length(exposure) != n) {
+        stop("Number of observations different from number of exposures")
+      }
+
+      dm <- data.frame(y, X, exposure)
+
+      if (length(B0) == (h + 1)) {
+        B_fit <- B0
+      } else {
+        B_fit <- coef(stats::glm(y ~ . - exposure, offset = log(exposure), weights = weight, family = stats::poisson(), data = dm))
+      }
+
+      X0 <- cbind(rep(1, n), X)
+
+      ex <- exp(X0 %*% B_fit)
+      mult_fact <- ex * exposure
+
+      LL_cov <- function(alphafn, Sfn, obs, weightobs, m_fact) {
+        sum(weightobs * log(m_fact^obs * mp_density_cov(obs, m_fact, alphafn, Sfn)))
+      }
+
+      conditional_density_cov <- function(z, alphafn, Sfn, obs, weightobs, m_fact) {
+        (sum(weightobs * z^obs * exp(-z * m_fact) * ph_density(z, alphafn, Sfn) / (factorial(obs) * mp_density_cov(obs, m_fact, alphafn, Sfn)))) / (sum(weightobs))
+      }
+
+
+      ph_par <- x@pars
+      alpha_fit <- clone_vector(ph_par$alpha)
+      S_fit <- clone_matrix(ph_par$S)
+
+      for (k in 1:stepsEM) {
+
+        # Discretization of density
+        deltat <- 0
+        t <- initialpoint
+
+        prob <- numeric(0)
+        value <- numeric(0)
+
+        j <- 1
+
+        while (t < truncationpoint) {
+          if (conditional_density_cov(t, alpha_fit, S_fit, y, weight, mult_fact) < maxprobability / maxdelta) {
+            deltat <- maxdelta
+          } else {
+            deltat <- maxprobability / conditional_density_cov(t, alpha_fit, S_fit, y, weight, mult_fact)
+          }
+          proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, y, weight, mult_fact) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, y, weight, mult_fact) + conditional_density_cov(t + deltat, alpha_fit, S_fit, y, weight, mult_fact))
+          while (proba_aux > maxprobability) {
+            deltat <- deltat * 0.9
+            proba_aux <- deltat / 6 * (conditional_density_cov(t, alpha_fit, S_fit, y, weight, mult_fact) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, y, weight, mult_fact) + conditional_density_cov(t + deltat, alpha_fit, S_fit, y, weight, mult_fact))
+          }
+          if (proba_aux > 0) {
+            value[j] <- (t * conditional_density_cov(t, alpha_fit, S_fit, y, weight, mult_fact) + 4 * (t + deltat / 2) * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, y, weight, mult_fact) + (t + deltat) * conditional_density_cov(t + deltat, alpha_fit, S_fit, y, weight, mult_fact)) / (conditional_density_cov(t, alpha_fit, S_fit, y, weight, mult_fact) + 4 * conditional_density_cov(t + deltat / 2, alpha_fit, S_fit, y, weight, mult_fact) + conditional_density_cov(t + deltat, alpha_fit, S_fit, y, weight, mult_fact))
+            prob[j] <- proba_aux
+            j <- j + 1
+          }
+          t <- t + deltat
+        }
+
+        L <- mp_aux_density(y, mult_fact, alpha_fit, S_fit)
+        e_theta <- (y + 1) * L$dens_aux / L$density
+
+        dm$e_theta <- e_theta
+
+        B_fit <- coef(stats::glm(y ~ . - exposure - e_theta, offset = log(exposure * e_theta), weights = weight, family = stats::poisson(), data = dm))
+
+        # PH fitting
+        for (l in 1:stepsPH) {
+          EMstep(alpha_fit, S_fit, value, prob)
+        }
+
+        ex <- exp(X0 %*% B_fit)
+        mult_fact <- ex * exposure
+
+        if (k %% every == 0) {
+          cat("\r", "iteration:", k,
+              ", logLik:", LL_cov(alpha_fit, S_fit, y, weight, mult_fact), sum(prob),
+              sep = " "
+          )
+        }
+      }
+      cat("\n", sep = "")
+      x@pars$alpha <- alpha_fit
+      x@pars$S <- S_fit
+      x@coefs$B <- B_fit
+      x@fit <- list(
+        logLik = LL_cov(alpha_fit, S_fit, y, weight, mult_fact),
+        nobs = sum(prob)
+      )
       return(x)
     }
   }

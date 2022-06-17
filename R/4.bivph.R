@@ -167,3 +167,43 @@ setMethod("marginal", c(x = "bivphasetype"), function(x, mar = 1) {
   }
   return(xn)
 })
+
+
+
+#' Moment method for bivphasetype class
+#'
+#' @param x An object of class \linkS4class{bivphasetype}.
+#' @param k A vector with the location.
+#' @return An real value.
+#' @export
+#'
+#' @examples
+#' obj <- bivphasetype(dimensions = c(3, 3))
+#' moment(obj, c(1, 1))
+setMethod("moment", c(x = "bivphasetype"), function(x, k = c(1, 1)) {
+  ee <- rep(1, nrow(x@pars$S22))
+  return(factorial(k[1]) * factorial(k[2]) * x@pars$alpha %*% matrix_power(k[1] + 1,  base::solve(-x@pars$S11))  %*% x@pars$S12 %*% matrix_power(k[2],  base::solve(-x@pars$S22))  %*% ee)
+})
+
+
+
+#' Correlation method for bivphasetype class
+#'
+#' @param x An object of class \linkS4class{bivphasetype}.
+#' @param k A vector with the location.
+#' @return An real value.
+#' @export
+#'
+#' @examples
+#' obj <- bivphasetype(dimensions = c(3, 3))
+#' corr(obj, c(1, 1))
+setMethod("corr", c(x = "bivphasetype"), function(x) {
+  m11 <- moment(x, c(1, 0))
+  m12 <- moment(x, c(0, 1))
+  m21 <- moment(x, c(2, 0))
+  m22 <- moment(x, c(0, 2))
+  cm <- moment(x, c(1, 1))
+  return((cm - m11 * m12) / (sqrt(m21 - m11^2) * sqrt(m22 - m12^2)))
+})
+
+

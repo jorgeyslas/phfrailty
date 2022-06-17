@@ -15,7 +15,8 @@ setGeneric("sim", function(x, ...) {
 
 #' New generic for moment of matrix distributions
 #'
-#' Methods are available for objects of class \linkS4class{phasetype}.
+#' Methods are available for objects of class \linkS4class{phasetype} and
+#' \linkS4class{bivphasetype}.
 #'
 #' @param x An object of the model class.
 #' @param ... Further parameters to be passed on.
@@ -146,3 +147,20 @@ setGeneric("fit", function(x, y, ...) {
 setGeneric("marginal", function(x, ...) {
   standardGeneric("marginal")
 })
+
+
+#' New generic for the correlation of multivariate matrix distributions
+#'
+#' Methods are available for objects of classes \linkS4class{phasetype} and
+#' \linkS4class{bivphasetype}.
+#'
+#' @param x An object of the model class.
+#' @param ... Further parameters to be passed on.
+#'
+#' @return Correlation of the multivariate object
+#'
+#'
+setGeneric("corr", function(x, ...) {
+  standardGeneric("corr")
+})
+

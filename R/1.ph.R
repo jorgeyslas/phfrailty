@@ -212,6 +212,29 @@ setMethod("quan", c(x = "phasetype"), function(x, p) {
 })
 
 
+#' Moment method for phase-type distributions
+#'
+#' @param x An object of class \linkS4class{phasetype}.
+#' @param k A vector of integers
+#'
+#' @return The kth moment of the phase-type distribution
+#' @export
+#'
+#' @examples
+#' obj <- phasetype(structure = "general")
+#' moment(obj, 1)
+setMethod("moment", c(x = "phasetype"), function(x, k = 1) {
+  ph_par <- x@pars
+  ee <- rep(1, length(ph_par$alpha))
+  aux_mat <- base::solve(-ph_par$S)
+  mt <- numeric(length(k))
+  for (i in 1:length(k)) {
+    mt[i] <- factorial(k[i]) * ph_par$alpha %*% matrix_power(k[i], aux_mat) %*% ee
+  }
+  return(mt)
+})
+
+
 #' Fit method for phase-type frailty models
 #'
 #' @param x An object of class \linkS4class{phasetype}.
@@ -287,7 +310,7 @@ setMethod(
       }
 
       conditional_density <- function(z, alphafn, Sfn, theta, obs, cens, weightobs, weightcens) {
-        (sum(z * weightobs * exp(-z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(weightcens * exp(-z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (sum(weight) + sum(rcenweight))
+        (sum(z * weightobs * exp(-z * chaz(theta, obs)) * ph_density(z, alphafn, Sfn) / ph_laplace_der_nocons(chaz(theta, obs), 2, alphafn, Sfn)) + sum(weightcens * exp(-z * chaz(theta, cens)) * ph_density(z, alphafn, Sfn) / ph_laplace(chaz(theta, cens), alphafn, Sfn))) / (sum(weightobs) + sum(rcenweight))
       }
 
       Ezgiveny <- function(thetamax, alphafn, Sfn, theta, obs, cens, weightobs, weightcens) {

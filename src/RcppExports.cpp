@@ -144,6 +144,67 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mp_aux_density
+Rcpp::List mp_aux_density(Rcpp::NumericVector x, Rcpp::NumericVector ex, arma::vec alpha, arma::mat S);
+RcppExport SEXP _phfrailty_mp_aux_density(SEXP xSEXP, SEXP exSEXP, SEXP alphaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ex(exSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(mp_aux_density(x, ex, alpha, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mp_cor_dens
+Rcpp::NumericVector mp_cor_dens(Rcpp::NumericMatrix x, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_mp_cor_dens(SEXP xSEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(mp_cor_dens(x, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mp_cor_dens_cov
+Rcpp::NumericVector mp_cor_dens_cov(Rcpp::NumericMatrix x, Rcpp::NumericMatrix ex, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_mp_cor_dens_cov(SEXP xSEXP, SEXP exSEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ex(exSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(mp_cor_dens_cov(x, ex, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mp_cor_dens_aux
+Rcpp::List mp_cor_dens_aux(Rcpp::NumericMatrix x, Rcpp::NumericMatrix ex, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_mp_cor_dens_aux(SEXP xSEXP, SEXP exSEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ex(exSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(mp_cor_dens_aux(x, ex, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
 // EMstep
 void EMstep(arma::vec& alpha, arma::mat& S, const Rcpp::NumericVector& obs, const Rcpp::NumericVector& weight);
 RcppExport SEXP _phfrailty_EMstep(SEXP alphaSEXP, SEXP SSEXP, SEXP obsSEXP, SEXP weightSEXP) {
@@ -446,6 +507,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_matrix_vanloan", (DL_FUNC) &_phfrailty_matrix_vanloan, 3},
     {"_phfrailty_mp_density", (DL_FUNC) &_phfrailty_mp_density, 3},
     {"_phfrailty_mp_density_cov", (DL_FUNC) &_phfrailty_mp_density_cov, 4},
+    {"_phfrailty_mp_aux_density", (DL_FUNC) &_phfrailty_mp_aux_density, 4},
+    {"_phfrailty_mp_cor_dens", (DL_FUNC) &_phfrailty_mp_cor_dens, 5},
+    {"_phfrailty_mp_cor_dens_cov", (DL_FUNC) &_phfrailty_mp_cor_dens_cov, 6},
+    {"_phfrailty_mp_cor_dens_aux", (DL_FUNC) &_phfrailty_mp_cor_dens_aux, 6},
     {"_phfrailty_EMstep", (DL_FUNC) &_phfrailty_EMstep, 4},
     {"_phfrailty_EMstep_bivph", (DL_FUNC) &_phfrailty_EMstep_bivph, 6},
     {"_phfrailty_ph_density", (DL_FUNC) &_phfrailty_ph_density, 3},

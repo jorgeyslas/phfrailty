@@ -5,7 +5,7 @@ using namespace Rcpp;
 //'
 //' @param v A vector.
 //' @return A clone of the vector.
-//'
+//' @export
 // [[Rcpp::export]]
 NumericVector clone_vector(NumericVector v) {
   NumericVector new_v = clone(v);
@@ -17,7 +17,7 @@ NumericVector clone_vector(NumericVector v) {
 //'
 //' @param m A matrix.
 //' @return A clone of the matrix.
-//'
+//' @export
 // [[Rcpp::export]]
 NumericMatrix clone_matrix(NumericMatrix m) {
   NumericMatrix new_m = clone(m);

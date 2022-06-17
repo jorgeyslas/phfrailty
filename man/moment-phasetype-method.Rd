@@ -5,20 +5,28 @@
 \title{Moment method for phase-type distributions}
 \usage{
 \S4method{moment}{phasetype}(x, k = 1)
+
+\S4method{moment}{phasetype}(x, k = 1)
 }
 \arguments{
 \item{x}{An object of class \linkS4class{phasetype}.}
 
-\item{k}{A positive integer (moment order).}
+\item{k}{A vector of integers}
 }
 \value{
 The raw moment of the \linkS4class{phasetype} (or underlying \linkS4class{phasetype}) object.
+
+The kth moment of the phase-type distribution
 }
 \description{
+Moment method for phase-type distributions
+
 Moment method for phase-type distributions
 }
 \examples{
 set.seed(123)
 obj <- phasetype(structure = "general", dimension = 3)
 moment(obj, 2)
+obj <- phasetype(structure = "general")
+moment(obj, 1)
 }

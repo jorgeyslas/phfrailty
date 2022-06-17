@@ -111,7 +111,7 @@ mp_density <- function(x, alpha, S) {
     .Call(`_phfrailty_mp_density`, x, alpha, S)
 }
 
-#' Phase-type mixed Poisson density
+#' Phase-type mixed Poisson density with covariates
 #'
 #' Computes the density of a phase-type Mixed Poisson distribution with parameters
 #' \code{alpha} and \code{S} at \code{x}.
@@ -124,6 +124,71 @@ mp_density <- function(x, alpha, S) {
 #' @export
 mp_density_cov <- function(x, ex, alpha, S) {
     .Call(`_phfrailty_mp_density_cov`, x, ex, alpha, S)
+}
+
+#' Phase-type mixed Poisson density with covariates
+#'
+#' Computes the density of a phase-type Mixed Poisson distribution with parameters
+#' \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param x Non-negative integer values.
+#' @param ex Vector of covariates effect.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+mp_aux_density <- function(x, ex, alpha, S) {
+    .Call(`_phfrailty_mp_aux_density`, x, ex, alpha, S)
+}
+
+#' Correlated Phase-type mixed Poisson density
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param x Matrix of values.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+mp_cor_dens <- function(x, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_mp_cor_dens`, x, alpha, S11, S12, S22)
+}
+
+#' Correlated Phase-type mixed Poisson density with covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param x Matrix of values.
+#' @param ex Matrix of covariates effect.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+mp_cor_dens_cov <- function(x, ex, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_mp_cor_dens_cov`, x, ex, alpha, S11, S12, S22)
+}
+
+#' Correlated Phase-type mixed Poisson density with covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param x Matrix of values.
+#' @param ex Matrix of covariates effect.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+mp_cor_dens_aux <- function(x, ex, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_mp_cor_dens_aux`, x, ex, alpha, S11, S12, S22)
 }
 
 #' EM for phase-type distributions using Pade for matrix exponential
@@ -404,7 +469,7 @@ rmph <- function(n, alpha, S, R) {
 #'
 #' @param v A vector.
 #' @return A clone of the vector.
-#'
+#' @export
 clone_vector <- function(v) {
     .Call(`_phfrailty_clone_vector`, v)
 }
@@ -413,7 +478,7 @@ clone_vector <- function(v) {
 #'
 #' @param m A matrix.
 #' @return A clone of the matrix.
-#'
+#' @export
 clone_matrix <- function(m) {
     .Call(`_phfrailty_clone_matrix`, m)
 }

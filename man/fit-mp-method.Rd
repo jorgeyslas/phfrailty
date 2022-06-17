@@ -7,6 +7,7 @@
 \S4method{fit}{mp}(
   x,
   y,
+  exposure = numeric(0),
   weight = numeric(0),
   X = numeric(0),
   stepsEM = 100,
@@ -24,6 +25,8 @@
 \item{x}{An object of class \linkS4class{mp}.}
 
 \item{y}{Vector or data.}
+
+\item{exposure}{Vector of exposures for observations.}
 
 \item{weight}{Vector of weights for observations.}
 

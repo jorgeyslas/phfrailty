@@ -83,7 +83,12 @@ arma::mat matrix_exponential(arma::mat A) {
 //' @export
 // [[Rcpp::export]]
 arma::mat matrix_power(int n, arma::mat A) {
-  if (n == 1) {
+  if (n == 0) {
+    arma::mat d;
+    d.eye(size(A));
+    return(d);
+  }
+  else if (n == 1) {
     return A;
   }
   else if (n == 2) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{mp_density_cov}
 \alias{mp_density_cov}
-\title{Phase-type mixed Poisson density}
+\title{Phase-type mixed Poisson density with covariates}
 \usage{
 mp_density_cov(x, ex, alpha, S)
 }
