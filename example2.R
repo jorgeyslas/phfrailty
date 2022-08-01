@@ -4,6 +4,9 @@ oe_data <- read.csv("oe_lnorm_20211204.csv")
 head(oe_data)
 
 oe <- oe_data[oe_data$no == 12 & oe_data$id == "lnorm_ind", ]
+head(oe)
+dim(oe)
+sum(oe$o1)
 
 G <- max(oe$group)
 
@@ -39,7 +42,7 @@ oe_data2 <- oe[oe$e2 > 0, ]
 
 # Initial values
 m1 <- glm(o1 ~ age + I(age^2) + offset(log(e1 + 1e-10)), family = poisson(link = "log"), data = oe)
-m1 <- glm(o1 ~ age + I(age^2), offset = log(e1), family = poisson(link = "log"), data = oe_data1)
+m1.1 <- glm(o1 ~ age + I(age^2), offset = log(e1), family = poisson(link = "log"), data = oe_data1)
 
 m1 <- glm(o1 ~ age + I(age^2) + offset(log(e1)), family = poisson(link = "log"), data = oe_data1)
 m2 <- glm(o2 ~ age + offset(log(e2)), family = poisson(link = "log"), data = oe_data2)
@@ -150,8 +153,11 @@ hz1 <- function(x) {
 }
 
 hz2 <- function(x) {
-  0.489635228100584 * exp(-3.2 - 0.025 * x + 0.0006 * x^2)
+  #0.489635228100584 * exp(-3.2 - 0.025 * x + 0.0006 * x^2)
+  0.489635228100584* 10 ^ (5.662015 + 0.033462 * x - 10)
 }
+
+
 
 x <- seq(20, 100, by = 1)
 
