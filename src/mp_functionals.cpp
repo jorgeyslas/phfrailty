@@ -231,13 +231,18 @@ Rcpp::List mp_cor_dens_aux(Rcpp::NumericMatrix x, Rcpp::NumericMatrix ex, arma::
   arma::mat temp_mat2;
 
   for (int k{0}; k < x.nrow(); ++k){
-    temp_mat1 = matrix_power(x(k, 0) + 2, inv(ex(k, 0) * I1 - S11));
-    temp_mat2 = matrix_power(x(k, 1) + 2, inv(ex(k, 1) * I2 - S22));
-    aux_mat = alpha.t() * temp_mat1 * S12 * temp_mat2 * (ex(k, 1) * I2 - S22)  * exit_vect;
+    //temp_mat1 = matrix_power(x(k, 0) + 2, inv(ex(k, 0) * I1 - S11));
+    temp_mat1 = matrix_power(x(k, 0) + 2, inv(I1 - S11 / ex(k, 0)));
+    //temp_mat2 = matrix_power(x(k, 1) + 2, inv(ex(k, 1) * I2 - S22));
+    temp_mat2 = matrix_power(x(k, 1) + 2, inv(I2 - S22 / ex(k, 1)));
+    //aux_mat = alpha.t() * temp_mat1 * S12 * temp_mat2 * (ex(k, 1) * I2 - S22)  * exit_vect;
+    aux_mat = alpha.t() * temp_mat1 * S12 * temp_mat2 * (I2 - S22 / ex(k, 1))  * exit_vect;
     dens_aux1[k] = aux_mat(0,0);
-    aux_mat = alpha.t() * temp_mat1 * (ex(k, 0) * I1 - S11) * S12 * temp_mat2 * exit_vect;
+    //aux_mat = alpha.t() * temp_mat1 * (ex(k, 0) * I1 - S11) * S12 * temp_mat2 * exit_vect;
+    aux_mat = alpha.t() * temp_mat1 * (I1 - S11 / ex(k, 0)) * S12 * temp_mat2 * exit_vect;
     dens_aux2[k] = aux_mat(0,0);
-    aux_mat = alpha.t() * temp_mat1 * (ex(k, 0) * I1 - S11) * S12 * temp_mat2 * (ex(k, 1) * I2 - S22) * exit_vect;
+    //aux_mat = alpha.t() * temp_mat1 * (ex(k, 0) * I1 - S11) * S12 * temp_mat2 * (ex(k, 1) * I2 - S22) * exit_vect;
+    aux_mat = alpha.t() * temp_mat1 * (I1 - S11 / ex(k, 0)) * S12 * temp_mat2 * (I2 - S22 / ex(k, 1)) * exit_vect;
     density[k] = aux_mat(0,0);
   }
   return Rcpp::List::create(
