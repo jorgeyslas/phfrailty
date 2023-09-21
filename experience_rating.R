@@ -8,8 +8,10 @@ experience_rating_bph <- function(x,
                                   delta1 = 0.015,
                                   initialpoint2 = 0.0001,
                                   truncationpoint2 = 8,
-                                  delta2 = 0.015) {
+                                  delta2 = 0.015,
+                                  every = 1) {
 
+  start_time <- Sys.time()
   # Biv PH parameters
   x_par <- x@pars
   alpha_fit <- clone_vector(x_par$alpha)
@@ -64,19 +66,30 @@ experience_rating_bph <- function(x,
     for (l in 1:length(value[, 1])) {
       prob[l] <- conditional_density(matrix(c(value[l, 1], value[l, 2]), ncol = 2), alpha_fit, S11_fit, S12_fit, S22_fit, fac, y, aux$density / (fac[, 1] * fac[, 2]))
     }
-    print(sum(prob * delta1 * delta2))
 
     # PH fitting
     for (l in 1:stepsPH) {
       EMstep_bivph(alpha_fit, S11_fit, S12_fit, S22_fit, matrix(c(value[, 1], value[, 2]), ncol = 2), prob)
     }
 
-    oe_data$o1_hat <- exp(beta1_fit[1] + beta1_fit[2] * oe_data$age + beta1_fit[3] * oe_data$age^2) * (oe_data$e1 + 1e-10)
-    oe_data$o2_hat <- exp(beta2_fit[1] + beta2_fit[2] * oe_data$age) * (oe_data$e2 + 1e-10)
+    oe_data$o1_hat <- exp(beta1_fit[1] + beta1_fit[2] * oe_data$age + beta1_fit[3] * oe_data$age^2) * (oe_data$e1 + 1e-15)
+    oe_data$o2_hat <- exp(beta2_fit[1] + beta2_fit[2] * oe_data$age) * (oe_data$e2 + 1e-15)
 
     aggreated_data <- aggregate(cbind(o1, o1_hat, o2, o2_hat) ~ group + no + id, data = oe_data, FUN = sum)
 
     fac <- as.matrix(aggreated_data[, c(5, 7)])
+
+    if (k %% every == 0) {
+      s1 <- sum(lgamma(aggreated_data[, 4] + 1)) + sum(lgamma(aggreated_data[, 6] + 1)) - sum(lgamma(oe_data[, 6] + 1)) - sum(lgamma(oe_data[, 8] + 1))
+      s2 <- sum(oe_data[, 6]* log(oe_data[, 9])) + sum(oe_data[, 8] * log(oe_data[, 10]))
+      s3 <- sum((aggreated_data[, 4]) * log(aggreated_data[, 5])) + sum((aggreated_data[, 6]) * log(aggreated_data[, 7]))
+      s4 <- sum(log(mp_cor_dens_cov(as.matrix(aggreated_data[, c(4, 6)]), as.matrix(aggreated_data[, c(5, 7)]), alpha_fit, S11_fit, S12_fit, S22_fit) / (aggreated_data[, 5] * aggreated_data[, 7])))
+      cat("\r", "iteration:", k,
+          ", logLik:", s1 + s2 - s3 + s4,
+          ", prob disc:", sum(prob * delta1 * delta2),
+          sep = " "
+      )
+    }
   }
 
   aux <- mp_cor_dens_aux(y, fac, alpha_fit, S11_fit, S12_fit, S22_fit)
@@ -107,5 +120,10 @@ experience_rating_bph <- function(x,
 
   out_list <- list(bph_fit = x_fit, oe_out = oe_out)
 
+  end_time <- Sys.time()
+  cat("\n Running time: ", end_time - start_time)
+
   return(out_list)
 }
+
+

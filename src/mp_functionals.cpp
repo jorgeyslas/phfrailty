@@ -188,7 +188,8 @@ Rcpp::NumericVector mp_cor_dens_cov(Rcpp::NumericMatrix x, Rcpp::NumericMatrix e
   arma::mat aux_mat(1,1);
 
   for (int k{0}; k < x.nrow(); ++k){
-    aux_mat = alpha.t() *  matrix_power(x(k, 0) + 1, inv(ex(k, 0) * I1 - S11)) * S12 * matrix_power(x(k, 1) + 1, inv(ex(k, 1) * I2 - S22)) * exit_vect;
+    //aux_mat = alpha.t() *  matrix_power(x(k, 0) + 1, inv(ex(k, 0) * I1 - S11)) * S12 * matrix_power(x(k, 1) + 1, inv(ex(k, 1) * I2 - S22)) * exit_vect;
+    aux_mat = alpha.t() *  matrix_power(x(k, 0) + 1, inv(I1 - S11 / ex(k, 0))) * S12 * matrix_power(x(k, 1) + 1, inv(I2 - S22 / ex(k, 1))) * exit_vect;
     density[k] = aux_mat(0,0);
   }
   return density;

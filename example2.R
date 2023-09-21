@@ -1,9 +1,7 @@
 library(phfrailty)
-oe_data <- read.csv("oe_lnorm_20211204.csv")
-oe_data <- read.csv("oe_lnorm_20220801.csv")
-oe_data <- read.csv("oe_gamma_20220801.csv")
 oe_data <- read.csv("oe_gamma_20220802.csv")
 oe_data <- read.csv("oe_lnorm_20220802.csv")
+oe_data <- read.csv("oe_mgamma_20220812.csv")
 
 head(oe_data)
 
@@ -13,6 +11,9 @@ oe <- oe_data[oe_data$no == 22 & oe_data$id == "lnorm_neg", ]
 oe <- oe_data[oe_data$no == 22 & oe_data$id == "gamma_ind", ]
 oe <- oe_data[oe_data$no == 22 & oe_data$id == "gamma_pos", ]
 oe <- oe_data[oe_data$no == 22 & oe_data$id == "gamma_neg", ]
+oe <- oe_data[oe_data$no == 22 & oe_data$id == "mgamma_ind", ]
+oe <- oe_data[oe_data$no == 22 & oe_data$id == "mgamma_pos", ]
+oe <- oe_data[oe_data$no == 22 & oe_data$id == "mgamma_neg", ]
 
 head(oe)
 dim(oe)
@@ -22,8 +23,8 @@ G <- max(oe$group)
 
 # y2 <- as.matrix(oe[, c(6, 8)])
 
-stepsPH <- 300 #50 / 20
-stepsEM <- 4 #10 / 5
+stepsPH <- 20 #50 / 20
+stepsEM <- 10 #10 / 5
 
 
 initialpoint1 <- 0.0001
@@ -35,13 +36,17 @@ delta2 <- 0.015
 
 ## Initial PH
 set.seed(1)
-bivph_ini <- bivphasetype(dimensions = c(3, 3))
+bivph_ini <- bivphasetype(dimensions = c(5, 5))
 
 bivph_par <- bivph_ini@pars
 alpha_fit <- clone_vector(bivph_par$alpha)
 S11_fit <- clone_matrix(bivph_par$S11)
 S12_fit <- clone_matrix(bivph_par$S12)
 S22_fit <- clone_matrix(bivph_par$S22)
+
+
+#oe_test <- experience_rating_bph(bivph_ini, oe)
+#corr(oe_test$bph_fit)
 
 moment(bivph_ini, c(0, 1))
 moment(bivph_ini, c(1, 0))
@@ -153,8 +158,8 @@ for (k in 1:stepsEM) {
   #oe$o1_hat <- exp(beta1_fit[1] + beta1_fit[2] * oe$age + beta1_fit[3] * oe$age^2) * oe$e1
   #oe$o2_hat <- exp(beta2_fit[1] + beta2_fit[2] * oe$age) * oe$e2
 
-  oe$o1_hat <- exp(beta1_fit[1] + beta1_fit[2] * oe$age + beta1_fit[3] * oe$age^2) * (oe$e1 + 1e-10)
-  oe$o2_hat <- exp(beta2_fit[1] + beta2_fit[2] * oe$age) * (oe$e2 + 1e-10)
+  oe$o1_hat <- exp(beta1_fit[1] + beta1_fit[2] * oe$age + beta1_fit[3] * oe$age^2) * (oe$e1 + 1e-15)
+  oe$o2_hat <- exp(beta2_fit[1] + beta2_fit[2] * oe$age) * (oe$e2 + 1e-15)
 
   #oe$o1_hat <- fitted(m1)
   #oe$o2_hat <- fitted(m2)
@@ -164,6 +169,12 @@ for (k in 1:stepsEM) {
   fac <- as.matrix(aggreated_data[, c(5, 8)])
 
   #cat(sum(log(fac2^y2))+ sum(log(mp_cor_dens_cov(y, fac, alpha_fit, S11_fit, S12_fit, S22_fit))), sep = " ")
+
+  s1 <- sum(lgamma(aggreated_data[, 4] + 1)) + sum(lgamma(aggreated_data[, 7] + 1)) - sum(lgamma(oe[, 6] + 1)) - sum(lgamma(oe[, 8] + 1))
+  s2 <- sum(oe[, 6]* log(oe[, 9])) + sum(oe[, 8] * log(oe[, 10]))
+  s3 <- sum((aggreated_data[, 4]) * log(aggreated_data[, 5])) + sum((aggreated_data[, 7]) * log(aggreated_data[, 8]))
+  s4 <- sum(log(mp_cor_dens_cov(as.matrix(aggreated_data[, c(4, 7)]), as.matrix(aggreated_data[, c(5, 8)]), alpha_fit, S11_fit, S12_fit, S22_fit) / (aggreated_data[, 5] * aggreated_data[, 8])))
+  cat(s1 + s2 - s3 + s4, sep = " ")
 
 }
 
@@ -227,7 +238,7 @@ oe_out$sec1 <- beta1_fit[3]
 
 
 
-write.csv(oe_out, "phfit_gammaind_group22.csv", row.names = FALSE)
+write.csv(oe_out, "phfit_gammapos_group22.csv", row.names = FALSE)
 write.csv(oe_out, "phfit_lnormpos_group22.csv", row.names = FALSE)
 
 write.csv(oe_out, "phfit_gammaneg_group22.csv", row.names = FALSE)
@@ -315,10 +326,10 @@ abline(0, 1, col = "blue")
 plot(original_theta[original_theta$id == "lnorm_neg", 4], ethetha2 * adjustment2)
 abline(0, 1, col = "blue")
 
-plot(original_theta[original_theta$id == "gamma_pos", 3], ethetha1 * adjustment1)
+plot(rep(original_theta[original_theta$id == "gamma_pos", 3], 2), ethetha1 * adjustment1)
 abline(0, 1, col = "blue")
 
-plot(original_theta[original_theta$id == "gamma_pos", 4], ethetha2 * adjustment2)
+plot(rep(original_theta[original_theta$id == "gamma_pos", 4], 2), ethetha2 * adjustment2)
 abline(0, 1, col = "blue")
 
 plot(original_theta[original_theta$id == "gamma_neg", 3], ethetha1 * adjustment1)
