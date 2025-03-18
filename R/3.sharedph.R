@@ -50,12 +50,19 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   if ((!bhaz1 %in% c("exponential", "weibull", "gompertz")) | (!bhaz2 %in% c("exponential", "weibull", "gompertz"))) {
     stop("invalid bhaz")
   }
-  if (bhaz1 %in% c("exponential", "weibull")) {
+  if (bhaz1 %in% c("exponential")) {
     if (is.null(bhaz_pars1)) bhaz_pars1 <- 1
     if (length(bhaz_pars1) != 1 | sum(bhaz_pars1 <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
     } else {
       names(bhaz_pars1) <- "theta"
+    }
+  } else if (bhaz1 %in% c("weibull")) {
+    if (is.null(bhaz_pars1)) bhaz_pars1 <- c(1, 1)
+    if (length(bhaz_pars1) != 2 | (bhaz_pars1[1] <= 0) | (bhaz_pars1[2] <= 0)) {
+      stop("bhaz parameter should be positive and of length two: lambda, theta > 0")
+    } else {
+      names(bhaz_pars1) <- c("lambda", "theta")
     }
   } else if (bhaz1 %in% c("gompertz")) {
     if (is.null(bhaz_pars1)) bhaz_pars1 <- c(0.1, 1)
@@ -66,12 +73,19 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
     }
   }
 
-  if (bhaz2 %in% c("exponential", "weibull")) {
+  if (bhaz2 %in% c("exponential")) {
     if (is.null(bhaz_pars2)) bhaz_pars2 <- 1
     if (length(bhaz_pars2) != 1 | sum(bhaz_pars2 <= 0) > 0) {
       stop("bhaz parameter should be positive and of length one")
     } else {
       names(bhaz_pars2) <- "theta"
+    }
+  } else if (bhaz2 %in% c("weibull")) {
+    if (is.null(bhaz_pars2)) bhaz_pars2 <- c(1, 1)
+    if (length(bhaz_pars2) != 2 | (bhaz_pars2[1] <= 0) | (bhaz_pars2[2] <= 0)) {
+      stop("bhaz parameter should be positive and of length two: lambda, theta > 0")
+    } else {
+      names(bhaz_pars2) <- c("lambda", "theta")
     }
   } else if (bhaz2 %in% c("gompertz")) {
     if (is.null(bhaz_pars2)) bhaz_pars2 <- c(0.1, 1)
@@ -83,7 +97,7 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   }
 
   f1 <- function(theta, t) theta
-  f2 <- function(theta, t) theta * t^(theta - 1)
+  f2 <- function(theta, t) theta[1] * theta[2] * t^(theta[2] - 1)
   f3 <- function(theta, t) theta[1] * exp(theta[2] * t)
   nb1 <- which(bhaz1 == c("exponential", "weibull", "gompertz"))
   nb2 <- which(bhaz2 == c("exponential", "weibull", "gompertz"))
@@ -91,7 +105,7 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   hz2 <- base::eval(parse(text = paste("f", nb2, sep = "")))
 
   f1 <- function(theta, t) theta * t
-  f2 <- function(theta, t) t^theta
+  f2 <- function(theta, t) theta[1] * t^theta[2]
   f3 <- function(theta, t) theta[1] * (exp(theta[2] * t) - 1) / theta[2]
   nb1 <- which(bhaz1 == c("exponential", "weibull", "gompertz"))
   nb2 <- which(bhaz2 == c("exponential", "weibull", "gompertz"))
@@ -99,7 +113,7 @@ shared <- function(ph = NULL, bhaz1 = NULL, bhaz_pars1 = NULL, bhaz2 = NULL, bha
   c_hz2 <- base::eval(parse(text = paste("f", nb2, sep = "")))
 
   f1 <- function(theta, t) t / theta
-  f2 <- function(theta, t) t^(1 / theta)
+  f2 <- function(theta, t) (t / theta[1])^(1 / theta[2])
   f3 <- function(theta, t) log(theta[2] * t / theta[1] + 1) / theta[2]
   nb1 <- which(bhaz1 == c("exponential", "weibull", "gompertz"))
   nb2 <- which(bhaz2 == c("exponential", "weibull", "gompertz"))
