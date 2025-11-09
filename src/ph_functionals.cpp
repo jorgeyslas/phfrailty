@@ -150,6 +150,44 @@ Rcpp::NumericVector ph_laplace_der_nocons(Rcpp::NumericVector r, int n, arma::ve
 }
 
 
+//' Derivative of order n of the Laplace transform of a phase-type distribution
+//' without the multiplying constant
+//'
+//' Computes the derivative of order n (without the multiplying constant) of the
+//' Laplace transform at \code{r} of a phase-type distribution with parameters
+//' \code{alpha} and \code{S}.
+//'
+//' @param r Vector of real values.
+//' @param n An integer.
+//' @param alpha Vector of initial probabilities.
+//' @param S Sub-intensity matrix.
+//' @return Laplace transform at \code{r}.
+//' @export
+//' @examples
+//' alpha <- c(0.5, 0.3, 0.2)
+//' S <- matrix(c(c(-1, 0, 0), c(1, -2, 0),c(0, 1, -5)), nrow = 3, ncol = 3)
+//' ph_laplace_der_vec(0.5, 2, alpha, S)
+// [[Rcpp::export]]
+Rcpp::NumericVector ph_laplace_der_vec(Rcpp::NumericVector r, Rcpp::NumericVector n, arma::vec alpha, arma::mat S) {
+   Rcpp::NumericVector laplace(r.size());
+
+   arma::mat e;
+   e.ones(S.n_cols, 1);
+   arma::mat exit_vect = (S * (-1)) * e;
+
+   arma::mat aux_mat(1,1);
+
+   arma::mat identity_matrix;
+   identity_matrix.eye(size(S));
+
+   for (int i{0}; i < r.size(); ++i) {
+     aux_mat = alpha.t() * matrix_power(n[i], inv(identity_matrix * r[i] +  S * (-1.0))) * exit_vect;
+     laplace[i] = aux_mat(0,0);
+   }
+   return laplace;
+ }
+
+
 // Multivariate case
 
 //' Bivariate phase-type joint density

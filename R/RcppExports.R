@@ -34,6 +34,20 @@ discretizate_bivdensity <- function(density, parameters, ini_point1, truncation_
     .Call(`_phfrailty_discretizate_bivdensity`, density, parameters, ini_point1, truncation_point1, max_deltat1, ini_point2, truncation_point2, max_deltat2, max_probability)
 }
 
+#' EM for bivariate phase-type distributions using Pade for matrix exponential
+#'
+#' @param alpha Initial probabilities.
+#' @param S11 Sub-intensity.
+#' @param S12 A matrix.
+#' @param S22 Sub-intensity.
+#' @param obs The observations.
+#' @param weight The weights for the observations.
+#' @return Fitted alpha, S11, S12 and S22 after one iteration.
+#' @export
+EMstep_bivph_omp <- function(alpha, S11, S12, S22, obs, weight) {
+    invisible(.Call(`_phfrailty_EMstep_bivph_omp`, alpha, S11, S12, S22, obs, weight))
+}
+
 #' L_inf norm of a matrix
 #'
 #' Computes the inf norm of a matrix A, defined as
@@ -191,6 +205,91 @@ mp_cor_dens_aux <- function(x, ex, alpha, S11, S12, S22) {
     .Call(`_phfrailty_mp_cor_dens_aux`, x, ex, alpha, S11, S12, S22)
 }
 
+#' Correlated Phase-type mixing without covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param n vector of frequencies.
+#' @param w vector of aggregated severities.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+bm_dens_aux <- function(n, w, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_bm_dens_aux`, n, w, alpha, S11, S12, S22)
+}
+
+#' Correlated Phase-type mixing with covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param n vector of frequencies.
+#' @param w vector of aggregated severities.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+bm_dens_aux_cov <- function(n, ex1, w, ex2, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_bm_dens_aux_cov`, n, ex1, w, ex2, alpha, S11, S12, S22)
+}
+
+#' Correlated Phase-type mixing density without covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param n Vector of frequencies.
+#' @param w Vector of severities.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+bm_cor_dens <- function(n, w, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_bm_cor_dens`, n, w, alpha, S11, S12, S22)
+}
+
+#' Correlated Phase-type mixing density without covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param n Vector of frequencies.
+#' @param w Vector of severities.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+bm_cor_dens2 <- function(n, w, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_bm_cor_dens2`, n, w, alpha, S11, S12, S22)
+}
+
+#' Correlated Phase-type mixing density with covariates
+#'
+#' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+#' with parameters \code{alpha} and \code{S} at \code{x}.
+#'
+#' @param n Vector of frequencies.
+#' @param w Vector of severities.
+#' @param alpha Vector of initial probabilities.
+#' @param S11 Sub-intensity matrix.
+#' @param S12 Matrix.
+#' @param S22 Sub-intensity matrix.
+#' @return The density at \code{x}.
+#' @export
+bm_cor_dens_cov <- function(n, ex1, w, ex2, alpha, S11, S12, S22) {
+    .Call(`_phfrailty_bm_cor_dens_cov`, n, ex1, w, ex2, alpha, S11, S12, S22)
+}
+
 #' EM for phase-type distributions using Pade for matrix exponential
 #'
 #' @param alpha Initial probabilities.
@@ -215,6 +314,20 @@ EMstep <- function(alpha, S, obs, weight) {
 #' @export
 EMstep_bivph <- function(alpha, S11, S12, S22, obs, weight) {
     invisible(.Call(`_phfrailty_EMstep_bivph`, alpha, S11, S12, S22, obs, weight))
+}
+
+#' EM for bivariate phase-type distributions using Pade for matrix exponential
+#'
+#' @param alpha Initial probabilities.
+#' @param S11 Sub-intensity.
+#' @param S12 A matrix.
+#' @param S22 Sub-intensity.
+#' @param obs The observations.
+#' @param weight The weights for the observations.
+#' @return Fitted alpha, S11, S12 and S22 after one iteration.
+#' @export
+EMstep_bivph_gpt <- function(alpha, S11, S12, S22, obs, weight) {
+    invisible(.Call(`_phfrailty_EMstep_bivph_gpt`, alpha, S11, S12, S22, obs, weight))
 }
 
 #' Phase-type density
@@ -283,6 +396,27 @@ ph_laplace <- function(r, alpha, S) {
 #' ph_laplace_der_nocons(0.5, 2, alpha, S)
 ph_laplace_der_nocons <- function(r, n, alpha, S) {
     .Call(`_phfrailty_ph_laplace_der_nocons`, r, n, alpha, S)
+}
+
+#' Derivative of order n of the Laplace transform of a phase-type distribution
+#' without the multiplying constant
+#'
+#' Computes the derivative of order n (without the multiplying constant) of the
+#' Laplace transform at \code{r} of a phase-type distribution with parameters
+#' \code{alpha} and \code{S}.
+#'
+#' @param r Vector of real values.
+#' @param n An integer.
+#' @param alpha Vector of initial probabilities.
+#' @param S Sub-intensity matrix.
+#' @return Laplace transform at \code{r}.
+#' @export
+#' @examples
+#' alpha <- c(0.5, 0.3, 0.2)
+#' S <- matrix(c(c(-1, 0, 0), c(1, -2, 0),c(0, 1, -5)), nrow = 3, ncol = 3)
+#' ph_laplace_der_vec(0.5, 2, alpha, S)
+ph_laplace_der_vec <- function(r, n, alpha, S) {
+    .Call(`_phfrailty_ph_laplace_der_vec`, r, n, alpha, S)
 }
 
 #' Bivariate phase-type joint density

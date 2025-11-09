@@ -196,7 +196,7 @@ setMethod("moment", c(x = "bivphasetype"), function(x, k = c(1, 1)) {
 #'
 #' @examples
 #' obj <- bivphasetype(dimensions = c(3, 3))
-#' corr(obj, c(1, 1))
+#' corr(obj)
 setMethod("corr", c(x = "bivphasetype"), function(x) {
   m11 <- moment(x, c(1, 0))
   m12 <- moment(x, c(0, 1))

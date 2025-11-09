@@ -46,6 +46,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// EMstep_bivph_omp
+void EMstep_bivph_omp(arma::vec& alpha, arma::mat& S11, arma::mat& S12, arma::mat& S22, const Rcpp::NumericMatrix& obs, const Rcpp::NumericVector& weight);
+RcppExport SEXP _phfrailty_EMstep_bivph_omp(SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP, SEXP obsSEXP, SEXP weightSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S22(S22SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type weight(weightSEXP);
+    EMstep_bivph_omp(alpha, S11, S12, S22, obs, weight);
+    return R_NilValue;
+END_RCPP
+}
 // inf_norm
 double inf_norm(arma::mat A);
 RcppExport SEXP _phfrailty_inf_norm(SEXP ASEXP) {
@@ -205,6 +220,90 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bm_dens_aux
+Rcpp::List bm_dens_aux(Rcpp::NumericVector n, Rcpp::NumericVector w, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_bm_dens_aux(SEXP nSEXP, SEXP wSEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(bm_dens_aux(n, w, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bm_dens_aux_cov
+Rcpp::List bm_dens_aux_cov(Rcpp::NumericVector n, Rcpp::NumericVector ex1, Rcpp::NumericVector w, Rcpp::NumericVector ex2, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_bm_dens_aux_cov(SEXP nSEXP, SEXP ex1SEXP, SEXP wSEXP, SEXP ex2SEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ex1(ex1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ex2(ex2SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(bm_dens_aux_cov(n, ex1, w, ex2, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bm_cor_dens
+Rcpp::NumericVector bm_cor_dens(Rcpp::NumericVector n, Rcpp::NumericVector w, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_bm_cor_dens(SEXP nSEXP, SEXP wSEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(bm_cor_dens(n, w, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bm_cor_dens2
+Rcpp::NumericVector bm_cor_dens2(Rcpp::NumericVector n, Rcpp::NumericVector w, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_bm_cor_dens2(SEXP nSEXP, SEXP wSEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(bm_cor_dens2(n, w, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bm_cor_dens_cov
+Rcpp::NumericVector bm_cor_dens_cov(Rcpp::NumericVector n, Rcpp::NumericVector ex1, Rcpp::NumericVector w, Rcpp::NumericVector ex2, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22);
+RcppExport SEXP _phfrailty_bm_cor_dens_cov(SEXP nSEXP, SEXP ex1SEXP, SEXP wSEXP, SEXP ex2SEXP, SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ex1(ex1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ex2(ex2SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S22(S22SEXP);
+    rcpp_result_gen = Rcpp::wrap(bm_cor_dens_cov(n, ex1, w, ex2, alpha, S11, S12, S22));
+    return rcpp_result_gen;
+END_RCPP
+}
 // EMstep
 void EMstep(arma::vec& alpha, arma::mat& S, const Rcpp::NumericVector& obs, const Rcpp::NumericVector& weight);
 RcppExport SEXP _phfrailty_EMstep(SEXP alphaSEXP, SEXP SSEXP, SEXP obsSEXP, SEXP weightSEXP) {
@@ -230,6 +329,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type obs(obsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type weight(weightSEXP);
     EMstep_bivph(alpha, S11, S12, S22, obs, weight);
+    return R_NilValue;
+END_RCPP
+}
+// EMstep_bivph_gpt
+void EMstep_bivph_gpt(arma::vec& alpha, arma::mat& S11, arma::mat& S12, arma::mat& S22, const Rcpp::NumericMatrix& obs, const Rcpp::NumericVector& weight);
+RcppExport SEXP _phfrailty_EMstep_bivph_gpt(SEXP alphaSEXP, SEXP S11SEXP, SEXP S12SEXP, SEXP S22SEXP, SEXP obsSEXP, SEXP weightSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S11(S11SEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S12(S12SEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type S22(S22SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type weight(weightSEXP);
+    EMstep_bivph_gpt(alpha, S11, S12, S22, obs, weight);
     return R_NilValue;
 END_RCPP
 }
@@ -284,6 +398,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
     rcpp_result_gen = Rcpp::wrap(ph_laplace_der_nocons(r, n, alpha, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ph_laplace_der_vec
+Rcpp::NumericVector ph_laplace_der_vec(Rcpp::NumericVector r, Rcpp::NumericVector n, arma::vec alpha, arma::mat S);
+RcppExport SEXP _phfrailty_ph_laplace_der_vec(SEXP rSEXP, SEXP nSEXP, SEXP alphaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type r(rSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(ph_laplace_der_vec(r, n, alpha, S));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -499,6 +627,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_discretizate_density", (DL_FUNC) &_phfrailty_discretizate_density, 6},
     {"_phfrailty_discretizate_bivdensity", (DL_FUNC) &_phfrailty_discretizate_bivdensity, 9},
+    {"_phfrailty_EMstep_bivph_omp", (DL_FUNC) &_phfrailty_EMstep_bivph_omp, 6},
     {"_phfrailty_inf_norm", (DL_FUNC) &_phfrailty_inf_norm, 1},
     {"_phfrailty_matrix_exponential", (DL_FUNC) &_phfrailty_matrix_exponential, 1},
     {"_phfrailty_matrix_power", (DL_FUNC) &_phfrailty_matrix_power, 2},
@@ -511,12 +640,19 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phfrailty_mp_cor_dens", (DL_FUNC) &_phfrailty_mp_cor_dens, 5},
     {"_phfrailty_mp_cor_dens_cov", (DL_FUNC) &_phfrailty_mp_cor_dens_cov, 6},
     {"_phfrailty_mp_cor_dens_aux", (DL_FUNC) &_phfrailty_mp_cor_dens_aux, 6},
+    {"_phfrailty_bm_dens_aux", (DL_FUNC) &_phfrailty_bm_dens_aux, 6},
+    {"_phfrailty_bm_dens_aux_cov", (DL_FUNC) &_phfrailty_bm_dens_aux_cov, 8},
+    {"_phfrailty_bm_cor_dens", (DL_FUNC) &_phfrailty_bm_cor_dens, 6},
+    {"_phfrailty_bm_cor_dens2", (DL_FUNC) &_phfrailty_bm_cor_dens2, 6},
+    {"_phfrailty_bm_cor_dens_cov", (DL_FUNC) &_phfrailty_bm_cor_dens_cov, 8},
     {"_phfrailty_EMstep", (DL_FUNC) &_phfrailty_EMstep, 4},
     {"_phfrailty_EMstep_bivph", (DL_FUNC) &_phfrailty_EMstep_bivph, 6},
+    {"_phfrailty_EMstep_bivph_gpt", (DL_FUNC) &_phfrailty_EMstep_bivph_gpt, 6},
     {"_phfrailty_ph_density", (DL_FUNC) &_phfrailty_ph_density, 3},
     {"_phfrailty_ph_cdf", (DL_FUNC) &_phfrailty_ph_cdf, 4},
     {"_phfrailty_ph_laplace", (DL_FUNC) &_phfrailty_ph_laplace, 3},
     {"_phfrailty_ph_laplace_der_nocons", (DL_FUNC) &_phfrailty_ph_laplace_der_nocons, 4},
+    {"_phfrailty_ph_laplace_der_vec", (DL_FUNC) &_phfrailty_ph_laplace_der_vec, 4},
     {"_phfrailty_bivph_density", (DL_FUNC) &_phfrailty_bivph_density, 5},
     {"_phfrailty_bivph_tail", (DL_FUNC) &_phfrailty_bivph_tail, 5},
     {"_phfrailty_bivph_laplace", (DL_FUNC) &_phfrailty_bivph_laplace, 5},

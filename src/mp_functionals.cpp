@@ -252,3 +252,223 @@ Rcpp::List mp_cor_dens_aux(Rcpp::NumericMatrix x, Rcpp::NumericMatrix ex, arma::
     Rcpp::Named("dens_aux2") = dens_aux2
   );
 }
+
+
+//' Correlated Phase-type mixing without covariates
+//'
+//' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+//' with parameters \code{alpha} and \code{S} at \code{x}.
+//'
+//' @param n vector of frequencies.
+//' @param w vector of aggregated severities.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return The density at \code{x}.
+//' @export
+// [[Rcpp::export]]
+Rcpp::List bm_dens_aux(Rcpp::NumericVector n, Rcpp::NumericVector w, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+   Rcpp::NumericVector density(n.size());
+   Rcpp::NumericVector dens_aux1(n.size());
+   Rcpp::NumericVector dens_aux2(n.size());
+
+   arma::mat e;
+   e.ones(S22.n_cols, 1);
+   arma::mat exit_vect = (S22 * (-1)) * e;
+
+   arma::mat I1;
+   I1.eye(size(S11));
+
+   arma::mat I2;
+   I2.eye(size(S22));
+
+   arma::mat aux_mat(1,1);
+
+   arma::mat temp_mat1;
+   arma::mat temp_mat2;
+
+   for (int k{0}; k < n.size(); ++k){
+     temp_mat1 = matrix_power(n[k] + 2, inv(I1 - S11));
+     temp_mat2 = matrix_power(n[k] + 2, inv(w[k] * I2 - S22));
+     aux_mat = alpha.t() * temp_mat1 * S12 * temp_mat2 * (w[k] * I2 - S22)  * exit_vect;
+     dens_aux1[k] = aux_mat(0,0);
+     aux_mat = alpha.t() * temp_mat1 * (I1 - S11) * S12 * temp_mat2 * exit_vect;
+     dens_aux2[k] = aux_mat(0,0);
+     aux_mat = alpha.t() * temp_mat1 * (I1 - S11) * S12 * temp_mat2 * (w[k] * I2 - S22) * exit_vect;
+     density[k] = aux_mat(0,0);
+   }
+   return Rcpp::List::create(
+     Rcpp::Named("density") = density,
+     Rcpp::Named("dens_aux1") = dens_aux1,
+     Rcpp::Named("dens_aux2") = dens_aux2
+   );
+}
+
+//' Correlated Phase-type mixing with covariates
+//'
+//' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+//' with parameters \code{alpha} and \code{S} at \code{x}.
+//'
+//' @param n vector of frequencies.
+//' @param w vector of aggregated severities.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return The density at \code{x}.
+//' @export
+// [[Rcpp::export]]
+Rcpp::List bm_dens_aux_cov(Rcpp::NumericVector n, Rcpp::NumericVector ex1, Rcpp::NumericVector w, Rcpp::NumericVector ex2, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+   Rcpp::NumericVector density(n.size());
+   Rcpp::NumericVector dens_aux1(n.size());
+   Rcpp::NumericVector dens_aux2(n.size());
+
+   arma::mat e;
+   e.ones(S22.n_cols, 1);
+   arma::mat exit_vect = (S22 * (-1)) * e;
+
+   arma::mat I1;
+   I1.eye(size(S11));
+
+   arma::mat I2;
+   I2.eye(size(S22));
+
+   arma::mat aux_mat(1,1);
+
+   arma::mat temp_mat1;
+   arma::mat temp_mat2;
+
+   for (int k{0}; k < n.size(); ++k){
+     temp_mat1 = matrix_power(n[k] + 2, inv(ex1[k] * I1 - S11));
+     temp_mat2 = matrix_power(n[k] + 2, inv(w[k] * ex2[k] * I2 - S22));
+     aux_mat = alpha.t() * temp_mat1 * S12 * temp_mat2 * (w[k] * ex2[k] * I2 - S22)  * exit_vect;
+     dens_aux1[k] = aux_mat(0,0);
+     aux_mat = alpha.t() * temp_mat1 * (ex1[k] * I1 - S11) * S12 * temp_mat2 * exit_vect;
+     dens_aux2[k] = aux_mat(0,0);
+     aux_mat = alpha.t() * temp_mat1 * (ex1[k] * I1 - S11) * S12 * temp_mat2 * (w[k] * ex2[k] * I2 - S22) * exit_vect;
+     density[k] = aux_mat(0,0);
+   }
+   return Rcpp::List::create(
+     Rcpp::Named("density") = density,
+     Rcpp::Named("dens_aux1") = dens_aux1,
+     Rcpp::Named("dens_aux2") = dens_aux2
+   );
+}
+
+
+//' Correlated Phase-type mixing density without covariates
+//'
+//' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+//' with parameters \code{alpha} and \code{S} at \code{x}.
+//'
+//' @param n Vector of frequencies.
+//' @param w Vector of severities.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return The density at \code{x}.
+//' @export
+// [[Rcpp::export]]
+Rcpp::NumericVector bm_cor_dens(Rcpp::NumericVector n, Rcpp::NumericVector w, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+   Rcpp::NumericVector density(n.size());
+
+   arma::mat e;
+   e.ones(S22.n_cols, 1);
+   arma::mat exit_vect = (S22 * (-1)) * e;
+
+   arma::mat I1;
+   I1.eye(size(S11));
+
+   arma::mat I2;
+   I2.eye(size(S22));
+
+   arma::mat A1_inv = arma::inv(I1 - S11);
+
+   arma::mat aux_mat(1,1);
+
+   for (int k{0}; k < n.size(); ++k){
+     const int ni = static_cast<int>(std::llround(n[k]));
+     arma::mat  A2_inv= arma::inv(w[k] * I2 - S22);
+     arma::mat M1 = arma::powmat(A1_inv, ni + 1);
+     arma::mat M2 = arma::powmat(A2_inv, ni + 1);
+     aux_mat = alpha.t() *  M1 * S12 * M2 * exit_vect;
+     density[k] = aux_mat(0,0);
+   }
+   return density;
+}
+
+//' Correlated Phase-type mixing density without covariates
+//'
+//' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+//' with parameters \code{alpha} and \code{S} at \code{x}.
+//'
+//' @param n Vector of frequencies.
+//' @param w Vector of severities.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return The density at \code{x}.
+//' @export
+// [[Rcpp::export]]
+Rcpp::NumericVector bm_cor_dens2(Rcpp::NumericVector n, Rcpp::NumericVector w, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+   Rcpp::NumericVector density(n.size());
+
+   arma::mat e;
+   e.ones(S22.n_cols, 1);
+   arma::mat exit_vect = (S22 * (-1)) * e;
+
+   arma::mat I1;
+   I1.eye(size(S11));
+
+   arma::mat I2;
+   I2.eye(size(S22));
+
+   arma::mat aux_mat(1,1);
+
+   for (int k{0}; k < n.size(); ++k){
+     aux_mat = alpha.t() *  matrix_power(n[k] + 1, inv(I1 - S11)) * S12 * matrix_power(n[k] + 1, inv(w[k] * I2 - S22)) * exit_vect;
+     density[k] = aux_mat(0,0);
+   }
+   return density;
+ }
+
+//' Correlated Phase-type mixing density with covariates
+//'
+//' Computes the joint density of a correlated phase-type Mixed Poisson distribution
+//' with parameters \code{alpha} and \code{S} at \code{x}.
+//'
+//' @param n Vector of frequencies.
+//' @param w Vector of severities.
+//' @param alpha Vector of initial probabilities.
+//' @param S11 Sub-intensity matrix.
+//' @param S12 Matrix.
+//' @param S22 Sub-intensity matrix.
+//' @return The density at \code{x}.
+//' @export
+// [[Rcpp::export]]
+Rcpp::NumericVector bm_cor_dens_cov(Rcpp::NumericVector n, Rcpp::NumericVector ex1, Rcpp::NumericVector w, Rcpp::NumericVector ex2, arma::vec alpha, arma::mat S11, arma::mat S12, arma::mat S22) {
+   Rcpp::NumericVector density(n.size());
+
+   arma::mat e;
+   e.ones(S22.n_cols, 1);
+   arma::mat exit_vect = (S22 * (-1)) * e;
+
+   arma::mat I1;
+   I1.eye(size(S11));
+
+   arma::mat I2;
+   I2.eye(size(S22));
+
+   arma::mat aux_mat(1,1);
+
+   for (int k{0}; k < n.size(); ++k){
+     aux_mat = alpha.t() *  matrix_power(n[k] + 1, inv(ex1[k] * I1 - S11)) * S12 * matrix_power(n[k] + 1, inv(w[k] * ex2[k] * I2 - S22)) * exit_vect;
+     density[k] = aux_mat(0,0);
+  }
+  return density;
+}
+
+

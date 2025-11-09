@@ -19,5 +19,5 @@ Correlation method for bivphasetype class
 }
 \examples{
 obj <- bivphasetype(dimensions = c(3, 3))
-corr(obj, c(1, 1))
+corr(obj)
 }
